@@ -7,8 +7,12 @@
 var cssFileName = 'ebook.css';
 var pageName = 'ebook.xhtml';
 var ebookName = "ebook-" + document.title + ".epub";
+var imgSrcRegex = /<img.*src="([^"]+)"/gi;
+// var allImgSrc = [];
+// var allImgDest = [];
+var allImgSrc = {};
 
-console.log('mmerge');
+console.log('Hello');
 
 var pageSrc = document.getElementsByTagName('body')[0].innerHTML;
 var pageSrc = document.getElementsByTagName('article')[0].innerHTML;
@@ -91,6 +95,11 @@ function prepareEbookContent(rawContent) {
     // rawContent = rawContent.replace(/<\/.*>/gi, '</p>');
     // rawContent = rawContent.replace(/<[^<>]+>/gi, '');
 
+    extractImgs(rawContent);
+    rawContent = replaceImgs(rawContent);
+
+    alert();
+
     return '<?xml version="1.0" encoding="utf-8"?>' +
         '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">' +
         '<head>' +
@@ -99,6 +108,59 @@ function prepareEbookContent(rawContent) {
         '</head><body>' +
         rawContent +
         '</body></html>';
+}
+
+function extractImgs(rawContent) {
+    $(rawContent).find('img').each(function (index, elem) {
+        var imgsrc = $(elem).attr('src');
+        try {
+            if (imgsrc.indexOf('http') === 0) {
+                allImgSrc[imgsrc] = 'img-' + index + '.' + getFileExtension(imgsrc);
+            }
+        } catch (e) {
+        }
+    });
+}
+
+function replaceImgs(rawContent) {
+    // Object.keys(allImgSrc).forEach(function (imgsrc) {
+    //     rawContent = rawContent.replace(new RegExp(imgsrc, 'gi'), allImgSrc[imgsrc]);
+    // });
+    var keys = Object.keys(allImgSrc);
+    for (var i = 0; i < keys.length; i++) {
+        rawContent = rawContent.replace(keys[i], 'images/' + allImgSrc[keys[i]]);
+    }
+    return rawContent;
+}
+
+function getImagesIndex() {
+    return Object.keys(allImgSrc).reduce(function (prev, elem, index) {
+        return prev + '\n' + '<item href="images/'+allImgSrc[elem]+'" id="img'+index+'" media-type="image/'+getFileExtension(elem)+'"/>';
+    }, '');
+}
+
+function getFileExtension(fileName) {
+    var tmpFileName = fileName.split('.').pop();
+    if (tmpFileName.indexOf('?') > 0) {
+        tmpFileName = tmpFileName.split('?')[0];
+    }
+    if (tmpFileName.trim() === '') {
+        return 'jpg'; //TODO
+    }
+    return tmpFileName;
+}
+
+function deferredAddZip(url, filename, zip) {
+    var deferred = $.Deferred();
+    JSZipUtils.getBinaryContent(url, function (err, data) {
+        if(err) {
+            deferred.reject(err);
+        } else {
+            zip.file(filename, data, {binary:true});
+            deferred.resolve(data);
+        }
+    });
+    return deferred;
 }
 
 // http://ebooks.stackexchange.com/questions/1183/what-is-the-minimum-required-content-for-a-valid-epub
@@ -119,27 +181,6 @@ function buildEbook(ebookContent) {
 
 
     var oebps = zip.folder("OEBPS");
-    oebps.file('content.opf',
-    '<?xml version="1.0" encoding="UTF-8" ?>' +
-    '<package xmlns="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" unique-identifier="db-id" version="3.0">' +
-    '<metadata>' +
-        '<dc:title id="t1">Title</dc:title>' +
-        '<dc:identifier id="db-id">isbn</dc:identifier>' +
-        '<meta property="dcterms:modified">2014-03-27T09:14:09Z</meta>' +
-        '<dc:language>en</dc:language>' +
-    '</metadata>' +
-    '<manifest>' +
-        '<item id="toc" properties="nav" href="toc.xhtml" media-type="application/xhtml+xml" />' +
-        '<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />' +
-        '<item id="template_css" href="' + cssFileName + '" media-type="text/css" />' +
-        '<item id="ebook" href="' + pageName + '" media-type="application/xhtml+xml" />' +
-    '</manifest>' +
-    '<spine toc="ncx">' +
-        '<itemref idref="ebook" />' +
-    '</spine>' +
-    '</package>'
-    );
-
     oebps.file('toc.xhtml',
         '<?xml version="1.0" encoding="utf-8"?>' +
         '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">' +
@@ -183,9 +224,59 @@ function buildEbook(ebookContent) {
        prepareEbookContent(ebookContent)
     );
 
+    oebps.file('content.opf',
+    '<?xml version="1.0" encoding="UTF-8" ?>' +
+    '<package xmlns="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" unique-identifier="db-id" version="3.0">' +
+    '<metadata>' +
+        '<dc:title id="t1">Title</dc:title>' +
+        '<dc:identifier id="db-id">isbn</dc:identifier>' +
+        '<meta property="dcterms:modified">2014-03-27T09:14:09Z</meta>' +
+        '<dc:language>en</dc:language>' +
+    '</metadata>' +
+    '<manifest>' +
+        '<item id="toc" properties="nav" href="toc.xhtml" media-type="application/xhtml+xml" />' +
+        '<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />' +
+        '<item id="template_css" href="' + cssFileName + '" media-type="text/css" />' +
+        '<item id="ebook" href="' + pageName + '" media-type="application/xhtml+xml" />' +
+        getImagesIndex() +
+    '</manifest>' +
+    '<spine toc="ncx">' +
+        '<itemref idref="ebook" />' +
+    '</spine>' +
+    '</package>'
+    );
 
-    zip.generateAsync({type:"blob"})
-    .then(function(content) {
-        saveAs(content, ebookName);
+    ///////////////
+    ///////////////
+    var imgs = oebps.folder("images");
+    var imgsPromises = [];
+    // allImgSrc.forEach(function (imgSrc, index) {
+    Object.keys(allImgSrc).forEach(function (imgSrc, index) {
+        var tmpDeffered = deferredAddZip(imgSrc, allImgSrc[imgSrc], imgs);
+        imgsPromises.push(tmpDeffered);
     });
+
+    var done = false;
+
+    $.when.apply($, imgsPromises).done(function () {
+        done = true;
+        zip.generateAsync({type:"blob"})
+        .then(function(content) {
+            saveAs(content, ebookName);
+        });
+        console.log("done !");
+        }).fail(function (err) {
+            alert(err);
+        });
+
+    setTimeout(function () {
+        if (done) {
+            return;
+        }
+        zip.generateAsync({type:"blob"})
+        .then(function(content) {
+            saveAs(content, ebookName);
+        });
+    }, 5000);
+
 }
