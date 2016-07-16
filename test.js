@@ -8,14 +8,16 @@ var cssFileName = 'ebook.css';
 var pageName = 'ebook.xhtml';
 var ebookName = "ebook-" + document.title + ".epub";
 var imgSrcRegex = /<img.*src="([^"]+)"/gi;
-// var allImgSrc = [];
-// var allImgDest = [];
+var allowElements = ['h1', 'h2', 'span', 'p', 'img', 'a', 'div', 'ul', 'ol', 'li'];
+var imageIndex = 0;
 var allImgSrc = {};
+var allExternalLinks = [];
 
 console.log('Hello');
 
 var pageSrc = document.getElementsByTagName('body')[0].innerHTML;
-var pageSrc = document.getElementsByTagName('article')[0].innerHTML;
+
+console.log(pageSrc);
 
 buildEbook(pageSrc);
 
@@ -86,17 +88,42 @@ function getSelectedNode()
     }
 }
 
+function getString(node) {
+    var tagName = node.tagName.toLowerCase();
+    var innerText = node.innerText || node.textContent;
+
+    if (tagName === 'img') {
+        allImgSrc[node.src] = 'img-' + (imageIndex++) + '.' + getFileExtension(node.src);
+        return '<img src="' + ('images/' + allImgSrc[node.src]) + '"></img>';
+    }
+    if (tagName === 'a') {
+        // allExternalLinks.push(node.href); // TODO ???
+        return '<a href="' + (node.href) + '">'+innerText+'</a>';
+    }
+
+    if (innerText === '') {
+        return '';
+    }
+
+    if (tagName === 'div') {
+        if (node.hasChildNodes) {
+            return '';
+        }
+        return '<p>' + innerText + '</p>';
+    }
+
+    return '<' + tagName + '>' + innerText + '</' + tagName + '>';
+}
+
 function prepareEbookContent(rawContent) {
 
-    // rawContent = rawContent.replace(/<svg.*<\/svg>/gi, '');
-    // rawContent = rawContent.replace(/<script.*<\/script>/gi, '');
-    // rawContent = rawContent.replace(/<canvas.*<\/canvas>/gi, '');
-    // rawContent = rawContent.replace(/<[^\/].*>/gi, '<p>');
-    // rawContent = rawContent.replace(/<\/.*>/gi, '</p>');
-    // rawContent = rawContent.replace(/<[^<>]+>/gi, '');
+    var tarr = walkDOM(document.body);
 
-    extractImgs(rawContent);
-    rawContent = replaceImgs(rawContent);
+    var reduced = tarr.reduce(function (prev, crt, index) {
+        return prev + getString(crt);
+    }, '');
+
+    rawContent = reduced;
 
     alert();
 
@@ -110,32 +137,35 @@ function prepareEbookContent(rawContent) {
         '</body></html>';
 }
 
-function extractImgs(rawContent) {
-    $(rawContent).find('img').each(function (index, elem) {
-        var imgsrc = $(elem).attr('src');
-        try {
-            if (imgsrc.indexOf('http') === 0) {
-                allImgSrc[imgsrc] = 'img-' + index + '.' + getFileExtension(imgsrc);
-            }
-        } catch (e) {
-        }
-    });
-}
-
-function replaceImgs(rawContent) {
-    // Object.keys(allImgSrc).forEach(function (imgsrc) {
-    //     rawContent = rawContent.replace(new RegExp(imgsrc, 'gi'), allImgSrc[imgsrc]);
-    // });
-    var keys = Object.keys(allImgSrc);
-    for (var i = 0; i < keys.length; i++) {
-        rawContent = rawContent.replace(keys[i], 'images/' + allImgSrc[keys[i]]);
-    }
-    return rawContent;
-}
+// function extractImgs(rawContent) {
+//     $(rawContent).find('img').each(function (index, elem) {
+//         var imgsrc = $(elem).attr('src');
+//         try {
+//             if (imgsrc.indexOf('http') === 0) {
+//                 allImgSrc[imgsrc] = 'img-' + index + '.' + getFileExtension(imgsrc);
+//             }
+//         } catch (e) {
+//         }
+//     });
+// }
+//
+// function replaceImgs(rawContent) {
+//     var keys = Object.keys(allImgSrc);
+//     for (var i = 0; i < keys.length; i++) {
+//         rawContent = rawContent.replace(keys[i], 'images/' + allImgSrc[keys[i]]);
+//     }
+//     return rawContent;
+// }
 
 function getImagesIndex() {
     return Object.keys(allImgSrc).reduce(function (prev, elem, index) {
         return prev + '\n' + '<item href="images/'+allImgSrc[elem]+'" id="img'+index+'" media-type="image/'+getFileExtension(elem)+'"/>';
+    }, '');
+}
+
+function getExternalLinksIndex() { // TODO ???
+    return allExternalLinks.reduce(function (prev, elem, index) {
+        return prev + '\n' + '<item href="'+elem+'" />';
     }, '');
 }
 
@@ -149,6 +179,27 @@ function getFileExtension(fileName) {
     }
     return tmpFileName;
 }
+
+function walkDOM(main) {
+    var arr = [];
+    var loop = function(main) {
+        do {
+            try {
+                if (allowElements.indexOf(main.tagName.toLowerCase()) > -1) {
+                    arr.push(main);
+                }
+            } catch (e) {
+            }
+            if (main.hasChildNodes()) {
+                loop(main.firstChild);
+            }
+        }
+        while (main = main.nextSibling);
+    }
+    loop(main);
+    return arr;
+}
+
 
 function deferredAddZip(url, filename, zip) {
     var deferred = $.Deferred();
@@ -237,8 +288,9 @@ function buildEbook(ebookContent) {
         '<item id="toc" properties="nav" href="toc.xhtml" media-type="application/xhtml+xml" />' +
         '<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />' +
         '<item id="template_css" href="' + cssFileName + '" media-type="text/css" />' +
-        '<item id="ebook" href="' + pageName + '" media-type="application/xhtml+xml" />' +
+        '<item id="ebook" href="' + pageName + '" media-type="application/xhtml+xml" properties="remote-resources"/>' +
         getImagesIndex() +
+        getExternalLinksIndex() +
     '</manifest>' +
     '<spine toc="ncx">' +
         '<itemref idref="ebook" />' +
