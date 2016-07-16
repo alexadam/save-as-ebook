@@ -1,21 +1,28 @@
 {
 
-  "manifest_version": 2,
-  "name": "Test",
-  "version": "1.0",
+    "manifest_version": 2,
+    "name": "Test",
+    "version": "1.0",
 
-  "description": "Adds a solid red border to all webpages matching mozilla.org.",
+    "description": "Adds a solid red border to all webpages matching mozilla.org.",
 
-  "icons": {
-    "48": "icons/border-48.png"
-  },
+    "icons": {
+        "48": "icons/border-48.png"
+    },
 
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "css": ["fonts.css"],
-      "js": ["jquery.js", "filesaver.js", "jszip.js", "jszip-utils.js", "test.js"]
-    }
-  ]
+    "content_scripts": [{
+        "matches": ["<all_urls>"],
+        "css": ["fonts.css"],
+        "js": ["jquery.js", "filesaver.js", "jszip.js", "jszip-utils.js", "test.js"]
+    }],
+
+    "background": {
+       "scripts": ["background.js"]
+    },
+
+    "permissions": [
+        "contextMenus",
+        "activeTab"
+    ]
 
 }

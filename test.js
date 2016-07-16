@@ -4,6 +4,15 @@
 // https://stuk.github.io/jszip/
 // https://github.com/eligrey/FileSaver.js/
 
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    console.log('Start saving...');
+
+    var pageSrc = document.getElementsByTagName('body')[0].innerHTML;
+
+    buildEbook(pageSrc);
+});
+
 var cssFileName = 'ebook.css';
 var pageName = 'ebook.xhtml';
 var ebookName = "ebook-" + document.title + ".epub";
@@ -13,13 +22,7 @@ var imageIndex = 0;
 var allImgSrc = {};
 var allExternalLinks = [];
 
-console.log('Hello');
 
-var pageSrc = document.getElementsByTagName('body')[0].innerHTML;
-
-console.log(pageSrc);
-
-buildEbook(pageSrc);
 
 // console.log(pageSrc);
 //
@@ -91,6 +94,12 @@ function getSelectedNode()
 function getString(node) {
     var tagName = node.tagName.toLowerCase();
     var innerText = node.innerText || node.textContent;
+    var innerText = node.innerHTML;
+
+    innerText = innerText.replace(/<[^>]*>[^<]*<[^>]*>/gi,'');
+    innerText = innerText.replace(/<[^>]*>/gi,'');
+
+    console.log(innerText);
 
     if (tagName === 'img') {
         allImgSrc[node.src] = 'img-' + (imageIndex++) + '.' + getFileExtension(node.src);
@@ -288,7 +297,7 @@ function buildEbook(ebookContent) {
         '<item id="toc" properties="nav" href="toc.xhtml" media-type="application/xhtml+xml" />' +
         '<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />' +
         '<item id="template_css" href="' + cssFileName + '" media-type="text/css" />' +
-        '<item id="ebook" href="' + pageName + '" media-type="application/xhtml+xml" properties="remote-resources"/>' +
+        '<item id="ebook" href="' + pageName + '" media-type="application/xhtml+xml" />' +  //properties="remote-resources"
         getImagesIndex() +
         getExternalLinksIndex() +
     '</manifest>' +
@@ -329,6 +338,6 @@ function buildEbook(ebookContent) {
         .then(function(content) {
             saveAs(content, ebookName);
         });
-    }, 5000);
+    }, 50000);
 
 }
