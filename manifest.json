@@ -1,7 +1,7 @@
 {
 
     "manifest_version": 2,
-    "name": "Test",
+    "name": "Save As E-Book",
     "version": "1.0",
 
     "description": "Adds a solid red border to all webpages matching mozilla.org.",

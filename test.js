@@ -5,12 +5,30 @@
 // https://github.com/eligrey/FileSaver.js/
 
 
+
+
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     console.log('Start saving...');
 
-    var pageSrc = document.getElementsByTagName('body')[0].innerHTML;
+    if (request.type === 'whole-page') {
+        var pageSrc = document.getElementsByTagName('body')[0];
+        buildEbook(pageSrc);
+    } else if (request.type === 'selection') {
+        var pageSrc = getSelectedNodes();
+        buildEbook(pageSrc);
+    }
 
-    buildEbook(pageSrc);
+    /// TODO use storage
+    // else if (request.type === 'selection-to-buffer') {
+    //     var pageSrc = getSelectedNodes();
+    //     buffer.push(pageSrc)
+    // } else if (request.type === 'save-buffer') {
+    //     console.log('BUFFER', buffer);
+    //     pageSrc = buffer.join();
+    //     buildEbook(pageSrc);
+    // }
+
+
 });
 
 var cssFileName = 'ebook.css';
@@ -73,18 +91,20 @@ if (myimg) {
 //    allFrames: true
 // )
 
-function getSelectedNode()
+function getSelectedNodes()
 {
-    if (document.selection)
+    if (document.selection) {
     	// return document.selection.createRange().parentElement();
     	return document.selection.createRange();
+    }
     else
     {
     	var selection = window.getSelection();
     	if (selection.rangeCount > 0) {
             var range = selection.getRangeAt(0);
             var selectionContents = range.cloneContents();
-            console.log(selectionContents.children.length, selectionContents.children[0].outerHTML);
+            return selectionContents;
+            // console.log(selectionContents.children.length, selectionContents.children[0].outerHTML);
         }
     		// return selection.getRangeAt(0);
     		// return selection.createRange();
@@ -92,7 +112,13 @@ function getSelectedNode()
 }
 
 function getString(node) {
-    var tagName = node.tagName.toLowerCase();
+    var tagName = '';
+    if (!node.tagName) {
+        tagName = 'p';
+    } else {
+        tagName = node.tagName.toLowerCase();
+    }
+
     var innerText = node.innerText || node.textContent;
     var innerText = node.innerHTML;
 
@@ -126,13 +152,20 @@ function getString(node) {
 
 function prepareEbookContent(rawContent) {
 
-    var tarr = walkDOM(document.body);
+    var tarr = walkDOM(rawContent);
 
-    var reduced = tarr.reduce(function (prev, crt, index) {
-        return prev + getString(crt);
-    }, '');
-
-    rawContent = reduced;
+    if (tarr.length === 0) {
+        // if only simple text is selected
+        var div = document.createElement('div');
+        div.appendChild(rawContent.cloneNode(true));
+        var rawContent = div.innerHTML;
+        div.parentNode.remove(div);
+    } else {
+        var reduced = tarr.reduce(function (prev, crt, index) {
+            return prev + getString(crt);
+        }, '');
+        rawContent = reduced;
+    }
 
     alert();
 

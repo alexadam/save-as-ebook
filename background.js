@@ -26,17 +26,17 @@ function onRemoved() {
 Create all the context menu items.
 */
 chrome.contextMenus.create({
-  id: "save",
-  title: 'Save as E-Book',
+  id: "whole-page",
+  title: 'Whole Page',
   contexts: ["all"]
 }, onCreated);
 
-// chrome.contextMenus.create({
-//   id: "remove-me",
-//   title: chrome.i18n.getMessage("contextMenuItemRemoveMe"),
-//   contexts: ["all"]
-// }, onCreated);
-//
+chrome.contextMenus.create({
+  id: "selection",
+  title: "Selection",
+  contexts: ["all"]
+}, onCreated);
+
 // chrome.contextMenus.create({
 //   id: "separator-1",
 //   type: "separator",
@@ -44,19 +44,9 @@ chrome.contextMenus.create({
 // }, onCreated);
 //
 // chrome.contextMenus.create({
-//   id: "greenify",
-//   type: "radio",
-//   title: chrome.i18n.getMessage("contextMenuItemGreenify"),
-//   contexts: ["all"],
-//   checked: true
-// }, onCreated);
-//
-// chrome.contextMenus.create({
-//   id: "bluify",
-//   type: "radio",
-//   title: chrome.i18n.getMessage("contextMenuItemBluify"),
-//   contexts: ["all"],
-//   checked: false
+//   id: "selection-to-buffer",
+//   title: "Selection > Buffer",
+//   contexts: ["all"]
 // }, onCreated);
 //
 // chrome.contextMenus.create({
@@ -65,15 +55,12 @@ chrome.contextMenus.create({
 //   contexts: ["all"]
 // }, onCreated);
 //
-// var checkedState = true;
-//
 // chrome.contextMenus.create({
-//   id: "check-uncheck",
-//   type: "checkbox",
-//   title: chrome.i18n.getMessage("contextMenuItemUncheckMe"),
-//   contexts: ["all"],
-//   checked: checkedState
+//   id: "save-buffer",
+//   title: "save Buffer",
+//   contexts: ["all"]
 // }, onCreated);
+
 
 /*
 Set a colored border on the document in the given tab.
@@ -117,20 +104,26 @@ ID of the menu item that was clicked.
 */
 chrome.contextMenus.onClicked.addListener(function(info, tab) {
   switch (info.menuItemId) {
-    case "save":
+    case "whole-page":
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, {customData: ""});
+            chrome.tabs.sendMessage(tabs[0].id, {type: "whole-page"});
         });
       break;
-    case "remove-me":
-      chrome.contextMenus.remove(info.menuItemId, onRemoved);
+      case "selection":
+          chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+              chrome.tabs.sendMessage(tabs[0].id, {type: "selection"});
+          });
+        break;
+    case "selection-to-buffer":
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, {type: "selection-to-buffer"});
+        });
       break;
-    case "bluify":
-      borderify(tab.id, blue);
-      break;
-    case "greenify":
-      borderify(tab.id, green);
-      break;
+    case "save-buffer":
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, {type: "save-buffer"});
+        });
+        break;
     case "check-uncheck":
       updateCheckUncheck();
       break;
