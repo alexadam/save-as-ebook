@@ -7,21 +7,35 @@
 
 function mega() {
     var body = document.getElementsByTagName('body')[0];
-    var bodyClone = body.cloneNode(true);
-
-    // var allImgs = bodyClone.getElementsByTagName('img');
-    // console.log('all elem', allImgs);
-    // for (var i = 0; i < allImgs.length; i++) {
-    //         var newElem = document.createElement('img');
-    //         newElem.src = allImgs[i].src;
-    //         allImgs[i].parentNode.replaceChild(newElem, allImgs[i]);
-    // }
-    var srcTxt = bodyClone.innerHTML;
+    var srcTxt = body.innerHTML;
 
     srcTxt = srcTxt.replace(/<script.*?>.*?<\/script>/gi, '');
     srcTxt = srcTxt.replace(/<svg.*?>.*?<\/svg>/gi, '');
-    srcTxt = srcTxt.replace(/<img\s+.*?src="([^"]*)".*?>/gi, '@@@img$1###img');
-    srcTxt = srcTxt.replace(/<a\s+.*?href="([^"]*)".*?>/gi, '@@@a$1###href');
+    srcTxt = srcTxt.replace(/<(\w)[^>]*?><\/\1>/gi, '');
+
+    // srcTxt = srcTxt.replace(/<img\s+.*?src="([^"]*)".*?>/gi, '@@@img$1###img');
+    srcTxt = srcTxt.replace(/<img\s+.*?src="([^"]*)".*?>/gi, function (matched, p1) {
+        if (p1.indexOf('//') === 0) {
+            return '@@@img' + window.location.protocol + p1 + '###img';
+        }
+        if (p1.indexOf('/') === 0) {
+            return '@@@img' + window.location.protocol + '//' + window.location.hostname + p1 + '###img';
+        }
+        return '@@@img' + p1 + '###img';
+    });
+
+    // srcTxt = srcTxt.replace(/<a\s+.*?href="([^"]*)".*?>/gi, '@@@a$1###href');
+    srcTxt = srcTxt.replace(/<a\s+.*?href="([^"]*)".*?>/gi, function (matched, p1) {
+        if (p1.indexOf('#') === 0) {
+            return '@@@a' + window.location.href + p1 + '###href';
+        }
+        if (p1.indexOf('/') === 0) {
+            return '@@@a' + window.location.protocol + '//' + window.location.hostname + p1 + '###href';
+        }
+        return '@@@a' + p1 + '###href';
+    });
+
+
     srcTxt = srcTxt.replace(/<(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup)(>|\s+.*?>)/gi, '@@@$1');
     srcTxt = srcTxt.replace(/<\/(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup|a)(>|\s+.*?>)/gi, '###$1');
 
@@ -32,22 +46,9 @@ function mega() {
     srcTxt = srcTxt.replace(/@@@a(.*?)###href/gi, '<a href="$1">');
     srcTxt = srcTxt.replace(/@@@(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup)/gi, '<$1>');
     srcTxt = srcTxt.replace(/###(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup|a)/gi, '</$1>');
+    srcTxt = srcTxt.replace('  ', ' ');
 
-
-    // bodyClone.parentNode.removeChild(bodyClone);
     return srcTxt;
-
-    // try {
-    //     var s = new XMLSerializer();
-    //      var str = s.serializeToString(bodyClone);
-    //      return str;
-    // } catch (e) {
-    //     console.log(e);
-    // } finally {
-    //
-    // }
-
-
 }
 
 
