@@ -5,6 +5,52 @@
 // https://github.com/eligrey/FileSaver.js/
 
 
+function mega() {
+    var body = document.getElementsByTagName('body')[0];
+    var bodyClone = body.cloneNode(true);
+
+    // var allImgs = bodyClone.getElementsByTagName('img');
+    // console.log('all elem', allImgs);
+    // for (var i = 0; i < allImgs.length; i++) {
+    //         var newElem = document.createElement('img');
+    //         newElem.src = allImgs[i].src;
+    //         allImgs[i].parentNode.replaceChild(newElem, allImgs[i]);
+    // }
+    var srcTxt = bodyClone.innerHTML;
+
+    srcTxt = srcTxt.replace(/<script.*?>.*?<\/script>/gi, '');
+    srcTxt = srcTxt.replace(/<svg.*?>.*?<\/svg>/gi, '');
+    srcTxt = srcTxt.replace(/<img\s+.*?src="([^"]*)".*?>/gi, '@@@img$1###img');
+    srcTxt = srcTxt.replace(/<a\s+.*?href="([^"]*)".*?>/gi, '@@@a$1###href');
+    srcTxt = srcTxt.replace(/<(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup)(>|\s+.*?>)/gi, '@@@$1');
+    srcTxt = srcTxt.replace(/<\/(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup|a)(>|\s+.*?>)/gi, '###$1');
+
+    srcTxt = srcTxt.replace(/<[^>]+?>/gi, '');
+    srcTxt = srcTxt.replace(/&[a-z]+;/gi, '');
+
+    srcTxt = srcTxt.replace(/@@@img(.*?)###img/gi, '<img src="$1"></img>');
+    srcTxt = srcTxt.replace(/@@@a(.*?)###href/gi, '<a href="$1">');
+    srcTxt = srcTxt.replace(/@@@(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup)/gi, '<$1>');
+    srcTxt = srcTxt.replace(/###(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup|a)/gi, '</$1>');
+
+
+    // bodyClone.parentNode.removeChild(bodyClone);
+    return srcTxt;
+
+    // try {
+    //     var s = new XMLSerializer();
+    //      var str = s.serializeToString(bodyClone);
+    //      return str;
+    // } catch (e) {
+    //     console.log(e);
+    // } finally {
+    //
+    // }
+
+
+}
+
+
 
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
@@ -152,20 +198,22 @@ function getString(node) {
 
 function prepareEbookContent(rawContent) {
 
-    var tarr = walkDOM(rawContent);
+    // var tarr = walkDOM(rawContent);
+    //
+    // if (tarr.length === 0) {
+    //     // if only simple text is selected
+    //     var div = document.createElement('div');
+    //     div.appendChild(rawContent.cloneNode(true));
+    //     var rawContent = div.innerHTML;
+    //     div.parentNode.remove(div);
+    // } else {
+    //     var reduced = tarr.reduce(function (prev, crt, index) {
+    //         return prev + getString(crt);
+    //     }, '');
+    //     rawContent = reduced;
+    // }
 
-    if (tarr.length === 0) {
-        // if only simple text is selected
-        var div = document.createElement('div');
-        div.appendChild(rawContent.cloneNode(true));
-        var rawContent = div.innerHTML;
-        div.parentNode.remove(div);
-    } else {
-        var reduced = tarr.reduce(function (prev, crt, index) {
-            return prev + getString(crt);
-        }, '');
-        rawContent = reduced;
-    }
+    rawContent = mega();
 
     alert();
 
@@ -175,7 +223,9 @@ function prepareEbookContent(rawContent) {
         '<title>' + ebookName + '</title>' +
         '<link href="' + cssFileName + '" rel="stylesheet" type="text/css" />' +
         '</head><body>' +
+        // '</head>' +
         rawContent +
+        // '</html>';
         '</body></html>';
 }
 
