@@ -5,29 +5,62 @@
 // https://github.com/eligrey/FileSaver.js/
 
 
+var cssFileName = 'ebook.css';
+var pageName = 'ebook.xhtml';
+var ebookName = "ebook-" + document.title + ".epub";
+var imgSrcRegex = /<img.*src="([^"]+)"/gi;
+var allowElements = ['h1', 'h2', 'span', 'p', 'img', 'a', 'div', 'ul', 'ol', 'li'];
+var imageIndex = 0;
+var allImgSrc = {};
+var allExternalLinks = [];
+
+
 function mega() {
+    var body = document.getElementsByTagName('body')[0];
+    var bodyClone = body.cloneNode(true);
+
+
+    // srcTxt = srcTxt.replace(/<script.*?>.*?<\/script>/gim, '');
+    // srcTxt = srcTxt.replace(/<style.*?>[^<]*?<\/style>/gim, '');
+    // srcTxt = srcTxt.replace(/<svg.*?>.*?<\/svg>/gim, '');
+    // srcTxt = srcTxt.replace(/<(\w)[^>]*?><\/\1>/gi, '');
+
+
+    var elements = document.getElementsByTagName('script');
+    // while (elements[0]) elements[0].parentNode.removeChild(elements[0]);
+    while (elements[0]) bodyClone.removeChild(elements[0]);
+
+    var elements = document.getElementsByTagName('style');
+    while (elements[0]) bodyClone.removeChild(elements[0]);
+
+    var elements = document.getElementsByTagName('svg');
+    while (elements[0]) bodyClone.removeChild(elements[0]);
+
+    $('*:empty').remove();
+
     var body = document.getElementsByTagName('body')[0];
     var srcTxt = body.innerHTML;
 
-    srcTxt = srcTxt.replace(/<script.*?>.*?<\/script>/gi, '');
-    srcTxt = srcTxt.replace(/<svg.*?>.*?<\/svg>/gi, '');
-    srcTxt = srcTxt.replace(/<(\w)[^>]*?><\/\1>/gi, '');
 
     // srcTxt = srcTxt.replace(/<img\s+.*?src="([^"]*)".*?>/gi, '@@@img$1###img');
     srcTxt = srcTxt.replace(/<img\s+.*?src="([^"]*)".*?>/gi, function (matched, p1) {
+
+        allImgSrc[p1] = 'img-' + (imageIndex++) + '.' + getFileExtension(p1);
+
         if (p1.indexOf('//') === 0) {
-            return '@@@img' + window.location.protocol + p1 + '###img';
+            return '@@@img' + 'images/' + allImgSrc[p1] + '###img';
         }
         if (p1.indexOf('/') === 0) {
-            return '@@@img' + window.location.protocol + '//' + window.location.hostname + p1 + '###img';
+            return '@@@img' + 'images/' + allImgSrc[p1] + '###img';
         }
-        return '@@@img' + p1 + '###img';
+        return '@@@img' + 'images/' + allImgSrc[p1] + '###img';
     });
 
     // srcTxt = srcTxt.replace(/<a\s+.*?href="([^"]*)".*?>/gi, '@@@a$1###href');
     srcTxt = srcTxt.replace(/<a\s+.*?href="([^"]*)".*?>/gi, function (matched, p1) {
         if (p1.indexOf('#') === 0) {
             return '@@@a' + window.location.href + p1 + '###href';
+            // return '@@@a' + '#' + '###href';
         }
         if (p1.indexOf('/') === 0) {
             return '@@@a' + window.location.protocol + '//' + window.location.hostname + p1 + '###href';
@@ -47,8 +80,135 @@ function mega() {
     srcTxt = srcTxt.replace(/@@@(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup)/gi, '<$1>');
     srcTxt = srcTxt.replace(/###(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup|a)/gi, '</$1>');
     srcTxt = srcTxt.replace('  ', ' ');
+    // srcTxt = srcTxt.replace('\t\t', ' ');
 
     return srcTxt;
+}
+
+
+function getex(name) {
+    if (!name) {
+        return '';
+    }
+    return 'images/' + (imageIndex++) + '.' + getFileExtension(name);
+}
+
+function sanitize() {
+
+    var srcTxt = '';
+    try {
+    var dirty = document.getElementsByTagName('body')[0];
+    var dirty = '<div>' + document.getElementsByTagName('body')[0].innerHTML + '</div>';
+
+    wdirty = $.parseHTML(dirty);
+    $(wdirty).find('script, style, svg, canvas, noscript').remove();
+
+    srcTxt = $(wdirty).html();
+
+    // srcTxt = srcTxt.replace(/<[^>]+?>/gi, '');
+
+    // return srcTxt;
+
+
+    srcTxt = srcTxt.replace(/<img\s+.*?src="([^"]*)".*?>/gi, function (matched, p1) {
+
+        allImgSrc[p1] = 'img-' + (imageIndex++) + '.' + getFileExtension(p1);
+
+        if (p1.indexOf('//') === 0) {
+            return '@@@img' + 'images/' + allImgSrc[p1] + '###img';
+        }
+        if (p1.indexOf('/') === 0) {
+            return '@@@img' + 'images/' + allImgSrc[p1] + '###img';
+        }
+        return '@@@img' + 'images/' + allImgSrc[p1] + '###img';
+    });
+
+    // srcTxt = srcTxt.replace(/<a\s+.*?href="([^"]*)".*?>/gi, '@@@a$1###href');
+    srcTxt = srcTxt.replace(/<a\s+.*?href="([^"]*)".*?>/gi, function (matched, p1) {
+        if (p1.indexOf('#') === 0) {
+            return '@@@a' + window.location.href + p1 + '###href';
+            // return '@@@a' + '#' + '###href';
+        }
+        if (p1.indexOf('/') === 0) {
+            return '@@@a' + window.location.protocol + '//' + window.location.hostname + p1 + '###href';
+        }
+        return '@@@a' + p1 + '###href';
+    });
+
+
+    srcTxt = srcTxt.replace(/<(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup)(>|\s+[^>]*?>)/gi, '@@@$1');
+    srcTxt = srcTxt.replace(/<\/(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup|a)(>|\s+[^>]*?>)/gi, '###$1');
+
+    srcTxt = srcTxt.replace(/<[^>]+?>/gim, '');
+    srcTxt = srcTxt.replace(/\/>/gim, '');
+    srcTxt = srcTxt.replace(/&[a-z]+;/gim, '');
+
+    srcTxt = srcTxt.replace(/@@@img(.*?)###img/gi, '<img src="$1"></img>');
+    srcTxt = srcTxt.replace(/@@@a(.*?)###href/gi, '<a href="$1">');
+    srcTxt = srcTxt.replace(/@@@(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup)/gi, '<$1>');
+    srcTxt = srcTxt.replace(/###(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup|a)/gi, '</$1>');
+    // srcTxt = srcTxt.replace('  ', ' ');
+    // srcTxt = srcTxt.replace('\t\t', ' ');
+
+return srcTxt;
+
+
+
+
+    // $(dirty).find('*').not('div, p, img').remove();
+    //
+    //
+    // var clean = $(dirty).html();
+
+    // try {
+    //     var dirty = '<div><h1>gigi</hi>aaa bbb cccc<script>gigi are mere</script></div>';
+    //     var dirty = document.getElementsByTagName('body')[0].innerHTML;
+    //
+    //     var clean = sanitizeHtml(dirty, {
+    //       allowedTags: [ 'div', 'p', 'code', 'h1', 'h3', 'h4', 'h5', 'h6', 'blockquote',
+    //                     'img', 'a', 'ol', 'ul', 'li', 'b', 'i', 'sup', 'strong', 'strike',
+    //                     'table', 'tr', 'td', 'th', 'thead', 'tbody', 'span', 'pre', 'em' ],
+    //       allowedAttributes: {
+    //         'a': [ 'href' ],
+    //         'img': [ 'src' ]
+    //       },
+    //       exclusiveFilter: function (frame) {
+    //           if (!frame.text.trim() && frame.tag !== 'img') {
+    //               return true;
+    //           }
+    //         //   if (frame.tag === 'img' && frame.attribs.src.trim() === '') {
+    //         //       return true;
+    //         //   }
+    //       },
+    //       transformTags: {
+    //            'img': function(tagName, attribs) {
+    //                return {
+    //                    tagName: 'img',
+    //                    attribs: {
+    //                        'src': attribs.src //getex(attribs.src)
+    //                    }
+    //                };
+    //            },
+    //            'a': function(tagName, attribs) {
+    //                return {
+    //                    tagName: 'a',
+    //                    attribs: {
+    //                        'href': 'GIGI' + attribs.href
+    //                    }
+    //                };
+    //            }
+    //      }
+    //     });
+    //
+    //     var srcTxt = clean;
+
+    } catch (e) {
+        console.trace();
+        console.log(e);
+    }
+
+
+
 }
 
 
@@ -78,14 +238,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 });
 
-var cssFileName = 'ebook.css';
-var pageName = 'ebook.xhtml';
-var ebookName = "ebook-" + document.title + ".epub";
-var imgSrcRegex = /<img.*src="([^"]+)"/gi;
-var allowElements = ['h1', 'h2', 'span', 'p', 'img', 'a', 'div', 'ul', 'ol', 'li'];
-var imageIndex = 0;
-var allImgSrc = {};
-var allExternalLinks = [];
+
 
 
 
@@ -214,7 +367,8 @@ function prepareEbookContent(rawContent) {
     //     rawContent = reduced;
     // }
 
-    rawContent = mega();
+    // rawContent = mega();
+    rawContent = sanitize();
 
     alert();
 
@@ -422,6 +576,6 @@ function buildEbook(ebookContent) {
         .then(function(content) {
             saveAs(content, ebookName);
         });
-    }, 50000);
+    }, 60000);
 
 }
