@@ -101,9 +101,11 @@ function sanitize() {
     var dirty = '<div>' + document.getElementsByTagName('body')[0].innerHTML + '</div>';
 
     wdirty = $.parseHTML(dirty);
-    $(wdirty).find('script, style, svg, canvas, noscript').remove();
+    $wdirty = $(wdirty);
+    $wdirty.find('script, style, svg, canvas, noscript').remove();
+    $wdirty.find('*:empty').not('img').remove();
 
-    srcTxt = $(wdirty).html();
+    srcTxt = $wdirty.html();
 
     // srcTxt = srcTxt.replace(/<[^>]+?>/gi, '');
 
