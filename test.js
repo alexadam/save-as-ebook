@@ -8,276 +8,130 @@
 var cssFileName = 'ebook.css';
 var pageName = 'ebook.xhtml';
 var ebookName = "ebook-" + document.title + ".epub";
-var imgSrcRegex = /<img.*src="([^"]+)"/gi;
-var allowElements = ['h1', 'h2', 'span', 'p', 'img', 'a', 'div', 'ul', 'ol', 'li'];
 var imageIndex = 0;
 var allImgSrc = {};
 var allExternalLinks = [];
 
-
-function mega() {
-    var body = document.getElementsByTagName('body')[0];
-    var bodyClone = body.cloneNode(true);
-
-
-    // srcTxt = srcTxt.replace(/<script.*?>.*?<\/script>/gim, '');
-    // srcTxt = srcTxt.replace(/<style.*?>[^<]*?<\/style>/gim, '');
-    // srcTxt = srcTxt.replace(/<svg.*?>.*?<\/svg>/gim, '');
-    // srcTxt = srcTxt.replace(/<(\w)[^>]*?><\/\1>/gi, '');
-
-
-    var elements = document.getElementsByTagName('script');
-    // while (elements[0]) elements[0].parentNode.removeChild(elements[0]);
-    while (elements[0]) bodyClone.removeChild(elements[0]);
-
-    var elements = document.getElementsByTagName('style');
-    while (elements[0]) bodyClone.removeChild(elements[0]);
-
-    var elements = document.getElementsByTagName('svg');
-    while (elements[0]) bodyClone.removeChild(elements[0]);
-
-    $('*:empty').remove();
-
-    var body = document.getElementsByTagName('body')[0];
-    var srcTxt = body.innerHTML;
-
-
-    // srcTxt = srcTxt.replace(/<img\s+.*?src="([^"]*)".*?>/gi, '@@@img$1###img');
-    srcTxt = srcTxt.replace(/<img\s+.*?src="([^"]*)".*?>/gi, function (matched, p1) {
-
-        allImgSrc[p1] = 'img-' + (imageIndex++) + '.' + getFileExtension(p1);
-
-        if (p1.indexOf('//') === 0) {
-            return '@@@img' + 'images/' + allImgSrc[p1] + '###img';
-        }
-        if (p1.indexOf('/') === 0) {
-            return '@@@img' + 'images/' + allImgSrc[p1] + '###img';
-        }
-        return '@@@img' + 'images/' + allImgSrc[p1] + '###img';
-    });
-
-    // srcTxt = srcTxt.replace(/<a\s+.*?href="([^"]*)".*?>/gi, '@@@a$1###href');
-    srcTxt = srcTxt.replace(/<a\s+.*?href="([^"]*)".*?>/gi, function (matched, p1) {
-        if (p1.indexOf('#') === 0) {
-            return '@@@a' + window.location.href + p1 + '###href';
-            // return '@@@a' + '#' + '###href';
-        }
-        if (p1.indexOf('/') === 0) {
-            return '@@@a' + window.location.protocol + '//' + window.location.hostname + p1 + '###href';
-        }
-        return '@@@a' + p1 + '###href';
-    });
-
-
-    srcTxt = srcTxt.replace(/<(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup)(>|\s+.*?>)/gi, '@@@$1');
-    srcTxt = srcTxt.replace(/<\/(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup|a)(>|\s+.*?>)/gi, '###$1');
-
-    srcTxt = srcTxt.replace(/<[^>]+?>/gi, '');
-    srcTxt = srcTxt.replace(/&[a-z]+;/gi, '');
-
-    srcTxt = srcTxt.replace(/@@@img(.*?)###img/gi, '<img src="$1"></img>');
-    srcTxt = srcTxt.replace(/@@@a(.*?)###href/gi, '<a href="$1">');
-    srcTxt = srcTxt.replace(/@@@(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup)/gi, '<$1>');
-    srcTxt = srcTxt.replace(/###(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup|a)/gi, '</$1>');
-    srcTxt = srcTxt.replace('  ', ' ');
-    // srcTxt = srcTxt.replace('\t\t', ' ');
-
-    return srcTxt;
-}
-
-
-function getex(name) {
-    if (!name) {
+//////
+//////
+function getImageSrc(srcTxt) {
+    if (!srcTxt) {
         return '';
     }
-    return 'images/' + (imageIndex++) + '.' + getFileExtension(name);
+    allImgSrc[srcTxt] = 'img-' + (imageIndex++) + '.' + getFileExtension(srcTxt);
+    return 'images/' + allImgSrc[srcTxt];
 }
 
-function sanitize() {
+function getHref(hrefTxt) {
+    if (!hrefTxt) {
+        return '';
+    }
+    if (hrefTxt.indexOf('#') === 0) {
+        return window.location.href + hrefTxt;
+    }
+    if (hrefTxt.indexOf('/') === 0) {
+        return window.location.protocol + '//' + window.location.hostname + hrefTxt;
+    }
+    return hrefTxt;
+}
+
+function sanitize(rawContent) {
 
     var srcTxt = '';
     try {
-    var dirty = document.getElementsByTagName('body')[0];
-    var dirty = '<div>' + document.getElementsByTagName('body')[0].innerHTML + '</div>';
+        var tel = document.createElement('div');
+        tel.appendChild(rawContent.cloneNode(true));
+
+        // var dirty = '<div>' + document.getElementsByTagName('body')[0].innerHTML + '</div>';
+        var dirty = '<div>' + tel.innerHTML + '</div>';
+
+        var results = '';
+        var lastFragment = '';
+        var lastTag = '';
+        var inList = false;
+        var allowedTags = ['div', 'p', 'code', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'span', 'blockquote',
+            'img', 'a', 'ol', 'ul', 'li', 'b', 'i', 'sup', 'strong', 'strike',
+            'table', 'tr', 'td', 'th', 'thead', 'tbody', 'pre', 'em'
+        ];
+        var allowedTextTags = ['h4', 'h5', 'h6', 'span'];
+
+        HTMLParser(dirty, {
+            start: function(tag, attrs, unary) {
+                lastTag = tag;
+                if (allowedTags.indexOf(tag) < 0) {
+                    return;
+                }
+
+                if (tag === 'ol' || tag === 'ul') {
+                    inList = true;
+                }
+                if (tag === 'li' && !inList) {
+                    tag = 'p';
+                }
 
 
-    var results = "";
-    var lastTag = '';
-    var allowedTags = [ 'div', 'p', 'code', 'h1', 'h3', 'h4', 'h5', 'h6', 'blockquote',
-                        'img', 'a', 'ol', 'ul', 'li', 'b', 'i', 'sup', 'strong', 'strike',
-                        'table', 'tr', 'td', 'th', 'thead', 'tbody', 'span', 'pre', 'em' ];
+                if (tag === 'img') {
+                    var tattrs = attrs.filter(function(attr) {
+                        return attr.name === 'src';
+                    }).map(function(attr) {
+                        return getImageSrc(attr.escaped);
+                    });
+                    lastFragment = tattrs.length === 0 ? '<img></img>' : '<img src="' + tattrs[0] + '" alt=""></img>';
+                } else if (tag === 'a') {
+                    var tattrs = attrs.filter(function(attr) {
+                        return attr.name === 'href';
+                    }).map(function(attr) {
+                        return getHref(attr.escaped);
+                    });
+                    lastFragment = tattrs.length === 0 ? '<a>' : '<a href="' + tattrs[0] + '">';
+                } else {
+                    lastFragment = '<' + tag + '>';
+                }
 
-    HTMLParser(dirty, {
-      start: function( tag, attrs, unary ) {
-          lastTag = tag;
-          if (allowedTags.indexOf(tag) < 0) {
-              return;
-          }
+                results += lastFragment;
+                lastFragment = '';
+            },
+            end: function(tag) {
+                if (allowedTags.indexOf(tag) < 0 || tag === 'img') {
+                    return;
+                }
 
+                if (tag === 'ol' || tag === 'ul') {
+                    inList = false;
+                }
+                if (tag === 'li' && !inList) {
+                    tag = 'p';
+                }
 
-        if (tag === 'img') {
-            var tattrs = attrs.filter(function (attr) {
-                return attr.name === 'src';
-            });
-            if (tattrs.length > 0) {
-                results += '<img src="' + tattrs[0].escaped + '">';
+                results += "</" + tag + ">\n";
+            },
+            chars: function(text) {
+                if (lastTag !== '' && allowedTags.indexOf(lastTag) < 0) {
+                    return;
+                }
+                results += text;
+            },
+            comment: function(text) {
+                // results += "<!--" + text + "-->";
             }
+        });
 
-        } else if (tag === 'a') {
-            var tattrs = attrs.filter(function (attr) {
-                return attr.name === 'href';
-            });
-            if (tattrs.length > 0) {
-                results += '<a href="' + tattrs[0].escaped + '">';
-            }
-        } else {
-            results += '<' + tag + '>';
-        }
+        results = results.replace(/<([^>]+?)>\s*<\/\1>/gim, '');
+        results = results.replace(/&[a-z]+;/gim, '');
 
-      },
-      end: function( tag ) {
-          if (allowedTags.indexOf(tag) < 0) {
-              return;
-          }
-        results += "</" + tag + ">";
-      },
-      chars: function( text ) {
-          if (lastTag !== '' && allowedTags.indexOf(lastTag) < 0) {
-              return;
-          }
-        results += text;
-      },
-      comment: function( text ) {
-        // results += "<!--" + text + "-->";
-      }
-    });
-
-    return results;
-
-
-
-//
-//     wdirty = $.parseHTML(dirty);
-//     $wdirty = $(wdirty);
-//     $wdirty.find('script, style, svg, canvas, noscript').remove();
-//     $wdirty.find('*:empty').not('img').remove();
-//
-//     srcTxt = $wdirty.html();
-//
-//     // srcTxt = srcTxt.replace(/<[^>]+?>/gi, '');
-//
-//     // return srcTxt;
-//
-//
-//     srcTxt = srcTxt.replace(/<img\s+.*?src="([^"]*)".*?>/gi, function (matched, p1) {
-//
-//         allImgSrc[p1] = 'img-' + (imageIndex++) + '.' + getFileExtension(p1);
-//
-//         if (p1.indexOf('//') === 0) {
-//             return '@@@img' + 'images/' + allImgSrc[p1] + '###img';
-//         }
-//         if (p1.indexOf('/') === 0) {
-//             return '@@@img' + 'images/' + allImgSrc[p1] + '###img';
-//         }
-//         return '@@@img' + 'images/' + allImgSrc[p1] + '###img';
-//     });
-//
-//     // srcTxt = srcTxt.replace(/<a\s+.*?href="([^"]*)".*?>/gi, '@@@a$1###href');
-//     srcTxt = srcTxt.replace(/<a\s+.*?href="([^"]*)".*?>/gi, function (matched, p1) {
-//         if (p1.indexOf('#') === 0) {
-//             return '@@@a' + window.location.href + p1 + '###href';
-//             // return '@@@a' + '#' + '###href';
-//         }
-//         if (p1.indexOf('/') === 0) {
-//             return '@@@a' + window.location.protocol + '//' + window.location.hostname + p1 + '###href';
-//         }
-//         return '@@@a' + p1 + '###href';
-//     });
-//
-//
-//     srcTxt = srcTxt.replace(/<(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup)(>|\s+[^>]*?>)/gi, '@@@$1');
-//     srcTxt = srcTxt.replace(/<\/(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup|a)(>|\s+[^>]*?>)/gi, '###$1');
-//
-//     srcTxt = srcTxt.replace(/<[^>]+?>/gim, '');
-//     srcTxt = srcTxt.replace(/\/>/gim, '');
-//     srcTxt = srcTxt.replace(/&[a-z]+;/gim, '');
-//
-//     srcTxt = srcTxt.replace(/@@@img(.*?)###img/gi, '<img src="$1"></img>');
-//     srcTxt = srcTxt.replace(/@@@a(.*?)###href/gi, '<a href="$1">');
-//     srcTxt = srcTxt.replace(/@@@(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup)/gi, '<$1>');
-//     srcTxt = srcTxt.replace(/###(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup|a)/gi, '</$1>');
-//     // srcTxt = srcTxt.replace('  ', ' ');
-//     // srcTxt = srcTxt.replace('\t\t', ' ');
-//
-// return srcTxt;
-
-
-
-
-
-
-
-
-    // $(dirty).find('*').not('div, p, img').remove();
-    //
-    //
-    // var clean = $(dirty).html();
-
-    // try {
-    //     var dirty = '<div><h1>gigi</hi>aaa bbb cccc<script>gigi are mere</script></div>';
-    //     var dirty = document.getElementsByTagName('body')[0].innerHTML;
-    //
-    //     var clean = sanitizeHtml(dirty, {
-    //       allowedTags: [ 'div', 'p', 'code', 'h1', 'h3', 'h4', 'h5', 'h6', 'blockquote',
-    //                     'img', 'a', 'ol', 'ul', 'li', 'b', 'i', 'sup', 'strong', 'strike',
-    //                     'table', 'tr', 'td', 'th', 'thead', 'tbody', 'span', 'pre', 'em' ],
-    //       allowedAttributes: {
-    //         'a': [ 'href' ],
-    //         'img': [ 'src' ]
-    //       },
-    //       exclusiveFilter: function (frame) {
-    //           if (!frame.text.trim() && frame.tag !== 'img') {
-    //               return true;
-    //           }
-    //         //   if (frame.tag === 'img' && frame.attribs.src.trim() === '') {
-    //         //       return true;
-    //         //   }
-    //       },
-    //       transformTags: {
-    //            'img': function(tagName, attribs) {
-    //                return {
-    //                    tagName: 'img',
-    //                    attribs: {
-    //                        'src': attribs.src //getex(attribs.src)
-    //                    }
-    //                };
-    //            },
-    //            'a': function(tagName, attribs) {
-    //                return {
-    //                    tagName: 'a',
-    //                    attribs: {
-    //                        'href': 'GIGI' + attribs.href
-    //                    }
-    //                };
-    //            }
-    //      }
-    //     });
-    //
-    //     var srcTxt = clean;
+        return results;
 
     } catch (e) {
         console.trace();
         console.log(e);
     }
 
-
-
 }
 
 
 
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     console.log('Start saving...');
 
     if (request.type === 'whole-page') {
@@ -302,136 +156,26 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 });
 
 
-
-
-
-// console.log(pageSrc);
-//
-// var myimg = document.getElementsByTagName('img')[0];
-// console.log(myimg, 'p[p[p[p[p]]]]');
-//
-// setTimeout(function () {
-//     console.log(getSelectedNode());
-// }, 3000);
-
-
-if (myimg) {
-    // var mysrc = myimg.src;
-    //
-    //
-    // var zip = new JSZip();
-    // zip.file("Hello.txt", mysrc + "\n");
-    // var img = zip.folder("images");
-    //
-    // JSZipUtils.getBinaryContent(mysrc, function (err, data) {
-    //    if(err) {
-    //       throw err; // or handle the error
-    //    }
-    //    img.file("pic.png", data, {binary: true});
-    //
-    //    zip.generateAsync({type:"blob"})
-    //    .then(function(content) {
-    //        saveAs(content, "example.zip");
-    //    });
-    // });
-
-    // deferredAddZip(my);
-
-
-    // zip.generateAsync({type:"blob"})
-    // .then(function(content) {
-    //     saveAs(content, "example.zip");
-    // });
-
-}
-
-// browser.tabs.insertCSS(
-//   tabId,           // optional integer
-//   details: {
-//       file: "fonts.css"
-//   },
-//    runAt: "document_start",
-//    allFrames: true
-// )
-
-function getSelectedNodes()
-{
+function getSelectedNodes() {
     if (document.selection) {
-    	// return document.selection.createRange().parentElement();
-    	return document.selection.createRange();
-    }
-    else
-    {
-    	var selection = window.getSelection();
-    	if (selection.rangeCount > 0) {
+        // return document.selection.createRange().parentElement();
+        return document.selection.createRange();
+    } else {
+        var selection = window.getSelection();
+        if (selection.rangeCount > 0) {
             var range = selection.getRangeAt(0);
             var selectionContents = range.cloneContents();
             return selectionContents;
             // console.log(selectionContents.children.length, selectionContents.children[0].outerHTML);
         }
-    		// return selection.getRangeAt(0);
-    		// return selection.createRange();
+        // return selection.getRangeAt(0);
+        // return selection.createRange();
     }
-}
-
-function getString(node) {
-    var tagName = '';
-    if (!node.tagName) {
-        tagName = 'p';
-    } else {
-        tagName = node.tagName.toLowerCase();
-    }
-
-    var innerText = node.innerText || node.textContent;
-    var innerText = node.innerHTML;
-
-    innerText = innerText.replace(/<[^>]*>[^<]*<[^>]*>/gi,'');
-    innerText = innerText.replace(/<[^>]*>/gi,'');
-
-    console.log(innerText);
-
-    if (tagName === 'img') {
-        allImgSrc[node.src] = 'img-' + (imageIndex++) + '.' + getFileExtension(node.src);
-        return '<img src="' + ('images/' + allImgSrc[node.src]) + '"></img>';
-    }
-    if (tagName === 'a') {
-        // allExternalLinks.push(node.href); // TODO ???
-        return '<a href="' + (node.href) + '">'+innerText+'</a>';
-    }
-
-    if (innerText === '') {
-        return '';
-    }
-
-    if (tagName === 'div') {
-        if (node.hasChildNodes) {
-            return '';
-        }
-        return '<p>' + innerText + '</p>';
-    }
-
-    return '<' + tagName + '>' + innerText + '</' + tagName + '>';
 }
 
 function prepareEbookContent(rawContent) {
 
-    // var tarr = walkDOM(rawContent);
-    //
-    // if (tarr.length === 0) {
-    //     // if only simple text is selected
-    //     var div = document.createElement('div');
-    //     div.appendChild(rawContent.cloneNode(true));
-    //     var rawContent = div.innerHTML;
-    //     div.parentNode.remove(div);
-    // } else {
-    //     var reduced = tarr.reduce(function (prev, crt, index) {
-    //         return prev + getString(crt);
-    //     }, '');
-    //     rawContent = reduced;
-    // }
-
-    // rawContent = mega();
-    rawContent = sanitize();
+    var cleanContent = sanitize(rawContent);
 
     alert();
 
@@ -441,41 +185,19 @@ function prepareEbookContent(rawContent) {
         '<title>' + ebookName + '</title>' +
         '<link href="' + cssFileName + '" rel="stylesheet" type="text/css" />' +
         '</head><body>' +
-        // '</head>' +
-        rawContent +
-        // '</html>';
+        cleanContent +
         '</body></html>';
 }
 
-// function extractImgs(rawContent) {
-//     $(rawContent).find('img').each(function (index, elem) {
-//         var imgsrc = $(elem).attr('src');
-//         try {
-//             if (imgsrc.indexOf('http') === 0) {
-//                 allImgSrc[imgsrc] = 'img-' + index + '.' + getFileExtension(imgsrc);
-//             }
-//         } catch (e) {
-//         }
-//     });
-// }
-//
-// function replaceImgs(rawContent) {
-//     var keys = Object.keys(allImgSrc);
-//     for (var i = 0; i < keys.length; i++) {
-//         rawContent = rawContent.replace(keys[i], 'images/' + allImgSrc[keys[i]]);
-//     }
-//     return rawContent;
-// }
-
 function getImagesIndex() {
-    return Object.keys(allImgSrc).reduce(function (prev, elem, index) {
-        return prev + '\n' + '<item href="images/'+allImgSrc[elem]+'" id="img'+index+'" media-type="image/'+getFileExtension(elem)+'"/>';
+    return Object.keys(allImgSrc).reduce(function(prev, elem, index) {
+        return prev + '\n' + '<item href="images/' + allImgSrc[elem] + '" id="img' + index + '" media-type="image/' + getFileExtension(elem) + '"/>';
     }, '');
 }
 
 function getExternalLinksIndex() { // TODO ???
-    return allExternalLinks.reduce(function (prev, elem, index) {
-        return prev + '\n' + '<item href="'+elem+'" />';
+    return allExternalLinks.reduce(function(prev, elem, index) {
+        return prev + '\n' + '<item href="' + elem + '" />';
     }, '');
 }
 
@@ -490,34 +212,36 @@ function getFileExtension(fileName) {
     return tmpFileName;
 }
 
-function walkDOM(main) {
-    var arr = [];
-    var loop = function(main) {
-        do {
-            try {
-                if (allowElements.indexOf(main.tagName.toLowerCase()) > -1) {
-                    arr.push(main);
-                }
-            } catch (e) {
-            }
-            if (main.hasChildNodes()) {
-                loop(main.firstChild);
-            }
-        }
-        while (main = main.nextSibling);
-    }
-    loop(main);
-    return arr;
-}
+// function walkDOM(main) {
+//     var arr = [];
+//     var loop = function(main) {
+//         do {
+//             try {
+//                 if (allowElements.indexOf(main.tagName.toLowerCase()) > -1) {
+//                     arr.push(main);
+//                 }
+//             } catch (e) {
+//             }
+//             if (main.hasChildNodes()) {
+//                 loop(main.firstChild);
+//             }
+//         }
+//         while (main = main.nextSibling);
+//     }
+//     loop(main);
+//     return arr;
+// }
 
 
 function deferredAddZip(url, filename, zip) {
     var deferred = $.Deferred();
-    JSZipUtils.getBinaryContent(url, function (err, data) {
-        if(err) {
+    JSZipUtils.getBinaryContent(url, function(err, data) {
+        if (err) {
             deferred.reject(err);
         } else {
-            zip.file(filename, data, {binary:true});
+            zip.file(filename, data, {
+                binary: true
+            });
             deferred.resolve(data);
         }
     });
@@ -532,12 +256,12 @@ function buildEbook(ebookContent) {
 
     var metaInfFolder = zip.folder("META-INF");
     metaInfFolder.file('container.xml',
-    '<?xml version="1.0"?>' +
-    '<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">' +
-      '<rootfiles>' +
+        '<?xml version="1.0"?>' +
+        '<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">' +
+        '<rootfiles>' +
         '<rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>' +
-      '</rootfiles>' +
-    '</container>'
+        '</rootfiles>' +
+        '</container>'
     );
 
 
@@ -551,10 +275,10 @@ function buildEbook(ebookContent) {
         '</head>' +
         '<body>' +
         '<nav id="toc" epub:type="toc">' +
-            '<h1 class="frontmatter">Table of Contents</h1>' +
-            '<ol class="contents">' +
-                   '<li><a href="' + pageName + '">' + ebookName + '</a></li>' +
-            '</ol>' +
+        '<h1 class="frontmatter">Table of Contents</h1>' +
+        '<ol class="contents">' +
+        '<li><a href="' + pageName + '">' + ebookName + '</a></li>' +
+        '</ol>' +
         '</nav>' +
         '</body>' +
         '</html>'
@@ -572,8 +296,8 @@ function buildEbook(ebookContent) {
         '</docTitle>' +
         '<navMap>' +
         '<navPoint id="ebook" playOrder="1">' +
-            '<navLabel><text>cover</text></navLabel>' +
-            '<content src="' + pageName + '" />' +
+        '<navLabel><text>cover</text></navLabel>' +
+        '<content src="' + pageName + '" />' +
         '</navPoint>' +
         '</navMap>' +
         '</ncx>'
@@ -582,30 +306,30 @@ function buildEbook(ebookContent) {
     oebps.file(cssFileName, '');
 
     oebps.file(pageName,
-       prepareEbookContent(ebookContent)
+        prepareEbookContent(ebookContent)
     );
 
     oebps.file('content.opf',
-    '<?xml version="1.0" encoding="UTF-8" ?>' +
-    '<package xmlns="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" unique-identifier="db-id" version="3.0">' +
-    '<metadata>' +
+        '<?xml version="1.0" encoding="UTF-8" ?>' +
+        '<package xmlns="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" unique-identifier="db-id" version="3.0">' +
+        '<metadata>' +
         '<dc:title id="t1">Title</dc:title>' +
         '<dc:identifier id="db-id">isbn</dc:identifier>' +
         '<meta property="dcterms:modified">2014-03-27T09:14:09Z</meta>' +
         '<dc:language>en</dc:language>' +
-    '</metadata>' +
-    '<manifest>' +
+        '</metadata>' +
+        '<manifest>' +
         '<item id="toc" properties="nav" href="toc.xhtml" media-type="application/xhtml+xml" />' +
         '<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />' +
         '<item id="template_css" href="' + cssFileName + '" media-type="text/css" />' +
-        '<item id="ebook" href="' + pageName + '" media-type="application/xhtml+xml" />' +  //properties="remote-resources"
+        '<item id="ebook" href="' + pageName + '" media-type="application/xhtml+xml" />' + //properties="remote-resources"
         getImagesIndex() +
         getExternalLinksIndex() +
-    '</manifest>' +
-    '<spine toc="ncx">' +
+        '</manifest>' +
+        '<spine toc="ncx">' +
         '<itemref idref="ebook" />' +
-    '</spine>' +
-    '</package>'
+        '</spine>' +
+        '</package>'
     );
 
     ///////////////
@@ -613,32 +337,36 @@ function buildEbook(ebookContent) {
     var imgs = oebps.folder("images");
     var imgsPromises = [];
     // allImgSrc.forEach(function (imgSrc, index) {
-    Object.keys(allImgSrc).forEach(function (imgSrc, index) {
+    Object.keys(allImgSrc).forEach(function(imgSrc, index) {
         var tmpDeffered = deferredAddZip(imgSrc, allImgSrc[imgSrc], imgs);
         imgsPromises.push(tmpDeffered);
     });
 
     var done = false;
 
-    $.when.apply($, imgsPromises).done(function () {
+    $.when.apply($, imgsPromises).done(function() {
         done = true;
-        zip.generateAsync({type:"blob"})
-        .then(function(content) {
-            saveAs(content, ebookName);
-        });
+        zip.generateAsync({
+                type: "blob"
+            })
+            .then(function(content) {
+                saveAs(content, ebookName);
+            });
         console.log("done !");
-        }).fail(function (err) {
-            alert(err);
-        });
+    }).fail(function(err) {
+        alert(err);
+    });
 
-    setTimeout(function () {
+    setTimeout(function() {
         if (done) {
             return;
         }
-        zip.generateAsync({type:"blob"})
-        .then(function(content) {
-            saveAs(content, ebookName);
-        });
+        zip.generateAsync({
+                type: "blob"
+            })
+            .then(function(content) {
+                saveAs(content, ebookName);
+            });
     }, 60000);
 
 }
