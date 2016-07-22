@@ -100,59 +100,120 @@ function sanitize() {
     var dirty = document.getElementsByTagName('body')[0];
     var dirty = '<div>' + document.getElementsByTagName('body')[0].innerHTML + '</div>';
 
-    wdirty = $.parseHTML(dirty);
-    $wdirty = $(wdirty);
-    $wdirty.find('script, style, svg, canvas, noscript').remove();
-    $wdirty.find('*:empty').not('img').remove();
 
-    srcTxt = $wdirty.html();
+    var results = "";
+    var lastTag = '';
+    var allowedTags = [ 'div', 'p', 'code', 'h1', 'h3', 'h4', 'h5', 'h6', 'blockquote',
+                        'img', 'a', 'ol', 'ul', 'li', 'b', 'i', 'sup', 'strong', 'strike',
+                        'table', 'tr', 'td', 'th', 'thead', 'tbody', 'span', 'pre', 'em' ];
 
-    // srcTxt = srcTxt.replace(/<[^>]+?>/gi, '');
+    HTMLParser(dirty, {
+      start: function( tag, attrs, unary ) {
+          lastTag = tag;
+          if (allowedTags.indexOf(tag) < 0) {
+              return;
+          }
 
-    // return srcTxt;
 
+        if (tag === 'img') {
+            var tattrs = attrs.filter(function (attr) {
+                return attr.name === 'src';
+            });
+            if (tattrs.length > 0) {
+                results += '<img src="' + tattrs[0].escaped + '">';
+            }
 
-    srcTxt = srcTxt.replace(/<img\s+.*?src="([^"]*)".*?>/gi, function (matched, p1) {
-
-        allImgSrc[p1] = 'img-' + (imageIndex++) + '.' + getFileExtension(p1);
-
-        if (p1.indexOf('//') === 0) {
-            return '@@@img' + 'images/' + allImgSrc[p1] + '###img';
+        } else if (tag === 'a') {
+            var tattrs = attrs.filter(function (attr) {
+                return attr.name === 'href';
+            });
+            if (tattrs.length > 0) {
+                results += '<a href="' + tattrs[0].escaped + '">';
+            }
+        } else {
+            results += '<' + tag + '>';
         }
-        if (p1.indexOf('/') === 0) {
-            return '@@@img' + 'images/' + allImgSrc[p1] + '###img';
-        }
-        return '@@@img' + 'images/' + allImgSrc[p1] + '###img';
+
+      },
+      end: function( tag ) {
+          if (allowedTags.indexOf(tag) < 0) {
+              return;
+          }
+        results += "</" + tag + ">";
+      },
+      chars: function( text ) {
+          if (lastTag !== '' && allowedTags.indexOf(lastTag) < 0) {
+              return;
+          }
+        results += text;
+      },
+      comment: function( text ) {
+        // results += "<!--" + text + "-->";
+      }
     });
 
-    // srcTxt = srcTxt.replace(/<a\s+.*?href="([^"]*)".*?>/gi, '@@@a$1###href');
-    srcTxt = srcTxt.replace(/<a\s+.*?href="([^"]*)".*?>/gi, function (matched, p1) {
-        if (p1.indexOf('#') === 0) {
-            return '@@@a' + window.location.href + p1 + '###href';
-            // return '@@@a' + '#' + '###href';
-        }
-        if (p1.indexOf('/') === 0) {
-            return '@@@a' + window.location.protocol + '//' + window.location.hostname + p1 + '###href';
-        }
-        return '@@@a' + p1 + '###href';
-    });
+    return results;
 
 
-    srcTxt = srcTxt.replace(/<(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup)(>|\s+[^>]*?>)/gi, '@@@$1');
-    srcTxt = srcTxt.replace(/<\/(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup|a)(>|\s+[^>]*?>)/gi, '###$1');
 
-    srcTxt = srcTxt.replace(/<[^>]+?>/gim, '');
-    srcTxt = srcTxt.replace(/\/>/gim, '');
-    srcTxt = srcTxt.replace(/&[a-z]+;/gim, '');
+//
+//     wdirty = $.parseHTML(dirty);
+//     $wdirty = $(wdirty);
+//     $wdirty.find('script, style, svg, canvas, noscript').remove();
+//     $wdirty.find('*:empty').not('img').remove();
+//
+//     srcTxt = $wdirty.html();
+//
+//     // srcTxt = srcTxt.replace(/<[^>]+?>/gi, '');
+//
+//     // return srcTxt;
+//
+//
+//     srcTxt = srcTxt.replace(/<img\s+.*?src="([^"]*)".*?>/gi, function (matched, p1) {
+//
+//         allImgSrc[p1] = 'img-' + (imageIndex++) + '.' + getFileExtension(p1);
+//
+//         if (p1.indexOf('//') === 0) {
+//             return '@@@img' + 'images/' + allImgSrc[p1] + '###img';
+//         }
+//         if (p1.indexOf('/') === 0) {
+//             return '@@@img' + 'images/' + allImgSrc[p1] + '###img';
+//         }
+//         return '@@@img' + 'images/' + allImgSrc[p1] + '###img';
+//     });
+//
+//     // srcTxt = srcTxt.replace(/<a\s+.*?href="([^"]*)".*?>/gi, '@@@a$1###href');
+//     srcTxt = srcTxt.replace(/<a\s+.*?href="([^"]*)".*?>/gi, function (matched, p1) {
+//         if (p1.indexOf('#') === 0) {
+//             return '@@@a' + window.location.href + p1 + '###href';
+//             // return '@@@a' + '#' + '###href';
+//         }
+//         if (p1.indexOf('/') === 0) {
+//             return '@@@a' + window.location.protocol + '//' + window.location.hostname + p1 + '###href';
+//         }
+//         return '@@@a' + p1 + '###href';
+//     });
+//
+//
+//     srcTxt = srcTxt.replace(/<(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup)(>|\s+[^>]*?>)/gi, '@@@$1');
+//     srcTxt = srcTxt.replace(/<\/(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup|a)(>|\s+[^>]*?>)/gi, '###$1');
+//
+//     srcTxt = srcTxt.replace(/<[^>]+?>/gim, '');
+//     srcTxt = srcTxt.replace(/\/>/gim, '');
+//     srcTxt = srcTxt.replace(/&[a-z]+;/gim, '');
+//
+//     srcTxt = srcTxt.replace(/@@@img(.*?)###img/gi, '<img src="$1"></img>');
+//     srcTxt = srcTxt.replace(/@@@a(.*?)###href/gi, '<a href="$1">');
+//     srcTxt = srcTxt.replace(/@@@(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup)/gi, '<$1>');
+//     srcTxt = srcTxt.replace(/###(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup|a)/gi, '</$1>');
+//     // srcTxt = srcTxt.replace('  ', ' ');
+//     // srcTxt = srcTxt.replace('\t\t', ' ');
+//
+// return srcTxt;
 
-    srcTxt = srcTxt.replace(/@@@img(.*?)###img/gi, '<img src="$1"></img>');
-    srcTxt = srcTxt.replace(/@@@a(.*?)###href/gi, '<a href="$1">');
-    srcTxt = srcTxt.replace(/@@@(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup)/gi, '<$1>');
-    srcTxt = srcTxt.replace(/###(p|ol|ul|li|h1|h2|h3|tr|td|th|table|b|i|sup|a)/gi, '</$1>');
-    // srcTxt = srcTxt.replace('  ', ' ');
-    // srcTxt = srcTxt.replace('\t\t', ' ');
 
-return srcTxt;
+
+
 
 
 
