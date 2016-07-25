@@ -37,11 +37,17 @@ chrome.contextMenus.create({
   contexts: ["all"]
 }, onCreated);
 
-// chrome.contextMenus.create({
-//   id: "separator-1",
-//   type: "separator",
-//   contexts: ["all"]
-// }, onCreated);
+chrome.contextMenus.create({
+  id: "separator-1",
+  type: "separator",
+  contexts: ["all"]
+}, onCreated);
+
+chrome.contextMenus.create({
+  id: "edit-buffer",
+  title: "edit Buffer",
+  contexts: ["all"]
+}, onCreated);
 //
 // chrome.contextMenus.create({
 //   id: "selection-to-buffer",
@@ -124,8 +130,10 @@ chrome.contextMenus.onClicked.addListener(function(info, tab) {
             chrome.tabs.sendMessage(tabs[0].id, {type: "save-buffer"});
         });
         break;
-    case "check-uncheck":
-      updateCheckUncheck();
-      break;
+    case "edit-buffer":
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, {type: "show-buffer"});
+        });
+        break;
   }
 });

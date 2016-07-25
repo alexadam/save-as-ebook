@@ -13,6 +13,44 @@ var allImgSrc = {};
 var allExternalLinks = [];
 
 //////
+
+function force(contentString) {
+    try {
+        var tagOpen = '@@@';
+        var tagClose = '###';
+
+        var inlineElements = ['h1', 'h2', 'h3', 'sup', 'b', 'i', 'em', 'code', 'pre'];
+        var wrapElements = ['p'];
+
+        var $content = $(contentString);
+
+        $content.find('img').each(function (index, elem) {
+            $(elem).replaceWith('<span>' + tagOpen + 'img src="' + $(elem).attr('src') + '"' + tagClose + tagOpen + '/img' + tagClose + '</span>');
+        });
+
+        $content.find('a').each(function (index, elem) {
+            $(elem).replaceWith('<span>' + tagOpen + 'a href="' + $(elem).attr('href') + '">' + $(elem).html() + tagOpen + '/a' + tagClose + '</span>');
+        });
+
+        inlineElements.forEach(function (tagName) {
+            $content.find(tagName).each(function (index, elem) {
+                $(elem).replaceWith('<span>' + tagOpen + tagName + tagClose + $(elem).html() + tagOpen + '/' + tagName + tagClose + '</span>');
+            });
+        });
+
+        contentString = $content.text();
+
+        var tagOpenRegex = new RegExp(tagOpen, 'gi');
+        var tagCloseRegex = new RegExp(tagClose, 'gi');
+        contentString = contentString.replace(tagOpenRegex, '<');
+        contentString = contentString.replace(tagCloseRegex, '>');
+
+        return contentString;
+    } catch(e) {
+        console.log(e);
+    }
+}
+
 //////
 function getImageSrc(srcTxt) {
     if (!srcTxt) {
@@ -35,15 +73,34 @@ function getHref(hrefTxt) {
     return hrefTxt;
 }
 
+// https://github.com/blowsie/Pure-JavaScript-HTML5-Parser
 function sanitize(rawContent) {
 
     var srcTxt = '';
+    var dirty = null;
     try {
         var tel = document.createElement('div');
         tel.appendChild(rawContent.cloneNode(true));
+        dirty = '<div>' + tel.innerHTML + '</div>';
+
+
+        /////////////////
+
+        wdirty = $.parseHTML(dirty);
+        $wdirty = $(wdirty);
+        $wdirty.find('script, style, svg, canvas, noscript').remove();
+        $wdirty.find('*:empty').not('img').remove();
+
+        dirty = $wdirty.html();
+        // dirty = HTMLtoXML(dirty);
+
+        ////////////////
+
+
+        return force(dirty);
+
 
         // var dirty = '<div>' + document.getElementsByTagName('body')[0].innerHTML + '</div>';
-        var dirty = '<div>' + tel.innerHTML + '</div>';
 
         var results = '';
         var lastFragment = '';
@@ -116,7 +173,7 @@ function sanitize(rawContent) {
             }
         });
 
-        results = results.replace(/<([^>]+?)>\s*<\/\1>/gim, '');
+        // results = results.replace(/<([^>]+?)>\s*<\/\1>/gim, '');
         results = results.replace(/&[a-z]+;/gim, '');
 
         return results;
@@ -124,6 +181,8 @@ function sanitize(rawContent) {
     } catch (e) {
         console.trace();
         console.log(e);
+
+        return force(dirty);
     }
 
 }
@@ -140,6 +199,21 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     } else if (request.type === 'selection') {
         var pageSrc = getSelectedNodes();
         buildEbook(pageSrc);
+    } else if (request.type === 'show-buffer') {
+        // window.open(chrome.extension.getURL('chapter-editor/chapter-editor.html'), 'Chapter Editor');
+
+        chrome.tabs.create({
+            url: chrome.extension.getURL('chapter-editor/chapter-editor.html'),
+            active: false
+        }, function(tab) {
+            // After the tab has been created, open a window to inject the tab
+            chrome.windows.create({
+                tabId: tab.id,
+                type: 'popup',
+                focused: true
+                // incognito, top, left, ...
+            });
+        });
     }
 
     /// TODO use storage
