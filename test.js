@@ -18,18 +18,16 @@ function force(contentString) {
     try {
         var tagOpen = '@@@';
         var tagClose = '###';
-
-        var inlineElements = ['h1', 'h2', 'h3', 'sup', 'b', 'i', 'em', 'code', 'pre'];
-        var wrapElements = ['p'];
+        var inlineElements = ['h1', 'h2', 'h3', 'sup', 'b', 'i', 'em', 'code', 'pre', 'p'];
 
         var $content = $(contentString);
 
         $content.find('img').each(function (index, elem) {
-            $(elem).replaceWith('<span>' + tagOpen + 'img src="' + $(elem).attr('src') + '"' + tagClose + tagOpen + '/img' + tagClose + '</span>');
+            $(elem).replaceWith('<span>' + tagOpen + 'img src="' + getImageSrc($(elem).attr('src')) + '"' + tagClose + tagOpen + '/img' + tagClose + '</span>');
         });
 
         $content.find('a').each(function (index, elem) {
-            $(elem).replaceWith('<span>' + tagOpen + 'a href="' + $(elem).attr('href') + '">' + $(elem).html() + tagOpen + '/a' + tagClose + '</span>');
+            $(elem).replaceWith('<span>' + tagOpen + 'a href="' + getHref($(elem).attr('href')) + '"' + tagClose + $(elem).html() + tagOpen + '/a' + tagClose + '</span>');
         });
 
         inlineElements.forEach(function (tagName) {
@@ -44,6 +42,8 @@ function force(contentString) {
         var tagCloseRegex = new RegExp(tagClose, 'gi');
         contentString = contentString.replace(tagOpenRegex, '<');
         contentString = contentString.replace(tagCloseRegex, '>');
+        contentString = contentString.replace(/&amp;/gi, '&'); // TODO ??
+        contentString = contentString.replace(/&/gi, '&amp;');
 
         return contentString;
     } catch(e) {
@@ -65,11 +65,12 @@ function getHref(hrefTxt) {
         return '';
     }
     if (hrefTxt.indexOf('#') === 0) {
-        return window.location.href + hrefTxt;
+        hrefTxt = window.location.href + hrefTxt;
     }
     if (hrefTxt.indexOf('/') === 0) {
-        return window.location.protocol + '//' + window.location.hostname + hrefTxt;
+        hrefTxt = window.location.protocol + '//' + window.location.hostname + hrefTxt;
     }
+    // hrefTxt = escape(hrefTxt); // TODO
     return hrefTxt;
 }
 
@@ -92,6 +93,8 @@ function sanitize(rawContent) {
         $wdirty.find('*:empty').not('img').remove();
 
         dirty = $wdirty.html();
+
+        // dirty = dirty.replace(/&nbsp;/gi, '');
         // dirty = HTMLtoXML(dirty);
 
         ////////////////
