@@ -11,9 +11,20 @@ var ebookName = "ebook-" + document.title + ".epub";
 var imageIndex = 0;
 var allImgSrc = {};
 var allExternalLinks = [];
-var allPages = [];
 
 //////
+
+function getHtmlAsString(htmlContent) {
+    try {
+        var tmp = document.createElement('div');
+        tmp.appendChild(htmlContent.cloneNode(true));
+        var dirty = '<div>' + tmp.innerHTML + '</div>';
+        return dirty;
+    } catch (e) {
+        console.log(e);
+        return '';
+    }
+}
 
 function force(contentString) {
     try {
@@ -31,11 +42,13 @@ function force(contentString) {
             $(elem).replaceWith('<span>' + tagOpen + 'a href="' + getHref($(elem).attr('href')) + '"' + tagClose + $(elem).html() + tagOpen + '/a' + tagClose + '</span>');
         });
 
-        inlineElements.forEach(function (tagName) {
-            $content.find(tagName).each(function (index, elem) {
-                $(elem).replaceWith('<span>' + tagOpen + tagName + tagClose + $(elem).html() + tagOpen + '/' + tagName + tagClose + '</span>');
+        if ($('*').length < 3000) { // TODO
+            inlineElements.forEach(function (tagName) {
+                $content.find(tagName).each(function (index, elem) {
+                    $(elem).replaceWith('<span>' + tagOpen + tagName + tagClose + $(elem).html() + tagOpen + '/' + tagName + tagClose + '</span>');
+                });
             });
-        });
+        }
 
         contentString = $content.text();
 
@@ -76,19 +89,13 @@ function getHref(hrefTxt) {
 }
 
 // https://github.com/blowsie/Pure-JavaScript-HTML5-Parser
-function sanitize(rawContent) {
+function sanitize(rawContentString) {
 
     var srcTxt = '';
     var dirty = null;
     try {
-        var tel = document.createElement('div');
-        tel.appendChild(rawContent.cloneNode(true));
-        dirty = '<div>' + tel.innerHTML + '</div>';
-
-
-        /////////////////
-
-        wdirty = $.parseHTML(dirty);
+        // dirty = getHtmlAsString(rawContent);
+        wdirty = $.parseHTML(rawContentString);
         $wdirty = $(wdirty);
         $wdirty.find('script, style, svg, canvas, noscript').remove();
         $wdirty.find('*:empty').not('img').remove();
@@ -130,16 +137,16 @@ function sanitize(rawContent) {
                     tag = 'p';
                 }
 
-
+                var tattrs = null;
                 if (tag === 'img') {
-                    var tattrs = attrs.filter(function(attr) {
+                    tattrs = attrs.filter(function(attr) {
                         return attr.name === 'src';
                     }).map(function(attr) {
                         return getImageSrc(attr.escaped);
                     });
                     lastFragment = tattrs.length === 0 ? '<img></img>' : '<img src="' + tattrs[0] + '" alt=""></img>';
                 } else if (tag === 'a') {
-                    var tattrs = attrs.filter(function(attr) {
+                    tattrs = attrs.filter(function(attr) {
                         return attr.name === 'href';
                     }).map(function(attr) {
                         return getHref(attr.escaped);
@@ -193,34 +200,48 @@ function sanitize(rawContent) {
 
 
 function getPageUrl(url) {
-    console.log('ooooo');
     return url.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'') + Math.floor(Math.random() * 10000) + '.xhtml';
 }
 
 var pageIndex = 0;
 function getPageTitle(title) {
     try {
-        console.log('ppppp', title);
         if (title.trim() === '') {
             return 'page-' + pageIndex++;
         }
         var tmp = title;
-        console.log('gigi 2', tmp);
         return title;
     } catch (e) {
         console.log(e);
-    } finally {
-
     }
-
 }
 
 function bibi(inp) {
     return inp;
 }
 
+function getEbookPages() {
+    try {
+        var allPages = sessionStorage.getItem('ebook');
+        if (!allPages) {
+            allPages = [];
+        } else {
+            allPages = JSON.parse(allPages);
+        }
+        return allPages;
+    } catch (e) {
+        console.log(e);
+        return [];
+    }
+
+}
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     console.log('Start saving...');
+
+    var allPages = getEbookPages();
+
+    alert();
 
     var pageSrc = '';
     if (request.type === 'whole-page') {
@@ -228,17 +249,19 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         allPages.push({
             url: getPageUrl(document.title),
             title: bibi(document.title), //gatPageTitle(document.title),
-            content: pageSrc
+            content: getHtmlAsString(pageSrc)
         });
-        console.log('aici');
+        sessionStorage.setItem('ebook', JSON.stringify(allPages));
         buildEbook();
     } else if (request.type === 'selection') {
         pageSrc = getSelectedNodes();
         allPages.push({
             url: getPageUrl(document.title),
-            title: gatPageTitle(document.title),
-            content: pageSrc
+            title: bibi(document.title),
+            content: getHtmlAsString(pageSrc)
         });
+        console.log('PUSH', JSON.stringify(allPages));
+        sessionStorage.setItem('ebook', JSON.stringify(allPages));
         buildEbook();
     } else if (request.type === 'show-buffer') {
         // window.open(chrome.extension.getURL('chapter-editor/chapter-editor.html'), 'Chapter Editor');
@@ -353,6 +376,7 @@ function deferredAddZip(url, filename, zip) {
 
 // http://ebooks.stackexchange.com/questions/1183/what-is-the-minimum-required-content-for-a-valid-epub
 function buildEbook() {
+    var allPages = getEbookPages();
     var zip = new JSZip();
 
     zip.file('mimetype', 'application/epub+zip');
@@ -452,6 +476,9 @@ function buildEbook() {
         '</package>'
     );
 
+
+
+
     ///////////////
     ///////////////
     var imgs = oebps.folder("images");
@@ -488,5 +515,10 @@ function buildEbook() {
                 saveAs(content, ebookName);
             });
     }, 60000);
+
+    ///////////// clean
+    sessionStorage.removeItem('ebook');
+    allImgSrc = {};
+    imageIndex = 0;
 
 }
