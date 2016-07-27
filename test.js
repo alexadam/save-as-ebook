@@ -222,7 +222,7 @@ function bibi(inp) {
 
 function getEbookPages() {
     try {
-        var allPages = sessionStorage.getItem('ebook');
+        var allPages = localStorage.getItem('ebook');
         if (!allPages) {
             allPages = [];
         } else {
@@ -251,7 +251,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             title: bibi(document.title), //gatPageTitle(document.title),
             content: getHtmlAsString(pageSrc)
         });
-        sessionStorage.setItem('ebook', JSON.stringify(allPages));
+        localStorage.setItem('ebook', JSON.stringify(allPages));
         buildEbook();
     } else if (request.type === 'selection') {
         pageSrc = getSelectedNodes();
@@ -261,8 +261,17 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             content: getHtmlAsString(pageSrc)
         });
         console.log('PUSH', JSON.stringify(allPages));
-        sessionStorage.setItem('ebook', JSON.stringify(allPages));
+        localStorage.setItem('ebook', JSON.stringify(allPages));
         buildEbook();
+    } else if (request.type === 'page-to-buffer') {
+        pageSrc = document.getElementsByTagName('body')[0];
+        allPages.push({
+            url: getPageUrl(document.title),
+            title: bibi(document.title), //gatPageTitle(document.title),
+            content: getHtmlAsString(pageSrc)
+        });
+        console.log('merge');
+        localStorage.setItem('ebook', JSON.stringify(allPages));
     } else if (request.type === 'show-buffer') {
         // window.open(chrome.extension.getURL('chapter-editor/chapter-editor.html'), 'Chapter Editor');
 
@@ -517,7 +526,7 @@ function buildEbook() {
     }, 60000);
 
     ///////////// clean
-    sessionStorage.removeItem('ebook');
+    localStorage.removeItem('ebook');
     allImgSrc = {};
     imageIndex = 0;
 

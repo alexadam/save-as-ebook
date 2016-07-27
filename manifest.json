@@ -13,14 +13,14 @@
     "content_scripts": [{
         "matches": ["<all_urls>"],
         "css": ["fonts.css"],
-        "js": ["jquery.js", "filesaver.js", "jszip.js", "jszip-utils.js", "pure-parser.js", "test.js"]
+        "js": ["jquery.js", "filesaver.js", "jszip.js", "jszip-utils.js", "pure-parser.js", "gigi.js"]
     }],
 
     "background": {
-       "scripts": ["background.js"]
+       "scripts": ["background2.js"]
     },
 
-    "page_action": {
+    "browser_action": {
         "default_icon": "",
         "default_title": "Beastify",
         "default_popup": "chapter-editor/chapter-editor.html"
@@ -28,7 +28,8 @@
 
     "permissions": [
         "contextMenus",
-        "activeTab"
+        "activeTab",
+        "storage"
     ]
 
 }
