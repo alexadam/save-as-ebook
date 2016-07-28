@@ -2,10 +2,38 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Chapter Editor</title>
+        <style>
+            .menu-holder {
+                padding: 5px;
+                padding-right: 10px;
+                margin: 0;
+            }
+
+            .menu-item {
+                display: block;
+                width: 100%;
+                margin: 5px;
+            }
+        </style>
     </head>
     <body>
-        <h1>Chapter Editor</h1>
-        
+        <div class="menu-holder">
+            <h3>Save as Ebook:</h3>
+            <button id="savePage" type="button" name="button" class="menu-item">Save Page</button>
+            <button id="saveSelection" type="button" name="button" class="menu-item">Save Selection</button>
+            <hr/>
+            <button id="pageChapter" type="button" name="button" class="menu-item">Add Page as Chapter</button>
+            <button id="selectionChapter" type="button" name="button" class="menu-item">Add Selection as Chapter</button>
+            <hr/>
+            <button id="editChapters" type="button" name="button" class="menu-item">Edit Chapters...</button>
+        </div>
+
+
+        <script src="jquery.js" charset="utf-8"></script>
+        <script src="filesaver.js" charset="utf-8"></script>
+        <script src="jszip.js" charset="utf-8"></script>
+        <script src="jszip-utils.js" charset="utf-8"></script>
+        <script src="saveEbook.js" charset="utf-8"></script>
+        <script src="menu.js" charset="utf-8"></script>
     </body>
 </html>
