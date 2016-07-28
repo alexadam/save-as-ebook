@@ -2,6 +2,15 @@ var allImgSrc = {};
 
 //////
 
+function getCurrentUrl() {
+    var url = window.location.href;
+    if (url.indexOf('?') > 0) {
+        url = window.location.href.split('?')[0];
+    }
+    url = url.substring(0, url.lastIndexOf('/')+1);
+    return url;
+}
+
 function getFileExtension(fileName) {
     var tmpFileName = fileName.split('.').pop();
     if (tmpFileName.indexOf('?') > 0) {
@@ -76,7 +85,7 @@ function force(contentString) {
 
 // https://github.com/blowsie/Pure-JavaScript-HTML5-Parser
 function sanitize(rawContentString) {
-
+    allImgSrc = {};
     var srcTxt = '';
     var dirty = null;
     try {
@@ -229,6 +238,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         result = {
             url: getPageUrl(document.title),
             title: getPageTitle(document.title), //gatPageTitle(document.title),
+            baseUrl: getCurrentUrl(),
             imgs: allImgSrc,
             content: getContent(pageSrc)
         };
@@ -237,6 +247,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         result = {
             url: getPageUrl(document.title),
             title: getPageTitle(document.title),
+            baseUrl: getCurrentUrl(),
             imgs: allImgSrc,
             content: getContent(pageSrc)
         };

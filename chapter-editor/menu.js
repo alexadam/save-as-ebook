@@ -26,11 +26,11 @@ function saveEbookPages(pages) {
 }
 
 document.getElementById('savePage').onclick = function() {
+    localStorage.removeItem('ebook');
     chrome.tabs.query({
         currentWindow: true,
         active: true
     }, function(tab) {
-        console.log('aiai');
         chrome.tabs.sendMessage(
             tab[0].id,
             {
@@ -47,6 +47,7 @@ document.getElementById('savePage').onclick = function() {
 };
 
 document.getElementById('saveSelection').onclick = function() {
+    localStorage.removeItem('ebook');
     chrome.tabs.query({
         currentWindow: true,
         active: true

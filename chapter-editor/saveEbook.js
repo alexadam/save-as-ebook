@@ -1,4 +1,3 @@
-
 var cssFileName = 'ebook.css';
 var pageName = 'ebook.xhtml';
 var ebookName = "ebook-" + document.title + ".epub";
@@ -17,6 +16,15 @@ function getEbookPages() {
         return [];
     }
 
+}
+
+function getImgDownloadUrl(baseUrl, imgSrc) {
+    if (imgSrc.indexOf('http') !== 0) {
+        console.log(baseUrl + '/' + imgSrc);
+        return baseUrl + '/' + imgSrc;
+    }
+    console.log(imgSrc);
+    return imgSrc;
 }
 
 function getImagesIndex(allImgSrc) {
@@ -111,7 +119,7 @@ function buildEbook() {
         '<h1 class="frontmatter">Table of Contents</h1>' +
         '<ol class="contents">' +
         // '<li><a href="pages/' + pageName + '">' + ebookName + '</a></li>' + // TODO remove
-        allPages.reduce(function (prev, page) {
+        allPages.reduce(function(prev, page) {
             return prev + '\n' + '<li><a href="pages/' + page.url + '">' + page.title + '</a></li>';
         }, '') +
         '</ol>' +
@@ -132,12 +140,12 @@ function buildEbook() {
         '</docTitle>' +
         '<navMap>' +
         // '<content src="pages/' + pageName + '" />' + // TODO remove
-        allPages.reduce(function (prev, page, index) {
+        allPages.reduce(function(prev, page, index) {
             return prev + '\n' +
-            '<navPoint id="ebook' + index + '" playOrder="' + (index+1) + '">' +
-            '<navLabel><text>' + page.title + '</text></navLabel>' +
-            '<content src="pages/' + page.url + '" />' +
-            '</navPoint>';
+                '<navPoint id="ebook' + index + '" playOrder="' + (index + 1) + '">' +
+                '<navLabel><text>' + page.title + '</text></navLabel>' +
+                '<content src="pages/' + page.url + '" />' +
+                '</navPoint>';
         }, '') +
         '</navMap>' +
         '</ncx>'
@@ -146,7 +154,7 @@ function buildEbook() {
     oebps.file(cssFileName, '');
 
     var pagesFolder = oebps.folder('pages');
-    allPages.forEach(function (page) {
+    allPages.forEach(function(page) {
         pagesFolder.file(page.url,
             '<?xml version="1.0" encoding="utf-8"?>' +
             '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">' +
@@ -173,17 +181,17 @@ function buildEbook() {
         '<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />' +
         '<item id="template_css" href="' + cssFileName + '" media-type="text/css" />' +
         // '<item id="ebook" href="pages/' + pageName + '" media-type="application/xhtml+xml" />' + //properties="remote-resources" // TODO remove
-        allPages.reduce(function (prev, page, index) {
+        allPages.reduce(function(prev, page, index) {
             return prev + '\n' + '<item id="ebook' + index + '" href="pages/' + page.url + '" media-type="application/xhtml+xml" />';
         }, '') +
-        allPages.reduce(function (prev, page, index) {
+        allPages.reduce(function(prev, page, index) {
             return prev + '\n' + getImagesIndex(page.imgs);
         }, '') +
         // getExternalLinksIndex() +
         '</manifest>' +
         '<spine toc="ncx">' +
         // '<itemref idref="ebook" />' + // TODO remove
-        allPages.reduce(function (prev, page, index) {
+        allPages.reduce(function(prev, page, index) {
             return prev + '\n' + '<itemref idref="ebook' + index + '" />';
         }, '') +
         '</spine>' +
@@ -197,9 +205,10 @@ function buildEbook() {
     ///////////////
     var imgs = oebps.folder("images");
     var imgsPromises = [];
-    allPages.forEach(function (page) {
+    allPages.forEach(function(page) {
         Object.keys(page.imgs).forEach(function(imgSrc, index) {
-            var tmpDeffered = deferredAddZip(imgSrc, page.imgs[imgSrc], imgs);
+            console.log('AICI', imgSrc, getImgDownloadUrl(page.baseUrl, imgSrc));
+            var tmpDeffered = deferredAddZip(getImgDownloadUrl(page.baseUrl, imgSrc), page.imgs[imgSrc], imgs);
             imgsPromises.push(tmpDeffered);
         });
     });
