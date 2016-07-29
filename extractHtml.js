@@ -230,28 +230,30 @@ function getSelectedNodes() {
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     console.log('Extract Html...');
+    allImgSrc = {};
     var result = {};
     var pageSrc = '';
+    var tmpConent = '';
 
     if (request.type === 'extract-page') {
         pageSrc = document.getElementsByTagName('body')[0];
-        result = {
-            url: getPageUrl(document.title),
-            title: getPageTitle(document.title), //gatPageTitle(document.title),
-            baseUrl: getCurrentUrl(),
-            imgs: allImgSrc,
-            content: getContent(pageSrc)
-        };
+        tmpConent = getContent(pageSrc);
     } else if (request.type === 'extract-selection') {
         pageSrc = getSelectedNodes();
-        result = {
-            url: getPageUrl(document.title),
-            title: getPageTitle(document.title),
-            baseUrl: getCurrentUrl(),
-            imgs: allImgSrc,
-            content: getContent(pageSrc)
-        };
+        tmpConent = getContent(pageSrc);
     }
+
+    if (tmpConent.trim() === '') {
+        return;
+    }
+
+    result = {
+        url: getPageUrl(document.title),
+        title: getPageTitle(document.title), //gatPageTitle(document.title),
+        baseUrl: getCurrentUrl(),
+        imgs: allImgSrc,
+        content: tmpConent
+    };
 
     sendResponse(result);
     console.log('Html Extracted');

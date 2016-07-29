@@ -2,28 +2,13 @@ var cssFileName = 'ebook.css';
 var pageName = 'ebook.xhtml';
 var ebookName = "ebook-" + document.title + ".epub";
 
-function getEbookPages() {
-    try {
-        var allPages = localStorage.getItem('ebook');
-        if (!allPages) {
-            allPages = [];
-        } else {
-            allPages = JSON.parse(allPages);
-        }
-        return allPages;
-    } catch (e) {
-        console.log(e);
-        return [];
-    }
-
-}
-
 function getImgDownloadUrl(baseUrl, imgSrc) {
+    if (imgSrc.indexOf('//') === 0) {
+        return baseUrl.split('//')[0] + imgSrc;
+    }
     if (imgSrc.indexOf('http') !== 0) {
-        console.log(baseUrl + '/' + imgSrc);
         return baseUrl + '/' + imgSrc;
     }
-    console.log(imgSrc);
     return imgSrc;
 }
 
@@ -207,7 +192,6 @@ function buildEbook() {
     var imgsPromises = [];
     allPages.forEach(function(page) {
         Object.keys(page.imgs).forEach(function(imgSrc, index) {
-            console.log('AICI', imgSrc, getImgDownloadUrl(page.baseUrl, imgSrc));
             var tmpDeffered = deferredAddZip(getImgDownloadUrl(page.baseUrl, imgSrc), page.imgs[imgSrc], imgs);
             imgsPromises.push(tmpDeffered);
         });

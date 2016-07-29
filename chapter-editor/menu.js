@@ -5,26 +5,6 @@ document.getElementById("editChapters").onclick = function() {
     win.focus();
 };
 
-
-function getEbookPages() { // TODO add as utils
-    try {
-        var allPages = localStorage.getItem('ebook');
-        if (!allPages) {
-            allPages = [];
-        } else {
-            allPages = JSON.parse(allPages);
-        }
-        return allPages;
-    } catch (e) {
-        console.log(e);
-        return [];
-    }
-}
-
-function saveEbookPages(pages) {
-    localStorage.setItem('ebook', JSON.stringify(pages));
-}
-
 document.getElementById('savePage').onclick = function() {
     localStorage.removeItem('ebook');
     chrome.tabs.query({
