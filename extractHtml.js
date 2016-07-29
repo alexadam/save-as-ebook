@@ -79,6 +79,7 @@ function force(contentString) {
 
         return contentString;
     } catch(e) {
+        console.log('ERROR');
         console.log(e);
     }
 }
@@ -95,15 +96,12 @@ function sanitize(rawContentString) {
         $wdirty.find('script, style, svg, canvas, noscript').remove();
         $wdirty.find('*:empty').not('img').remove();
 
-        dirty = $wdirty.html();
-
-        // dirty = dirty.replace(/&nbsp;/gi, '');
-        // dirty = HTMLtoXML(dirty);
+        dirty = '<div>' + $wdirty.html() + '</div>';
 
         ////////////////
 
 
-        return force(dirty);
+        return force(dirty); // TODO
 
 
         // var dirty = '<div>' + document.getElementsByTagName('body')[0].innerHTML + '</div>';
@@ -233,17 +231,17 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     allImgSrc = {};
     var result = {};
     var pageSrc = '';
-    var tmpConent = '';
+    var tmpContent = '';
 
     if (request.type === 'extract-page') {
         pageSrc = document.getElementsByTagName('body')[0];
-        tmpConent = getContent(pageSrc);
+        tmpContent = getContent(pageSrc);
     } else if (request.type === 'extract-selection') {
         pageSrc = getSelectedNodes();
-        tmpConent = getContent(pageSrc);
+        tmpContent = getContent(pageSrc);
     }
 
-    if (tmpConent.trim() === '') {
+    if (tmpContent.trim() === '') {
         return;
     }
 
@@ -252,7 +250,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         title: getPageTitle(document.title), //gatPageTitle(document.title),
         baseUrl: getCurrentUrl(),
         imgs: allImgSrc,
-        content: tmpConent
+        content: tmpContent
     };
 
     sendResponse(result);

@@ -38,7 +38,10 @@ document.getElementById('saveSelection').onclick = function() {
                 type: 'extract-selection'
             },
             function (response) {
-                console.log('Selection EXTRAcTED', response);
+                var allPages = getEbookPages();
+                allPages.push(response);
+                saveEbookPages(allPages);
+                buildEbook();
             }
         );
     });
