@@ -74,7 +74,6 @@ function deferredAddZip(url, filename, zip) {
 // http://ebooks.stackexchange.com/questions/1183/what-is-the-minimum-required-content-for-a-valid-epub
 function buildEbook() {
     console.log('Prepare Content...');
-
     var allPages = getEbookPages();
     var zip = new JSZip();
 
@@ -182,7 +181,6 @@ function buildEbook() {
         '</spine>' +
         '</package>'
     );
-
 
 
 

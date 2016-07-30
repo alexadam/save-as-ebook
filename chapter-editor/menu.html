@@ -3,29 +3,63 @@
     <head>
         <meta charset="utf-8">
         <style>
+            .row {
+                width: 320px;
+                margin-bottom: 5px;
+            }
             .menu-holder {
                 padding: 5px;
                 padding-right: 10px;
                 margin: 0;
+                width: 320px;
+                /*height: 500px;*/
             }
 
             .menu-item {
-                display: block;
+                display: inline-block;
+                width: 49%;
+            }
+
+            .menu-item-full {
+                display: inline-block;
                 width: 100%;
-                margin: 5px;
+            }
+
+            ul, li {
+                display: block;
+                width: 300px;
+                margin: 0;
+                padding: 0;
+            }
+
+            li {
+                border-bottom: solid 1px #ccc;
+                padding: 5px 0;
             }
         </style>
     </head>
     <body>
         <div class="menu-holder">
-            <h3>Save as Ebook:</h3>
-            <button id="savePage" type="button" name="button" class="menu-item">Save Page</button>
-            <button id="saveSelection" type="button" name="button" class="menu-item">Save Selection</button>
+            <div class="row">
+                <b>Save as Ebook:</b>
+            </div>
+            <div class="row">
+                <button id="savePage" type="button" name="button" class="menu-item">Save Page</button>
+                <button id="saveSelection" type="button" name="button" class="menu-item">Save Selection</button>
+            </div>
             <hr/>
-            <button id="pageChapter" type="button" name="button" class="menu-item">Add Page as Chapter</button>
-            <button id="selectionChapter" type="button" name="button" class="menu-item">Add Selection as Chapter</button>
+            <div class="row">
+                <button id="pageChapter" type="button" name="button" class="menu-item">Add Page as Chapter</button>
+                <button id="selectionChapter" type="button" name="button" class="menu-item">Add Selection as Chapter</button>
+            </div>
             <hr/>
-            <button id="editChapters" type="button" name="button" class="menu-item">Edit Chapters...</button>
+            <div class="row">
+                <button id="editChapters" type="button" name="button" class="menu-item-full">Edit Chapters...</button>
+            </div>
+            <div class="row">
+                <ul id="chapters" class="menu-item-full"></ul>
+                <button id="saveChapters" type="button" name="button" class="menu-item-full">Save Chapters</button>
+            </div>
         </div>
 
 
