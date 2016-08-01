@@ -21,6 +21,19 @@ function createChapterList(allPages) {
     }
     modalContent.appendChild(list);
 }
+
+var buttons = document.createElement('div');
+var closeButton = document.createElement('button');
+closeButton.innerText = 'close';
+buttons.appendChild(closeButton);
+var saveButton = document.createElement('button');
+saveButton.onclick = function () {
+    buildEbook();
+};
+saveButton.innerText = 'save';
+buttons.appendChild(saveButton);
+modalContent.appendChild(buttons);
+
 /////////////////////
 
 

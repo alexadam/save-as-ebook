@@ -77,6 +77,7 @@ function buildEbook() {
 
 // http://ebooks.stackexchange.com/questions/1183/what-is-the-minimum-required-content-for-a-valid-epub
 function _buildEbook(allPages) {
+    console.log(allPages);
     console.log('Prepare Content...');
     var zip = new JSZip();
 
@@ -193,15 +194,18 @@ function _buildEbook(allPages) {
     var imgsPromises = [];
     allPages.forEach(function(page) {
         Object.keys(page.imgs).forEach(function(imgSrc, index) {
-            var tmpDeffered = deferredAddZip(getImgDownloadUrl(page.baseUrl, imgSrc), page.imgs[imgSrc], imgs);
-            imgsPromises.push(tmpDeffered);
+            // var tmpDeffered = deferredAddZip(getImgDownloadUrl(page.baseUrl, imgSrc), page.imgs[imgSrc], imgs);
+            // imgsPromises.push(tmpDeffered);
+            imgs.file(page.imgs[imgSrc], page.imgsData[page.imgs[imgSrc]], {
+                base64: true
+            });
         });
     });
 
     var done = false;
 
-    $.when.apply($, imgsPromises).done(function() {
-        done = true;
+    // $.when.apply($, imgsPromises).done(function() {
+    //     done = true;
         zip.generateAsync({
                 type: "blob"
             })
@@ -209,9 +213,10 @@ function _buildEbook(allPages) {
                 saveAs(content, ebookName);
             });
         console.log("done !");
-    }).fail(function(err) {
-        alert(err);
-    });
+    // }).fail(function(err) {
+    //     console.log(err);
+    //     alert('99999 ' + err);
+    // });
 
     setTimeout(function() {
         if (done) {

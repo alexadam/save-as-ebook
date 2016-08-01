@@ -28,6 +28,12 @@ document.getElementById("editChapters").onclick = function() {
             file: '/chapter-editor/utils.js'
         });
 
+        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jquery.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/filesaver.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jszip.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jszip-utils.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/saveEbook.js'});
+
         chrome.tabs.executeScript(tab[0].id, {
             file: '/chapter-editor/inlined.js'
         });
@@ -79,13 +85,11 @@ function dispatch(action, justAddToBuffer) {
         //     }
         // );
 
-        chrome.tabs.executeScript(tab[0].id, {
-            file: 'chapter-editor/jquery.js'
-        });
-
-        chrome.tabs.executeScript(tab[0].id, {
-            file: 'pure-parser.js'
-        });
+        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jquery.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/filesaver.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jszip.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jszip-utils.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/pure-parser.js'});
 
         chrome.tabs.executeScript(tab[0].id, {
             file: 'extractHtml.js'
