@@ -16,7 +16,7 @@
     }],
 
     "background": {
-        "scripts": []
+        "scripts": ["background.js"]
     },
 
     "browser_action": {

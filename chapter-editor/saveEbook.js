@@ -71,10 +71,13 @@ function deferredAddZip(url, filename, zip) {
     return deferred;
 }
 
-// http://ebooks.stackexchange.com/questions/1183/what-is-the-minimum-required-content-for-a-valid-epub
 function buildEbook() {
+    getEbookPages(_buildEbook);
+}
+
+// http://ebooks.stackexchange.com/questions/1183/what-is-the-minimum-required-content-for-a-valid-epub
+function _buildEbook(allPages) {
     console.log('Prepare Content...');
-    var allPages = getEbookPages();
     var zip = new JSZip();
 
     zip.file('mimetype', 'application/epub+zip');
@@ -223,7 +226,7 @@ function buildEbook() {
     }, 60000);
 
     ///////////// clean
-    localStorage.removeItem('ebook');
+    removeEbook();
     imageIndex = 0;
 
 }

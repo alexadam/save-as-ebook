@@ -6,24 +6,58 @@ document.getElementById("editChapters").onclick = function() {
 
     // chrome.tabs.create({url:"editor.html"});
 
-    var list = document.getElementById('chapters');
-    var allPages = getEbookPages();
+    // var list = document.getElementById('chapters');
+    // var allPages = getEbookPages();
+    //
+    // for (var i = 0; i < allPages.length; i++) {
+    //     var listItem = document.createElement('li');
+    //     var label = document.createElement('span');
+    //     label.innerHTML = allPages[i].title;
+    //     label.class = 'menu-item-full';
+    //     listItem.appendChild(label);
+    //     list.appendChild(listItem);
+    // }
 
-    for (var i = 0; i < allPages.length; i++) {
-        var listItem = document.createElement('li');
-        var label = document.createElement('span');
-        label.innerHTML = allPages[i].title;
-        label.class = 'menu-item-full';
-        listItem.appendChild(label);
-        list.appendChild(listItem);
-    }
+
+    chrome.tabs.query({
+        currentWindow: true,
+        active: true
+    }, function(tab) {
+
+        chrome.tabs.executeScript(tab[0].id, {
+            file: '/chapter-editor/utils.js'
+        });
+
+        chrome.tabs.executeScript(tab[0].id, {
+            file: '/chapter-editor/inlined.js'
+        });
+
+        // chrome.tabs.executeScript(tab[0].id, {
+        //     file: 'extractHtml.js'
+        // }, function() {
+        //     // if (chrome.runtime.lastError) {
+        //     //     alert(JSON.stringify(chrome.runtime.lastError));
+        //     //     throw Error("Unable to inject script into tab " + tabId);
+        //     // }
+        //     chrome.tabs.sendMessage(tab[0].id, {
+        //         type: action
+        //     }, function(response) {
+        //         var allPages = getEbookPages();
+        //         allPages.push(response);
+        //         saveEbookPages(allPages);
+        //         if (!justAddToBuffer) {
+        //             buildEbook();
+        //         }
+        //     });
+        // });
+    });
 
 
 };
 
 function dispatch(action, justAddToBuffer) {
     if (!justAddToBuffer) {
-        localStorage.removeItem('ebook');
+        removeEbook();
     }
     chrome.tabs.query({
         currentWindow: true,
@@ -63,12 +97,20 @@ function dispatch(action, justAddToBuffer) {
             chrome.tabs.sendMessage(tab[0].id, {
                 type: action
             }, function(response) {
-                var allPages = getEbookPages();
-                allPages.push(response);
-                saveEbookPages(allPages);
-                if (!justAddToBuffer) {
-                    buildEbook();
-                }
+                // var allPages = getEbookPages();
+                // allPages.push(response);
+                // saveEbookPages(allPages);
+                // if (!justAddToBuffer) {
+                //     buildEbook();
+                // }
+
+                getEbookPages(function (allPages) {
+                    allPages.push(response);
+                    saveEbookPages(allPages);
+                    if (!justAddToBuffer) {
+                        buildEbook();
+                    }
+                });
             });
         });
     });
