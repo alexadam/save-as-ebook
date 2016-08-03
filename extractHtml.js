@@ -60,7 +60,7 @@ function force(contentString) {
             $(elem).replaceWith('<span>' + tagOpen + 'a href="' + getHref($(elem).attr('href')) + '"' + tagClose + $(elem).html() + tagOpen + '/a' + tagClose + '</span>');
         });
 
-        if ($('*').length < 3000) { // TODO
+        if ($('*').length < 10000) { // TODO
             inlineElements.forEach(function (tagName) {
                 $content.find(tagName).each(function (index, elem) {
                     $(elem).replaceWith('<span>' + tagOpen + tagName + tagClose + $(elem).html() + tagOpen + '/' + tagName + tagClose + '</span>');
@@ -352,7 +352,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         sendResponse(result);
     }).fail(function(err) {
         console.log('ERROR', JSON.stringify(err));
-        // alert('99999 ' + JSON.stringify(err));
     });
 
     return true;

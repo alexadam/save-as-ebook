@@ -1,6 +1,4 @@
 var cssFileName = 'ebook.css';
-var pageName = 'ebook.xhtml';
-var ebookName = "ebook-" + document.title + ".epub";
 
 function getImgDownloadUrl(baseUrl, imgSrc) {
     if (imgSrc.indexOf('//') === 0) {
@@ -77,8 +75,8 @@ function buildEbook() {
 
 // http://ebooks.stackexchange.com/questions/1183/what-is-the-minimum-required-content-for-a-valid-epub
 function _buildEbook(allPages) {
-    console.log(allPages);
     console.log('Prepare Content...');
+    ebookName = allPages[0].title + '.epub';
     var zip = new JSZip();
 
     zip.file('mimetype', 'application/epub+zip');
