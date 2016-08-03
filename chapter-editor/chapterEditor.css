@@ -1,0 +1,14 @@
+
+.chapters-list {
+
+}
+
+.chapter-item {
+    line-height: 24px;
+    height: 24px;
+    font-size: 15px;
+}
+
+.chapter-item * {
+    vertical-align: middle;
+}

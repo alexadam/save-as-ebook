@@ -14,6 +14,7 @@ document.getElementById("editChapters").onclick = function() {
         chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jszip.js'});
         chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jszip-utils.js'});
         chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/saveEbook.js'});
+        chrome.tabs.insertCSS(tab[0].id, {file: '/chapter-editor/chapterEditor.css'});
 
         chrome.tabs.executeScript(tab[0].id, {
             file: '/chapter-editor/chapterEditor.js'
