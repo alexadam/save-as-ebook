@@ -1,24 +1,5 @@
-var win = null;
 
 document.getElementById("editChapters").onclick = function() {
-    // win = window.open(chrome.extension.getURL('chapter-editor/editor.html'), '_blank');
-    // win.focus();
-
-    // chrome.tabs.create({url:"editor.html"});
-
-    // var list = document.getElementById('chapters');
-    // var allPages = getEbookPages();
-    //
-    // for (var i = 0; i < allPages.length; i++) {
-    //     var listItem = document.createElement('li');
-    //     var label = document.createElement('span');
-    //     label.innerHTML = allPages[i].title;
-    //     label.class = 'menu-item-full';
-    //     listItem.appendChild(label);
-    //     list.appendChild(listItem);
-    // }
-
-
     chrome.tabs.query({
         currentWindow: true,
         active: true
@@ -35,27 +16,8 @@ document.getElementById("editChapters").onclick = function() {
         chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/saveEbook.js'});
 
         chrome.tabs.executeScript(tab[0].id, {
-            file: '/chapter-editor/inlined.js'
+            file: '/chapter-editor/chapterEditor.js'
         });
-
-        // chrome.tabs.executeScript(tab[0].id, {
-        //     file: 'extractHtml.js'
-        // }, function() {
-        //     // if (chrome.runtime.lastError) {
-        //     //     alert(JSON.stringify(chrome.runtime.lastError));
-        //     //     throw Error("Unable to inject script into tab " + tabId);
-        //     // }
-        //     chrome.tabs.sendMessage(tab[0].id, {
-        //         type: action
-        //     }, function(response) {
-        //         var allPages = getEbookPages();
-        //         allPages.push(response);
-        //         saveEbookPages(allPages);
-        //         if (!justAddToBuffer) {
-        //             buildEbook();
-        //         }
-        //     });
-        // });
     });
 
 
@@ -70,21 +32,6 @@ function dispatch(action, justAddToBuffer) {
         active: true
     }, function(tab) {
 
-        // chrome.tabs.sendMessage(
-        //     tab[0].id, {
-        //         type: action
-        //     },
-        //     function(response) {
-        //         alert('nnn 3' + response);
-        //         var allPages = getEbookPages();
-        //         allPages.push(response);
-        //         saveEbookPages(allPages);
-        //         if (!justAddToBuffer) {
-        //             buildEbook();
-        //         }
-        //     }
-        // );
-
         chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jquery.js'});
         chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/filesaver.js'});
         chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jszip.js'});
@@ -94,20 +41,9 @@ function dispatch(action, justAddToBuffer) {
         chrome.tabs.executeScript(tab[0].id, {
             file: 'extractHtml.js'
         }, function() {
-            // if (chrome.runtime.lastError) {
-            //     alert(JSON.stringify(chrome.runtime.lastError));
-            //     throw Error("Unable to inject script into tab " + tabId);
-            // }
             chrome.tabs.sendMessage(tab[0].id, {
                 type: action
             }, function(response) {
-                // var allPages = getEbookPages();
-                // allPages.push(response);
-                // saveEbookPages(allPages);
-                // if (!justAddToBuffer) {
-                //     buildEbook();
-                // }
-
                 getEbookPages(function (allPages) {
                     allPages.push(response);
                     saveEbookPages(allPages);
