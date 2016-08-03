@@ -219,11 +219,11 @@ function getSelectedNodes() {
         return document.selection.createRange();
     }
     var selection = window.getSelection();
-    if (selection.rangeCount > 0) {
-        var range = selection.getRangeAt(0);
-        var selectionContents = range.cloneContents();
-        return selectionContents;
+    var docfrag = [];
+    for (var i = 0; i < selection.rangeCount; i++) {
+        docfrag.push(selection.getRangeAt(i).cloneContents());
     }
+    return docfrag;
 }
 
 /////
@@ -322,7 +322,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         tmpContent = getContent(pageSrc);
     } else if (request.type === 'extract-selection') {
         pageSrc = getSelectedNodes();
-        tmpContent = getContent(pageSrc);
+        pageSrc.forEach(function (page) {
+            tmpContent += getContent(page);
+        });
     }
 
     if (tmpContent.trim() === '') {
