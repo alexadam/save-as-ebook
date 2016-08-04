@@ -1,14 +1,68 @@
-
-.chapters-list {
-
+body.dragging, body.dragging * {
+    cursor: move !important;
+}
+.dragged {
+    position: absolute;
+    opacity: 0.5;
+    z-index: 2000;
+}
+ul.chapters-list li.placeholder {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    border: solid 10px red;
+}
+ul.chapters-list li.placeholder:before {
+    position: absolute;
+    content: "";
+    /*width: 0;
+    height: 0;*/
+    margin-top: -5px;
+    left: -5px;
+    top: -4px;
+    border: 5px solid black;
+    border-left-color: red;
+    border-right: none;
 }
 
+
+
+
+#chapterEditor-UpperClose {
+    padding: 10px;
+    font-size: 15px;
+    color: red;
+    display: block;
+}
+ul, ul.chapters-list {
+    width: 100%;
+    display: block;
+    padding: 0;
+    margin: 0;
+    list-style-type: none !important;
+}
 .chapter-item {
+    display: block;
     line-height: 24px;
     height: 24px;
     font-size: 15px;
+    list-style-type: none;
 }
-
+#chapterEditor-modalHeader {
+    display: block;
+    width: 100%;
+    text-align: right;
+}
+#chapterEditor-modalList {
+    display: block;
+    width: 100%;
+}
+#chapterEditor-modalFooter {
+    display: block;
+}
 .chapter-item * {
     vertical-align: middle;
+}
+#dragHandler {
+    padding: 0 5px;
 }

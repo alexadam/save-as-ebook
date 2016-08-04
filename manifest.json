@@ -29,7 +29,11 @@
         "contextMenus",
         "activeTab",
         "storage",
-        "tabs"
+        "tabs",
+        "notifications",
+        "http://*/*",
+        "https://*/*",
+        "<all_urls>"
     ]
 
 }

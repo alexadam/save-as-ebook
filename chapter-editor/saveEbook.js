@@ -75,6 +75,10 @@ function buildEbook() {
 
 // http://ebooks.stackexchange.com/questions/1183/what-is-the-minimum-required-content-for-a-valid-epub
 function _buildEbook(allPages) {
+    allPages = allPages.filter(function (page) {
+        return page !== null;
+    });
+
     console.log('Prepare Content...');
     ebookName = allPages[0].title + '.epub';
     var zip = new JSZip();
@@ -224,7 +228,8 @@ function _buildEbook(allPages) {
                 type: "blob"
             })
             .then(function(content) {
-                saveAs(content, ebookName);
+                alert('SAVE AS');
+                // saveAs(content, ebookName);
             });
     }, 60000);
 
