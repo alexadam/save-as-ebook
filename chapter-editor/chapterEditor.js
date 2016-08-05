@@ -2,7 +2,7 @@ for (var i=0; i<document.styleSheets.length; i++) {
     document.styleSheets.item(i).disabled = true;
 }
 
-var tmp = document.getElementById('chapterEditorView');
+var tmp = document.getElementById('chapterEditor-Modal');
 if (tmp) {
     tmp.parentNode.removeChild(tmp);
 }
@@ -26,21 +26,25 @@ function showEditor() {
 
     ////////
     // Header
+    var title = document.createElement('span');
+    title.id = "chapterEditor-Title";
+    title.innerText = "Chapter Editor";
     var upperCloseButton = document.createElement('button');
+    modalHeader.appendChild(title);
     upperCloseButton.onclick = closeModal;
     upperCloseButton.innerText = 'X';
-    upperCloseButton.id = 'chapterEditor-UpperClose';
+    upperCloseButton.className = 'chapterEditor-text-button chapterEditor-float-right';
     modalHeader.appendChild(upperCloseButton);
     /////////////////////
     // Content List
 
-
+    // TODO change ids - add prefix !!!!
 
     function createChapterList(allPages) {
         allPagesRef = allPages;
 
         var list = document.createElement('ul');
-        list.className = 'chapters-list';
+        list.className = 'chapterEditor-chapters-list';
         // list.style.listStyle = 'none';
         for (var i = 0; i < allPages.length; i++) {
             if (!allPages[i]) {
@@ -48,7 +52,7 @@ function showEditor() {
             }
             var listItem = document.createElement('li');
             listItem.id = 'li' + i;
-            listItem.className = 'chapter-item';
+            listItem.className = 'chapterEditor-chapter-item';
 
             var dragHandler = document.createElement('span');
             dragHandler.id = 'dragHandler';
@@ -59,18 +63,20 @@ function showEditor() {
             label.id = 'text' + i;
             label.rows = 1;
             // label.cols = 100;
-            label.style.width = '75%';
+            label.style.width = '80%';
             label.style.display = 'inline';
             label.value = allPages[i].title;
 
             var buttons = document.createElement('span');
 
             var previewButton = document.createElement('button');
-            previewButton.innerText = 'raw preview';
+            previewButton.innerText = 'Raw Preview';
+            previewButton.className = 'chapterEditor-text-button';
             previewButton.onclick = previewListItem(i);
 
             var removeButton = document.createElement('button');
-            removeButton.innerText = 'remove';
+            removeButton.innerText = 'Remove';
+            removeButton.className = 'chapterEditor-text-button chapterEditor-text-red';
             removeButton.onclick = removeListItem(i);
 
             buttons.appendChild(previewButton);
@@ -91,7 +97,8 @@ function showEditor() {
     // Footer
     var buttons = document.createElement('div');
     var closeButton = document.createElement('button');
-    closeButton.innerText = 'close';
+    closeButton.innerText = 'Cancel';
+    closeButton.className = 'chapterEditor-footer-button chapterEditor-float-left chapterEditor-cancel-button';
     closeButton.onclick = closeModal;
     buttons.appendChild(closeButton);
 
@@ -99,14 +106,15 @@ function showEditor() {
     saveButton.onclick = function() {
         buildEbook();
     };
-    saveButton.innerText = 'save';
+    saveButton.innerText = 'Generate eBook ...';
+    saveButton.className = 'chapterEditor-footer-button chapterEditor-float-right chapterEditor-generate-button';
     buttons.appendChild(saveButton);
     modalFooter.appendChild(buttons);
 
     /////////////////////
 
     var modal = document.createElement('div');
-    modal.id = 'chapterEditorView';
+    modal.id = 'chapterEditor-Modal';
 
     modalContent.appendChild(modalHeader);
     modalContent.appendChild(modalList);
@@ -116,21 +124,20 @@ function showEditor() {
     body.appendChild(modal);
 
     modal.style.display = "none";
-    modal.style.position = 'fixed'; /* Stay in place */
-    modal.style.zIndex = '1'; /* Sit on top */
+    modal.style.position = 'fixed';
+    modal.style.zIndex = '1';
     modal.style.left = '0';
     modal.style.top = '0';
-    modal.style.width = '100%'; /* Full width */
-    modal.style.height = '100%'; /* Full height */
-    modal.style.overflow = 'auto'; /* Enable scroll if needed */
-    modal.style.backgroundColor = 'rgba(0,0,0,1)'; /* Fallback color */
+    modal.style.width = '100%';
+    modal.style.height = '100%';
+    modal.style.overflow = 'auto';
+    modal.style.backgroundColor = 'rgba(210, 210, 210, 1)';
 
-    modalContent.style.zIndex = '2'; /* Sit on top */
+    modalContent.style.zIndex = '2';
     modalContent.style.backgroundColor = '#fff';
-    modalContent.style.margin = '15% auto'; /* 15% from the top and centered */
-    modalContent.style.padding = '20px';
-    modalContent.style.border = '1px solid #888';
-    modalContent.style.width = '80%'; /* Could be more or less, depending on screen size */
+    modalContent.style.margin = '5% auto';
+    modalContent.style.padding = '0';
+    modalContent.style.width = '70%';
 
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
