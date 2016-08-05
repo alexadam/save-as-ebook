@@ -5,11 +5,8 @@ document.getElementById("editChapters").onclick = function() {
         active: true
     }, function(tab) {
 
-        chrome.tabs.executeScript(tab[0].id, {
-            file: '/chapter-editor/utils.js'
-        });
-
         chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jquery.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/utils.js'});
         chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/filesaver.js'});
         chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jszip.js'});
         chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jszip-utils.js'});
@@ -20,6 +17,8 @@ document.getElementById("editChapters").onclick = function() {
         chrome.tabs.executeScript(tab[0].id, {
             file: '/chapter-editor/chapterEditor.js'
         });
+
+         window.close();
     });
 
 
@@ -35,6 +34,7 @@ function dispatch(action, justAddToBuffer) {
     }, function(tab) {
 
         chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jquery.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/utils.js'});
         chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/filesaver.js'});
         chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jszip.js'});
         chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jszip-utils.js'});

@@ -1,15 +1,5 @@
 var cssFileName = 'ebook.css';
 
-function getImgDownloadUrl(baseUrl, imgSrc) {
-    if (imgSrc.indexOf('//') === 0) {
-        return baseUrl.split('//')[0] + imgSrc;
-    }
-    if (imgSrc.indexOf('http') !== 0) {
-        return baseUrl + '/' + imgSrc;
-    }
-    return imgSrc;
-}
-
 function getImagesIndex(allImgSrc) {
     return Object.keys(allImgSrc).reduce(function(prev, elem, index) {
         return prev + '\n' + '<item href="images/' + allImgSrc[elem] + '" id="img' + index + '" media-type="image/' + getFileExtension(elem) + '"/>';
@@ -20,53 +10,6 @@ function getExternalLinksIndex() { // TODO ???
     return allExternalLinks.reduce(function(prev, elem, index) {
         return prev + '\n' + '<item href="' + elem + '" />';
     }, '');
-}
-
-function getFileExtension(fileName) {
-    var tmpFileName = fileName.split('.').pop();
-    if (tmpFileName.indexOf('?') > 0) {
-        tmpFileName = tmpFileName.split('?')[0];
-    }
-    if (tmpFileName.trim() === '') {
-        return 'jpg'; //TODO
-    }
-    return tmpFileName;
-}
-
-// function walkDOM(main) {
-//     var arr = [];
-//     var loop = function(main) {
-//         do {
-//             try {
-//                 if (allowElements.indexOf(main.tagName.toLowerCase()) > -1) {
-//                     arr.push(main);
-//                 }
-//             } catch (e) {
-//             }
-//             if (main.hasChildNodes()) {
-//                 loop(main.firstChild);
-//             }
-//         }
-//         while (main = main.nextSibling);
-//     }
-//     loop(main);
-//     return arr;
-// }
-
-
-function deferredAddZip(url, filename, zip) {
-    var deferred = $.Deferred();
-    JSZipUtils.getBinaryContent(url, function(err, data) {
-        if (err) {
-            deferred.reject(err);
-        } else {
-            zip.file(filename, data, {
-                binary: true
-            });
-            deferred.resolve(data);
-        }
-    });
-    return deferred;
 }
 
 function buildEbook() {
@@ -196,8 +139,6 @@ function _buildEbook(allPages) {
     var imgsPromises = [];
     allPages.forEach(function(page) {
         Object.keys(page.imgs).forEach(function(imgSrc, index) {
-            // var tmpDeffered = deferredAddZip(getImgDownloadUrl(page.baseUrl, imgSrc), page.imgs[imgSrc], imgs);
-            // imgsPromises.push(tmpDeffered);
             imgs.file(page.imgs[imgSrc], page.imgsData[page.imgs[imgSrc]], {
                 base64: true
             });

@@ -2,46 +2,12 @@ var allImgSrc = {};
 var allImgsData = {};
 //////
 
-function getCurrentUrl() {
-    var url = window.location.href;
-    if (url.indexOf('?') > 0) {
-        url = window.location.href.split('?')[0];
-    }
-    url = url.substring(0, url.lastIndexOf('/')+1);
-    return url;
-}
-
-function getFileExtension(fileName) {
-    var tmpFileName = fileName.split('.').pop();
-    if (tmpFileName.indexOf('?') > 0) {
-        tmpFileName = tmpFileName.split('?')[0];
-    }
-    if (tmpFileName.trim() === '') {
-        return 'jpg'; //TODO
-    }
-    return tmpFileName;
-}
-
 function getImageSrc(srcTxt) {
     if (!srcTxt) {
         return '';
     }
     allImgSrc[srcTxt] = 'img-' + (Math.floor(Math.random()*1000000)) + '.' + getFileExtension(srcTxt);
     return '../images/' + allImgSrc[srcTxt];
-}
-
-function getHref(hrefTxt) {
-    if (!hrefTxt) {
-        return '';
-    }
-    if (hrefTxt.indexOf('#') === 0) {
-        hrefTxt = window.location.href + hrefTxt;
-    }
-    if (hrefTxt.indexOf('/') === 0) {
-        hrefTxt = window.location.protocol + '//' + window.location.hostname + hrefTxt;
-    }
-    // hrefTxt = escape(hrefTxt); // TODO
-    return hrefTxt;
 }
 
 function force(contentString) {
@@ -296,17 +262,19 @@ function deferredAddZip(url, filename, zip) {
     return deferred;
 }
 
-function getImgDownloadUrl(baseUrl, imgSrc) {
+function getImgDownloadUrl(imgSrc) {
+    var baseUrl = getOriginUrl();
     if (imgSrc.indexOf('//') === 0) {
         return baseUrl.split('//')[0] + imgSrc;
     }
     if (imgSrc.indexOf('http') !== 0) {
+        if (imgSrc.indexOf('/') === 0) {
+            return baseUrl + imgSrc;
+        }
         return baseUrl + '/' + imgSrc;
     }
     return imgSrc;
 }
-
-
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     console.log('Extract Html...');
@@ -333,7 +301,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
     Object.keys(allImgSrc).forEach(function(imgSrc, index) {
         try {
-            var tmpDeffered = deferredAddZip(getImgDownloadUrl(getCurrentUrl(), imgSrc), allImgSrc[imgSrc]);
+            var tmpDeffered = deferredAddZip(getImgDownloadUrl(imgSrc), allImgSrc[imgSrc]);
             imgsPromises.push(tmpDeffered);
         } catch (e) {
             alert(e);
