@@ -54,13 +54,14 @@ function showEditor() {
             dragHandler.id = 'dragHandler';
             dragHandler.innerText = '\u21f5';
 
-            var label = document.createElement('textarea');
-            label.id = 'textarea' + i;
+            var label = document.createElement('input');
+            label.type = 'text';
+            label.id = 'text' + i;
             label.rows = 1;
             // label.cols = 100;
             label.style.width = '75%';
             label.style.display = 'inline';
-            label.innerText = allPages[i].title;
+            label.value = allPages[i].title;
 
             var buttons = document.createElement('span');
 
