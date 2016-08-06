@@ -32,8 +32,16 @@ ul.chapterEditor-chapters-list li.placeholder {
     font-family: "sans-serif";
 }
 
-#chapterEditor-UpperClose:hover {
-    background-color: #ccc;
+#chapterEditor-ebookTitleHolder {
+    background-color: #eee;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+}
+#chapterEditor-ebookTitleLabel {
+    font-weight: bold;
+    font-size: 18px;
+    font-family: sans-serif;
+    margin-right: 10px;
 }
 ul, ul.chapterEditor-chapters-list {
     width: 100%;
@@ -71,17 +79,16 @@ ul, ul.chapterEditor-chapters-list {
 
 #chapterEditor-modalHeader {
     display: block;
-    padding: 5px 0;
     overflow: hidden;
     padding: 20px;
 }
 #chapterEditor-modalList {
     display: block;
     /*width: 100%;*/
-    padding: 5px 0;
-    border-top: solid 1px black;
-    border-bottom: solid 1px black;
+    /*border-top: solid 1px black;*/
+    /*border-bottom: solid 1px black;*/
     padding: 20px;
+    padding-top: 0;
 }
 #chapterEditor-modalFooter {
     display: block;
@@ -134,9 +141,10 @@ ul, ul.chapterEditor-chapters-list {
 }
 .chapterEditor-generate-button {
     /*background-color: green;*/
+    background-color: yellow;
 }
 .chapterEditor-cancel-button {
-    /*background-color: orange;*/
+    /*background-color: black;*/
 }
 
 

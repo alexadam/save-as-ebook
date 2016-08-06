@@ -40,6 +40,22 @@ function showEditor() {
 
     // TODO change ids - add prefix !!!!
 
+    var titleHolder = document.createElement('div');
+    titleHolder.id = 'chapterEditor-ebookTitleHolder';
+    titleHolder.className = 'chapterEditor-chapter-item';
+
+    var ebookTilteLabel = document.createElement('span');
+    ebookTilteLabel.id = 'chapterEditor-ebookTitleLabel';
+    ebookTilteLabel.innerText = 'eBook Title: ';
+    titleHolder.appendChild(ebookTilteLabel);
+
+    var ebookTilte = document.createElement('input');
+    ebookTilte.id = 'chapterEditor-ebookTitle';
+    ebookTilte.type = 'text';
+    ebookTilte.value = 'eBook';
+    titleHolder.appendChild(ebookTilte);
+    modalList.appendChild(titleHolder);
+
     function createChapterList(allPages) {
         allPagesRef = allPages;
 
