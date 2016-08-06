@@ -10,7 +10,7 @@ ul.chapterEditor-chapters-list li.placeholder {
     position: relative;
     margin: 0;
     padding: 0;
-    border: solid 10px red;
+    border: solid 10px #f5f5f5;
 }
 /*ul.chapterEditor-chapters-list li.placeholder:before {
     position: absolute;
@@ -54,26 +54,23 @@ ul, ul.chapterEditor-chapters-list {
 .chapterEditor-chapter-item:hover {
     background-color: #f5f5f5;
 }
-.chapterEditor-chapter-item:nth-child(2n) {
-    /*background-color: rgba(0, 0, 255, 0.1);*/
+.chapterEditor-drag-handler {
+    cursor: move;
+    padding: 3px;
+    margin-right: 5px;
+    border-radius: 5px;
 }
 .chapterEditor-chapter-item > input[type="text"] {
     padding: 5px;
     font-size: 15px;
     font-family: "sans-serif";
-    /*border: solid 1px #aaa;*/
+    width: 80%;
     border: none;
     border-bottom: solid 1px #aaa;
 }
-/*.chapterEditor-chapter-item:nth-child(2n) > input[type="text"] {
-    background-color: #f5f5f5;
-    box-shadow: none;
-}*/
-
 
 #chapterEditor-modalHeader {
     display: block;
-    /*width: 100%;*/
     padding: 5px 0;
     overflow: hidden;
     padding: 20px;
@@ -106,6 +103,7 @@ ul, ul.chapterEditor-chapters-list {
     background-color: rgba(0, 0, 0, 0);
     margin: 0 3px;
     outline: none;
+    cursor: pointer;
 }
 .chapterEditor-text-button:hover {
     background-color: #000;
@@ -129,9 +127,54 @@ ul, ul.chapterEditor-chapters-list {
     border: none;
     background-color: rgba(0, 0, 0, 0);
 }
+.chapterEditor-footer-button:hover {
+    color: white;
+    background-color: rgba(0, 0, 0, 1);
+    cursor: pointer;
+}
 .chapterEditor-generate-button {
     /*background-color: green;*/
 }
 .chapterEditor-cancel-button {
     /*background-color: orange;*/
+}
+
+
+
+@media (max-width: 1700px) {
+    .chapterEditor-chapter-item {
+        line-height: 30px;
+        height: 30px;
+        padding: 4px 0;
+        font-size: 14px;
+    }
+    .chapterEditor-chapter-item > input[type="text"] {
+        padding: 3px;
+        font-size: 12px;
+        width: 75%;
+    }
+    .chapterEditor-text-button {
+        font-size: 12px;
+        padding: 3px;
+        margin: 0 2px;
+    }
+    .chapterEditor-footer-button {
+        padding: 15px 20px;
+        margin: 0;
+        font-size: 15px;
+        border: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+}
+
+@media (max-width: 1100px) {
+    .chapterEditor-chapter-item {
+        line-height: 30px;
+        height: 60px;
+        padding: 4px 0;
+        font-size: 14px;
+    }
+    .chapterEditor-chapter-item > input[type="text"] {
+        width: 90%;
+    }
 }

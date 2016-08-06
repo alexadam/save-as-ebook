@@ -174,8 +174,4 @@ function _buildEbook(allPages) {
             });
     }, 60000);
 
-    ///////////// clean
-    removeEbook();
-    imageIndex = 0;
-
 }

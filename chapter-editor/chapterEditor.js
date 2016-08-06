@@ -55,16 +55,12 @@ function showEditor() {
             listItem.className = 'chapterEditor-chapter-item';
 
             var dragHandler = document.createElement('span');
-            dragHandler.id = 'dragHandler';
+            dragHandler.className = 'chapterEditor-drag-handler';
             dragHandler.innerText = '\u21f5';
 
             var label = document.createElement('input');
             label.type = 'text';
             label.id = 'text' + i;
-            label.rows = 1;
-            // label.cols = 100;
-            label.style.width = '80%';
-            label.style.display = 'inline';
             label.value = allPages[i].title;
 
             var buttons = document.createElement('span');
@@ -89,7 +85,7 @@ function showEditor() {
         }
         modalList.appendChild(list);
         $(list).sortable({
-            handle: '#dragHandler',
+            handle: '.chapterEditor-drag-handler',
         });
     }
 
