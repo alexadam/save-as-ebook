@@ -8,11 +8,11 @@ if (tmp) {
 }
 showEditor();
 
+var allPagesRef = null;
 
 
 
 function showEditor() {
-    var allPagesRef = null;
 
     var body = document.getElementsByTagName('body')[0];
     var modalContent = document.createElement('div');
@@ -42,7 +42,6 @@ function showEditor() {
 
     var titleHolder = document.createElement('div');
     titleHolder.id = 'chapterEditor-ebookTitleHolder';
-    titleHolder.className = 'chapterEditor-chapter-item';
 
     var ebookTilteLabel = document.createElement('span');
     ebookTilteLabel.id = 'chapterEditor-ebookTitleLabel';
@@ -61,11 +60,13 @@ function showEditor() {
 
         var list = document.createElement('ul');
         list.className = 'chapterEditor-chapters-list';
-        // list.style.listStyle = 'none';
-        for (var i = 0; i < allPages.length; i++) {
-            if (!allPages[i]) {
+
+        for (var i = 0; i < allPagesRef.length; i++) {
+            if (!allPagesRef[i]) {
                 continue;
             }
+            allPagesRef[i].removed = false;
+
             var listItem = document.createElement('li');
             listItem.id = 'li' + i;
             listItem.className = 'chapterEditor-chapter-item';
@@ -77,7 +78,7 @@ function showEditor() {
             var label = document.createElement('input');
             label.type = 'text';
             label.id = 'text' + i;
-            label.value = allPages[i].title;
+            label.value = allPagesRef[i].title;
 
             var buttons = document.createElement('span');
 
@@ -116,7 +117,7 @@ function showEditor() {
 
     var saveButton = document.createElement('button');
     saveButton.onclick = function() {
-        buildEbook();
+        prepareEbook();
     };
     saveButton.innerText = 'Generate eBook ...';
     saveButton.className = 'chapterEditor-footer-button chapterEditor-float-right chapterEditor-generate-button';
@@ -182,6 +183,45 @@ function showEditor() {
         return function() {
             alert(allPagesRef[atIndex].content.trim().substring(0, 500) + ' ...');
         };
+    }
+
+    function prepareEbook() {
+        var newChapters = [];
+        var newEbookTitle = ebookTilte.value;
+        if (newEbookTitle.trim() === '') {
+            newEbookTitle = 'eBook';
+        }
+
+        try {
+
+            var tmpChaptersList = document.getElementsByClassName('chapterEditor-chapter-item');
+            if (!tmpChaptersList || !allPagesRef) {
+                return;
+            }
+
+            for (var i = 0; i < tmpChaptersList.length; i++) {
+                var listIndex = Number(tmpChaptersList[i].id.replace('li', ''));
+                if (allPagesRef[listIndex].removed === false) {
+                    newChapters.push(allPagesRef[listIndex]);
+                }
+            }
+
+            if (newChapters.length === 0) {
+                alert('Can\'t generate an empty eBook!');
+                return;
+            }
+
+            newChapters.splice(0, 0, {
+                type: 'title',
+                title: newEbookTitle
+            });
+
+            saveEbookPages(newChapters);
+            buildEbook();
+        } catch (e) {
+            console.log(e);
+        }
+
     }
 
     /////////////////////

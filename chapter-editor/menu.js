@@ -1,5 +1,10 @@
 
 document.getElementById("editChapters").onclick = function() {
+
+    if (document.getElementById('chapterEditor-Modal')) {
+        return;
+    }
+
     chrome.tabs.query({
         currentWindow: true,
         active: true

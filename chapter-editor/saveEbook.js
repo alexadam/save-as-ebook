@@ -18,14 +18,18 @@ function buildEbook() {
 
 // http://ebooks.stackexchange.com/questions/1183/what-is-the-minimum-required-content-for-a-valid-epub
 function _buildEbook(allPages) {
-    allPages = allPages.filter(function (page) {
+    allPages = allPages.filter(function(page) {
         return page !== null;
     });
 
     console.log('Prepare Content...');
-    ebookName = allPages[0].title + '.epub';
-    var zip = new JSZip();
 
+    ebookName = allPages[0].title + '.epub';
+    if (allPages[0].type === 'title') {
+        allPages.shift();
+    }
+
+    var zip = new JSZip();
     zip.file('mimetype', 'application/epub+zip');
 
     var metaInfFolder = zip.folder("META-INF");
@@ -51,7 +55,6 @@ function _buildEbook(allPages) {
         '<nav id="toc" epub:type="toc">' +
         '<h1 class="frontmatter">Table of Contents</h1>' +
         '<ol class="contents">' +
-        // '<li><a href="pages/' + pageName + '">' + ebookName + '</a></li>' + // TODO remove
         allPages.reduce(function(prev, page) {
             return prev + '\n' + '<li><a href="pages/' + page.url + '">' + page.title + '</a></li>';
         }, '') +
@@ -147,19 +150,14 @@ function _buildEbook(allPages) {
 
     var done = false;
 
-    // $.when.apply($, imgsPromises).done(function() {
-    //     done = true;
-        zip.generateAsync({
-                type: "blob"
-            })
-            .then(function(content) {
-                saveAs(content, ebookName);
-            });
-        console.log("done !");
-    // }).fail(function(err) {
-    //     console.log(err);
-    //     alert('99999 ' + err);
-    // });
+    zip.generateAsync({
+            type: "blob"
+        })
+        .then(function(content) {
+            done = true;
+            console.log("done !");
+            saveAs(content, ebookName);
+        });
 
     setTimeout(function() {
         if (done) {
@@ -169,9 +167,10 @@ function _buildEbook(allPages) {
                 type: "blob"
             })
             .then(function(content) {
-                alert('SAVE AS');
-                // saveAs(content, ebookName);
+                saveAs(content, ebookName);
             });
     }, 60000);
+
+    removeEbook();
 
 }
