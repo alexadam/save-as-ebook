@@ -56,6 +56,8 @@ function dispatch(action, justAddToBuffer) {
                     saveEbookPages(allPages);
                     if (!justAddToBuffer) {
                         buildEbook();
+                    } else {
+                        window.close();
                     }
                 });
             });

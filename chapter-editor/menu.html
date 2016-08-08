@@ -1,74 +1,59 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <style>
-            .row {
-                width: 320px;
-                margin-bottom: 5px;
-            }
-            .menu-holder {
-                padding: 5px;
-                padding-right: 10px;
-                margin: 0;
-                width: 320px;
-                /*height: 500px;*/
-            }
 
-            .menu-item {
-                display: inline-block;
-                width: 49%;
-            }
+<head>
+    <meta charset="utf-8">
+    <style>
+        .menu-holder {
+            padding: 5px;
+            margin: 0;
+            width: 200px;
+        }
 
-            .menu-item-full {
-                display: inline-block;
-                width: 100%;
-            }
+        #menuTitle {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
 
-            ul, li {
-                display: block;
-                width: 300px;
-                margin: 0;
-                padding: 0;
-            }
+        button {
+            font-family: sans-serif;
+            font-size: 14px;
+            width: 100%;
+            padding: 8px 10px;
+            border: none;
+            background-color: white;
+            text-align: left;
+        }
 
-            li {
-                border-bottom: solid 1px #ccc;
-                padding: 5px 0;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="menu-holder">
-            <div class="row">
-                <b>Save as Ebook:</b>
-            </div>
-            <div class="row">
-                <button id="savePage" type="button" name="button" class="menu-item">Save Page</button>
-                <button id="saveSelection" type="button" name="button" class="menu-item">Save Selection</button>
-            </div>
-            <hr/>
-            <div class="row">
-                <button id="pageChapter" type="button" name="button" class="menu-item">Add Page as Chapter</button>
-                <button id="selectionChapter" type="button" name="button" class="menu-item">Add Selection as Chapter</button>
-            </div>
-            <hr/>
-            <div class="row">
-                <button id="editChapters" type="button" name="button" class="menu-item-full">Edit Chapters...</button>
-            </div>
-            <div class="row">
-                <ul id="chapters" class="menu-item-full"></ul>
-                <button id="saveChapters" type="button" name="button" class="menu-item-full">Save Chapters</button>
-            </div>
-        </div>
+        button:hover {
+            background-color: #007fff;
+            color: white;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="menu-holder">
+        <div id="menuTitle">Save as eBook:</div>
+        <button id="savePage" type="button" name="button">Save Page</button>
+        <button id="saveSelection" type="button" name="button">Save Selection</button>
+        <hr/>
+        <button id="pageChapter" type="button" name="button">Add Page as Chapter</button>
+        <button id="selectionChapter" type="button" name="button">Add Selection as Chapter</button>
+        <hr/>
+        <button id="editChapters" type="button" name="button">Edit Chapters ...</button>
+    </div>
 
 
-        <script src="jquery.js" charset="utf-8"></script>
-        <script src="filesaver.js" charset="utf-8"></script>
-        <script src="jszip.js" charset="utf-8"></script>
-        <script src="jszip-utils.js" charset="utf-8"></script>
-        <script src="utils.js" charset="utf-8"></script>
-        <script src="saveEbook.js" charset="utf-8"></script>
-        <script src="menu.js" charset="utf-8"></script>
-    </body>
+    <script src="jquery.js" charset="utf-8"></script>
+    <script src="filesaver.js" charset="utf-8"></script>
+    <script src="jszip.js" charset="utf-8"></script>
+    <script src="jszip-utils.js" charset="utf-8"></script>
+    <script src="utils.js" charset="utf-8"></script>
+    <script src="saveEbook.js" charset="utf-8"></script>
+    <script src="menu.js" charset="utf-8"></script>
+</body>
+
 </html>
