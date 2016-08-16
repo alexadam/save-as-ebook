@@ -1,5 +1,6 @@
 var allImgSrc = {};
 var allImgsData = {};
+var maxNrOfElements = 10000;
 //////
 
 function getImageSrc(srcTxt) {
@@ -15,6 +16,7 @@ function force(contentString) {
         var tagOpen = '@@@'; //TODO
         var tagClose = '###';
         var inlineElements = ['h1', 'h2', 'h3', 'sup', 'b', 'i', 'em', 'code', 'pre', 'p'];
+        var replaceElements = [['li', 'p']];
 
         var $content = $(contentString);
 
@@ -28,10 +30,19 @@ function force(contentString) {
             $(elem).replaceWith('<span>' + tagOpen + 'a href="' + getHref($(elem).attr('href')) + '"' + tagClose + $(elem).html() + tagOpen + '/a' + tagClose + '</span>');
         });
 
-        if ($('*').length < 10000) { // TODO
+        if ($('*').length < maxNrOfElements) { // TODO
             inlineElements.forEach(function (tagName) {
                 $content.find(tagName).each(function (index, elem) {
-                    $(elem).replaceWith('<span>' + tagOpen + tagName + tagClose + $(elem).html() + tagOpen + '/' + tagName + tagClose + '</span>');
+                    var $elem = $(elem);
+                    $elem.replaceWith('<span>' + tagOpen + tagName + tagClose + $elem.html() + tagOpen + '/' + tagName + tagClose + '</span>');
+                });
+            });
+
+            replaceElements.forEach(function (replacePair) {
+                var tagName = replacePair[1];
+                $content.find(replacePair[0]).each(function (index, elem) {
+                    var $elem = $(elem);
+                    $elem.replaceWith('<span>' + tagOpen + tagName + tagClose + $elem.html() + tagOpen + '/' + tagName + tagClose + '</span>');
                 });
             });
         }
@@ -42,12 +53,11 @@ function force(contentString) {
         var tagCloseRegex = new RegExp(tagClose, 'gi');
         contentString = contentString.replace(tagOpenRegex, '<');
         contentString = contentString.replace(tagCloseRegex, '>');
-        contentString = contentString.replace(/&amp;/gi, '&'); // TODO ??
+        contentString = contentString.replace(/&amp;/gi, '&');
         contentString = contentString.replace(/&/gi, '&amp;');
 
         return contentString;
     } catch(e) {
-        console.log('ERROR');
         console.log(e);
     }
 }
@@ -68,8 +78,16 @@ function sanitize(rawContentString) {
 
         ////////////////
 
-
         return force(dirty); // TODO
+
+
+        /// TODO
+
+        if ($('*').length < maxNrOfElements) { // TODO
+            return force(dirty); // TODO
+        }
+
+
 
 
         // var dirty = '<div>' + document.getElementsByTagName('body')[0].innerHTML + '</div>';
@@ -203,9 +221,6 @@ function deferredAddZip(url, filename, zip) {
             deferred.reject(err);
         } else {
             allImgsData[filename] = base64ArrayBuffer(data);
-            // zip.file(filename, data, {
-            //     binary: true
-            // });
             deferred.resolve(data);
         }
     });
@@ -254,7 +269,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             imgsData: allImgsData,
             content: tmpContent
         };
-        console.log('Html Extracted');
         sendResponse(result);
     }).fail(function(err) {
         console.log('ERROR', JSON.stringify(err));
