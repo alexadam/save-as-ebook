@@ -14,7 +14,11 @@ function _getEbookPages() {
 }
 
 function _saveEbookPages(pages) {
-    localStorage.setItem('ebook', JSON.stringify(pages));
+    try {
+        localStorage.setItem('ebook', JSON.stringify(pages));
+    } catch (e) {
+        alert(e);
+    }
 }
 
 function _removeEbook() {
@@ -31,4 +35,5 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.type === 'remove') {
         _removeEbook();
     }
+    return true;
 });

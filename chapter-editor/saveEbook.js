@@ -12,8 +12,12 @@ function getExternalLinksIndex() { // TODO ???
     }, '');
 }
 
-function buildEbook() {
+function buildEbookFromChapters() {
     getEbookPages(_buildEbook);
+}
+
+function buildEbook(allPages) {
+    _buildEbook(allPages);
 }
 
 // http://ebooks.stackexchange.com/questions/1183/what-is-the-minimum-required-content-for-a-valid-epub

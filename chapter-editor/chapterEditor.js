@@ -217,9 +217,9 @@ function showEditor() {
             });
 
             saveEbookPages(newChapters);
-            buildEbook();
+            buildEbookFromChapters();
         } catch (e) {
-            console.log(e);
+            console.log('Error:', e);
         }
 
     }

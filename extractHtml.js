@@ -11,16 +11,24 @@ function getImageSrc(srcTxt) {
     return '../images/' + allImgSrc[srcTxt];
 }
 
+function generateRandomTag() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+    for(var i = 0; i < 10; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+
 function force(contentString) {
     try {
-        var tagOpen = '@@@'; //TODO
-        var tagClose = '###';
+        var tagOpen = '@@@' + generateRandomTag();
+        var tagClose = '###' + generateRandomTag();
         var inlineElements = ['h1', 'h2', 'h3', 'sup', 'b', 'i', 'em', 'code', 'pre', 'p'];
         var replaceElements = [['li', 'p']];
 
         var $content = $(contentString);
-
-        // TODO replace li with p
 
         $content.find('img').each(function (index, elem) {
             $(elem).replaceWith('<span>' + tagOpen + 'img src="' + getImageSrc($(elem).attr('src')) + '"' + tagClose + tagOpen + '/img' + tagClose + '</span>');
@@ -30,7 +38,7 @@ function force(contentString) {
             $(elem).replaceWith('<span>' + tagOpen + 'a href="' + getHref($(elem).attr('href')) + '"' + tagClose + $(elem).html() + tagOpen + '/a' + tagClose + '</span>');
         });
 
-        if ($('*').length < maxNrOfElements) { // TODO
+        if ($('*').length < maxNrOfElements) {
             inlineElements.forEach(function (tagName) {
                 $content.find(tagName).each(function (index, elem) {
                     var $elem = $(elem);
@@ -57,8 +65,8 @@ function force(contentString) {
         contentString = contentString.replace(/&/gi, '&amp;');
 
         return contentString;
-    } catch(e) {
-        console.log(e);
+    } catch (e) {
+        console.log('Error:', e);
     }
 }
 
@@ -77,20 +85,11 @@ function sanitize(rawContentString) {
         dirty = '<div>' + $wdirty.html() + '</div>';
 
         ////////////////
+        return force(dirty);
 
-        return force(dirty); // TODO
-
-
-        /// TODO
-
-        if ($('*').length < maxNrOfElements) { // TODO
-            return force(dirty); // TODO
+        if ($('*').length < maxNrOfElements) {
+            return force(dirty);
         }
-
-
-
-
-        // var dirty = '<div>' + document.getElementsByTagName('body')[0].innerHTML + '</div>';
 
         var results = '';
         var lastFragment = '';
@@ -163,15 +162,14 @@ function sanitize(rawContentString) {
             }
         });
 
-        // results = results.replace(/<([^>]+?)>\s*<\/\1>/gim, '');
-        results = results.replace(/&[a-z]+;/gim, '');
+        // results = results.replace(/&[a-z]+;/gim, '');
+        results = results.replace(/&amp;/gi, '&');
+        results = results.replace(/&/gi, '&amp;');
 
         return results;
 
     } catch (e) {
-        console.trace();
-        console.log(e);
-
+        console.log('Error:', e);
         return force(dirty);
     }
 
@@ -184,7 +182,7 @@ function getContent(htmlContent) {
         var dirty = '<div>' + tmp.innerHTML + '</div>';
         return sanitize(dirty);
     } catch (e) {
-        console.log(e);
+        console.log('Error:', e);
         return '';
     }
 }
@@ -200,10 +198,10 @@ function getPageTitle(inp) { //TODO
 }
 
 function getSelectedNodes() {
-    if (document.selection) {
+    // if (document.selection) {
         // return document.selection.createRange().parentElement();
-        return document.selection.createRange();
-    }
+        // return document.selection.createRange();
+    // }
     var selection = window.getSelection();
     var docfrag = [];
     for (var i = 0; i < selection.rangeCount; i++) {
@@ -259,8 +257,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             var tmpDeffered = deferredAddZip(getImgDownloadUrl(imgSrc), allImgSrc[imgSrc]);
             imgsPromises.push(tmpDeffered);
         } catch (e) {
-            alert(e);
-            console.log(e);
+            console.log('Error:', e);
         }
     });
 
@@ -273,8 +270,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             content: tmpContent
         };
         sendResponse(result);
-    }).fail(function(err) {
-        console.log('ERROR', JSON.stringify(err));
+    }).fail(function(e) {
+        console.log('Error:', e);
     });
 
     return true;

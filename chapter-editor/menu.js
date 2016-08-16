@@ -7,7 +7,8 @@ document.getElementById("editChapters").onclick = function() {
 
     chrome.tabs.query({
         currentWindow: true,
-        active: true
+        active: true,
+        highlighted: true
     }, function(tab) {
 
         chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jquery.js'});
@@ -35,7 +36,8 @@ function dispatch(action, justAddToBuffer) {
     }
     chrome.tabs.query({
         currentWindow: true,
-        active: true
+        active: true,
+        highlighted: true
     }, function(tab) {
 
         chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jquery.js'});
@@ -51,15 +53,15 @@ function dispatch(action, justAddToBuffer) {
             chrome.tabs.sendMessage(tab[0].id, {
                 type: action
             }, function(response) {
-                getEbookPages(function (allPages) {
-                    allPages.push(response);
-                    saveEbookPages(allPages);
-                    if (!justAddToBuffer) {
-                        buildEbook();
-                    } else {
+                if (!justAddToBuffer) {
+                    buildEbook([response]);
+                } else {
+                    getEbookPages(function (allPages) {
+                        allPages.push(response);
+                        saveEbookPages(allPages);
                         window.close();
-                    }
-                });
+                    });
+                }
             });
         });
     });
@@ -79,8 +81,4 @@ document.getElementById('pageChapter').onclick = function() {
 
 document.getElementById('selectionChapter').onclick = function() {
     dispatch('extract-selection', true);
-};
-
-document.getElementById('saveChapters').onclick = function() {
-    buildEbook();
 };
