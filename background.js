@@ -1,6 +1,9 @@
+var customStorage = null;
+
 function _getEbookPages() {
     try {
-        var allPages = localStorage.getItem('ebook');
+        // var allPages = localStorage.getItem('ebook');
+        var allPages = customStorage;
         if (!allPages) {
             allPages = [];
         } else {
@@ -15,14 +18,16 @@ function _getEbookPages() {
 
 function _saveEbookPages(pages) {
     try {
-        localStorage.setItem('ebook', JSON.stringify(pages));
+        // localStorage.setItem('ebook', JSON.stringify(pages));
+        customStorage = JSON.stringify(pages);
     } catch (e) {
         alert(e);
     }
 }
 
 function _removeEbook() {
-    localStorage.removeItem('ebook');
+    // localStorage.removeItem('ebook');
+    customStorage = null;
 }
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
