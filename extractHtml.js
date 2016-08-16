@@ -1,5 +1,5 @@
 var allImgSrc = {};
-var allImgsData = {};
+var allImages = [];
 var maxNrOfElements = 10000;
 //////
 
@@ -220,8 +220,12 @@ function deferredAddZip(url, filename, zip) {
         if (err) {
             deferred.reject(err);
         } else {
-            allImgsData[filename] = base64ArrayBuffer(data);
-            deferred.resolve(data);
+            var tmpImg = {
+                filename: filename,
+                data: base64ArrayBuffer(data)
+            };
+            allImages.push(tmpImg);
+            deferred.resolve();
         }
     });
     return deferred;
@@ -231,7 +235,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     console.log('Extract Html...');
     var imgsPromises = [];
     allImgSrc = {};
-    allImgsData = {};
+    allImages = [];
     var result = {};
     var pageSrc = '';
     var tmpContent = '';
@@ -263,10 +267,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     $.when.apply($, imgsPromises).done(function() {
         result = {
             url: getPageUrl(document.title),
-            title: getPageTitle(document.title), //gatPageTitle(document.title),
+            title: getPageTitle(document.title),
             baseUrl: getCurrentUrl(),
-            imgs: allImgSrc,
-            imgsData: allImgsData,
+            images: allImages,
             content: tmpContent
         };
         sendResponse(result);
