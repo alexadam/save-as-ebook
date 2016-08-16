@@ -161,6 +161,12 @@ function showEditor() {
 
     modal.style.display = "block";
 
+    document.onkeydown = function(evt) {
+        evt = evt || window.event;
+        if (evt.keyCode == 27) {
+            closeModal();
+        }
+    };
 
     function closeModal() {
         for (var i=0; i<document.styleSheets.length; i++) {
@@ -181,7 +187,7 @@ function showEditor() {
 
     function previewListItem(atIndex) {
         return function() {
-            alert(allPagesRef[atIndex].content.trim().substring(0, 500) + ' ...');
+            alert(allPagesRef[atIndex].content.trim().substring(0, 500).replace(/<[^>]+>/gi, '') + ' ...');
         };
     }
 

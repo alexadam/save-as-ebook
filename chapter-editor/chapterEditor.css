@@ -43,6 +43,12 @@ ul.chapterEditor-chapters-list li.placeholder {
     font-family: sans-serif;
     margin-right: 10px;
 }
+#chapterEditor-ebookTitle {
+    padding: 5px;
+    font-size: 15px;
+    font-family: "sans-serif";
+    width: 85%;
+}
 ul, ul.chapterEditor-chapters-list {
     width: 100%;
     display: block;
@@ -140,14 +146,11 @@ ul, ul.chapterEditor-chapters-list {
     cursor: pointer;
 }
 .chapterEditor-generate-button {
-    /*background-color: green;*/
     background-color: yellow;
 }
 .chapterEditor-cancel-button {
     /*background-color: black;*/
 }
-
-
 
 @media (max-width: 1700px) {
     .chapterEditor-chapter-item {
