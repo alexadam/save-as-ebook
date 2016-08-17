@@ -1,10 +1,10 @@
 {
 
     "manifest_version": 2,
-    "name": "Save As E-Book",
+    "name": "Save As eBook",
     "version": "1.0",
 
-    "description": "Adds a solid red border to all webpages matching mozilla.org.",
+    "description": "Save a web page or selection as eBook",
 
     "icons": {
         "48": "icons/border-48.png"
@@ -12,7 +12,7 @@
 
     "content_scripts": [{
         "matches": ["<all_urls>"],
-        "js": ["chapter-editor/jquery.js", "chapter-editor/jszip.js", "chapter-editor/jszip-utils.js", "chapter-editor/utils.js", "pure-parser.js", "extractHtml.js"]
+        "js": ["jquery.js", "jszip.js", "jszip-utils.js", "utils.js", "pure-parser.js", "extractHtml.js"]
     }],
 
     "background": {
@@ -21,8 +21,8 @@
 
     "browser_action": {
         "default_icon": "icon.png",
-        "default_title": "Beastify",
-        "default_popup": "chapter-editor/menu.html"
+        "default_title": "Save as eBook",
+        "default_popup": "menu.html"
      },
 
     "permissions": [

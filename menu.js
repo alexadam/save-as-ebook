@@ -11,17 +11,17 @@ document.getElementById("editChapters").onclick = function() {
         highlighted: true
     }, function(tab) {
 
-        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jquery.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/utils.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/filesaver.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jszip.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jszip-utils.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/saveEbook.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jquery-sortable.js'});
-        chrome.tabs.insertCSS(tab[0].id, {file: '/chapter-editor/chapterEditor.css'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/jquery.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/utils.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/filesaver.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/jszip.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/jszip-utils.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/saveEbook.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/jquery-sortable.js'});
+        chrome.tabs.insertCSS(tab[0].id, {file: '/chapterEditor.css'});
 
         chrome.tabs.executeScript(tab[0].id, {
-            file: '/chapter-editor/chapterEditor.js'
+            file: '/chapterEditor.js'
         });
 
          window.close();
@@ -40,11 +40,11 @@ function dispatch(action, justAddToBuffer) {
         highlighted: true
     }, function(tab) {
 
-        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jquery.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/utils.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/filesaver.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jszip.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/chapter-editor/jszip-utils.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/jquery.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/utils.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/filesaver.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/jszip.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/jszip-utils.js'});
         chrome.tabs.executeScript(tab[0].id, {file: '/pure-parser.js'});
 
         chrome.tabs.executeScript(tab[0].id, {
