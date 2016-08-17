@@ -4,10 +4,10 @@
     "name": "Save As eBook",
     "version": "1.0",
 
-    "description": "Save a web page or selection as eBook",
+    "description": "Save a web page or selection as eBook (.epub)",
 
     "icons": {
-        "48": "icons/border-48.png"
+        "48": "icons/book48.png"
     },
 
     "content_scripts": [{
@@ -20,7 +20,7 @@
     },
 
     "browser_action": {
-        "default_icon": "icon.png",
+        "default_icon": "icons/book32.png",
         "default_title": "Save as eBook",
         "default_popup": "menu.html"
      },
