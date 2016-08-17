@@ -193,8 +193,8 @@ function getPageUrl(url) {
     return url.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'') + Math.floor(Math.random() * 10000) + '.xhtml';
 }
 
-function getPageTitle(inp) { //TODO
-    return inp;
+function getPageTitle(title) { //TODO
+    return title;
 }
 
 function getSelectedNodes() {

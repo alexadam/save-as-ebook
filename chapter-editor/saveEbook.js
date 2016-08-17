@@ -6,7 +6,7 @@ function getImagesIndex(allImages) {
     }, '');
 }
 
-function getExternalLinksIndex() { // TODO ???
+function getExternalLinksIndex() { // TODO
     return allExternalLinks.reduce(function(prev, elem, index) {
         return prev + '\n' + '<item href="' + elem + '" />';
     }, '');
@@ -79,7 +79,6 @@ function _buildEbook(allPages) {
         '<text></text>' +
         '</docTitle>' +
         '<navMap>' +
-        // '<content src="pages/' + pageName + '" />' + // TODO remove
         allPages.reduce(function(prev, page, index) {
             return prev + '\n' +
                 '<navPoint id="ebook' + index + '" playOrder="' + (index + 1) + '">' +
@@ -120,7 +119,6 @@ function _buildEbook(allPages) {
         '<item id="toc" properties="nav" href="toc.xhtml" media-type="application/xhtml+xml" />' +
         '<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />' +
         '<item id="template_css" href="' + cssFileName + '" media-type="text/css" />' +
-        // '<item id="ebook" href="pages/' + pageName + '" media-type="application/xhtml+xml" />' + //properties="remote-resources" // TODO remove
         allPages.reduce(function(prev, page, index) {
             return prev + '\n' + '<item id="ebook' + index + '" href="pages/' + page.url + '" media-type="application/xhtml+xml" />';
         }, '') +
@@ -130,7 +128,6 @@ function _buildEbook(allPages) {
         // getExternalLinksIndex() +
         '</manifest>' +
         '<spine toc="ncx">' +
-        // '<itemref idref="ebook" />' + // TODO remove
         allPages.reduce(function(prev, page, index) {
             return prev + '\n' + '<itemref idref="ebook' + index + '" />';
         }, '') +
@@ -138,9 +135,6 @@ function _buildEbook(allPages) {
         '</package>'
     );
 
-
-
-    ///////////////
     ///////////////
     var imgsFolder = oebps.folder("images");
     allPages.forEach(function(page) {
