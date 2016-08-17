@@ -15,18 +15,85 @@ function generateRandomTag() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-    for(var i = 0; i < 10; i++)
+    for(var i = 0; i < 5; i++)
         text += possible.charAt(Math.floor(Math.random() * possible.length));
 
     return text;
 }
+
+
+// function force3(dirty) {
+//     var tagOpen = '@@@';// + generateRandomTag();
+//     var tagClose = '###';// + generateRandomTag();
+//     var removeElements = ['script', 'style', 'svg', 'canvas', 'noscript'];
+//     var inlineElements = ['h1', 'h2', 'h3', 'sup', 'b', 'i', 'em', 'code', 'pre', 'p'];
+//     var replaceElements = [['li', 'p'], ['tr', 'p']];
+//
+//     // var bodyClone = document.getElementsByTagName('body')[0].cloneNode(true);
+//
+//     var bodyClone = document.createElement('div');
+//     bodyClone.innerHTML = dirty;
+//
+//
+//     /////
+//
+//     var imgs = bodyClone.getElementsByTagName('img');
+//     for (var i = 0; i < imgs.length; i++) {
+//         var newImg = document.createElement('span');
+//         newImg.innerHTML = tagOpen + 'img src="' + getImageSrc(imgs[i].getAttribute('src')) + '"' + tagClose + tagOpen + '/img' + tagClose;
+//         imgs[i].parentNode.replaceChild(newImg, imgs[i]);
+//     }
+//
+//     var links = bodyClone.getElementsByTagName('a');
+//     for (i = 0; i < links.length; i++) {
+//         var newLink = document.createElement('span');
+//         newLink.innerHTML = tagOpen + 'a href="' + getHref(links[i].getAttribute('href')) + '"' + tagClose + links[i].innerHTML + tagOpen + '/a' + tagClose;
+//         links[i].parentNode.replaceChild(newLink, links[i]);
+//     }
+//
+//     for (i = 0; i < inlineElements.length; i++) {
+//         var tagName = inlineElements[i];
+//         var miscElements = bodyClone.getElementsByTagName(tagName);
+//         for (var j = 0; j < miscElements.length; j++) {
+//             var elemToBeReplaced = miscElements[j];
+//             var newElement = document.createElement('span');
+//             newElement.innerHTML = tagOpen + tagName + tagClose + elemToBeReplaced.innerHTML + tagOpen + '/' + tagName + tagClose;
+//             elemToBeReplaced.parentNode.replaceChild(newElement, elemToBeReplaced);
+//         }
+//     }
+//
+//     for (i = 0; i < replaceElements.length; i++) {
+//         var crtTagPair = replaceElements[i];
+//         var searchForTag = crtTagPair[0];
+//         var replaceWithTag = crtTagPair[1];
+//         var miscElements = bodyClone.getElementsByTagName(searchForTag);
+//         for (var j = 0; j < miscElements.length; j++) {
+//             var elemToBeReplaced = miscElements[j];
+//             var newElement = document.createElement('span');
+//             newElement.innerHTML = tagOpen + replaceWithTag + tagClose + elemToBeReplaced.innerHTML + tagOpen + '/' + replaceWithTag + tagClose;
+//             elemToBeReplaced.parentNode.replaceChild(newElement, elemToBeReplaced);
+//         }
+//     }
+//
+//     var contentString = bodyClone.innerText;
+//
+//     var tagOpenRegex = new RegExp(tagOpen, 'gi');
+//     var tagCloseRegex = new RegExp(tagClose, 'gi');
+//     contentString = contentString.replace(tagOpenRegex, '<');
+//     contentString = contentString.replace(tagCloseRegex, '>');
+//     contentString = contentString.replace(/&amp;/gi, '&');
+//     contentString = contentString.replace(/&/gi, '&amp;');
+//
+//     return contentString;
+//
+// }
 
 function force(contentString) {
     try {
         var tagOpen = '@@@' + generateRandomTag();
         var tagClose = '###' + generateRandomTag();
         var inlineElements = ['h1', 'h2', 'h3', 'sup', 'b', 'i', 'em', 'code', 'pre', 'p'];
-        var replaceElements = [['li', 'p']];
+        var replaceElements = [['li', 'p'], ['tr', 'p']];
 
         var $content = $(contentString);
 
@@ -39,19 +106,24 @@ function force(contentString) {
         });
 
         if ($('*').length < maxNrOfElements) {
-            inlineElements.forEach(function (tagName) {
-                $content.find(tagName).each(function (index, elem) {
-                    var $elem = $(elem);
-                    $elem.replaceWith('<span>' + tagOpen + tagName + tagClose + $elem.html() + tagOpen + '/' + tagName + tagClose + '</span>');
-                });
+            replaceElements.forEach(function (replacePair) {
+                var searchFor = replacePair[0];
+                var tagName = replacePair[1];
+                var tmpElems = $content.find(searchFor);
+                while (tmpElems.length > 0) {
+                    $tmpElem = $(tmpElems[0]);
+                    $tmpElem.replaceWith('<span>' + tagOpen + tagName + tagClose + $tmpElem.html() + tagOpen + '/' + tagName + tagClose + '</span>');
+                    tmpElems = $content.find(searchFor);
+                }
             });
 
-            replaceElements.forEach(function (replacePair) {
-                var tagName = replacePair[1];
-                $content.find(replacePair[0]).each(function (index, elem) {
-                    var $elem = $(elem);
-                    $elem.replaceWith('<span>' + tagOpen + tagName + tagClose + $elem.html() + tagOpen + '/' + tagName + tagClose + '</span>');
-                });
+            inlineElements.forEach(function (tagName) {
+                var tmpElems = $content.find(tagName);
+                while (tmpElems.length > 0) {
+                    $tmpElem = $(tmpElems[0]);
+                    $tmpElem.replaceWith('<span>' + tagOpen + tagName + tagClose + $tmpElem.html() + tagOpen + '/' + tagName + tagClose + '</span>');
+                    tmpElems = $content.find(tagName);
+                }
             });
         }
 
@@ -216,7 +288,8 @@ function deferredAddZip(url, filename, zip) {
     var deferred = $.Deferred();
     JSZipUtils.getBinaryContent(url, function(err, data) {
         if (err) {
-            deferred.reject(err);
+            // deferred.reject(err); TODO
+            deferred.resolve();
         } else {
             var tmpImg = {
                 filename: filename,
