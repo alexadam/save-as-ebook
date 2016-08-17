@@ -7,8 +7,7 @@ document.getElementById("editChapters").onclick = function() {
 
     chrome.tabs.query({
         currentWindow: true,
-        active: true,
-        highlighted: true
+        active: true
     }, function(tab) {
 
         chrome.tabs.executeScript(tab[0].id, {file: '/jquery.js'});
@@ -36,8 +35,7 @@ function dispatch(action, justAddToBuffer) {
     }
     chrome.tabs.query({
         currentWindow: true,
-        active: true,
-        highlighted: true
+        active: true
     }, function(tab) {
 
         chrome.tabs.executeScript(tab[0].id, {file: '/jquery.js'});

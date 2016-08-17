@@ -157,9 +157,7 @@ function sanitize(rawContentString) {
         dirty = '<div>' + $wdirty.html() + '</div>';
 
         ////////////////
-        return force(dirty);
-
-        if ($('*').length < maxNrOfElements) {
+        if ($('*').length > maxNrOfElements) {
             return force(dirty);
         }
 
