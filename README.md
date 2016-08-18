@@ -32,6 +32,13 @@ Save a web page/selection as an eBook (.epub format) - a Chrome/Firefox/Opera We
 3. Select the extension's directory
 ```
 
+## Convert .epub to .mobi
+
+```
+sudo apt-get install calibre
+ebook-convert "book.epub" "book.mobi"
+```
+
 ## To-Do
  - fix all 'epubcheck' errors (https://github.com/IDPF/epubcheck)
  - * there are some issues with relative URLs
@@ -47,6 +54,7 @@ Save a web page/selection as an eBook (.epub format) - a Chrome/Firefox/Opera We
  - add settings & options page (ui/ux)
 
 ## Credits
+ - http://ebooks.stackexchange.com/questions/1183/what-is-the-minimum-required-content-for-a-valid-epub
  - https://github.com/blowsie/Pure-JavaScript-HTML5-Parser
  - https://stuk.github.io/jszip/
  - http://johnny.github.io/jquery-sortable/

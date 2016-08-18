@@ -2,7 +2,7 @@ var cssFileName = 'ebook.css';
 
 function getImagesIndex(allImages) {
     return allImages.reduce(function(prev, elem, index) {
-        return prev + '\n' + '<item href="images/' + elem.filename + '" id="img' + index + '" media-type="image/' + getFileExtension(elem.filename) + '"/>';
+        return prev + '\n' + '<item href="images/' + elem.filename + '" id="img' + elem.filename + '" media-type="image/' + getFileExtension(elem.filename) + '"/>';
     }, '');
 }
 
@@ -76,7 +76,7 @@ function _buildEbook(allPages) {
         '<meta name="dtb:depth" content="1"/>' +
         '</head>' +
         '<docTitle>' +
-        '<text></text>' +
+        '<text>' + ebookName + '</text>' +
         '</docTitle>' +
         '<navMap>' +
         allPages.reduce(function(prev, page, index) {
@@ -99,7 +99,7 @@ function _buildEbook(allPages) {
             '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">' +
             '<head>' +
             '<title>' + page.title + '</title>' +
-            '<link href="' + cssFileName + '" rel="stylesheet" type="text/css" />' +
+            '<link href="../' + cssFileName + '" rel="stylesheet" type="text/css" />' +
             '</head><body>' +
             page.content +
             '</body></html>'
@@ -110,9 +110,9 @@ function _buildEbook(allPages) {
         '<?xml version="1.0" encoding="UTF-8" ?>' +
         '<package xmlns="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" unique-identifier="db-id" version="3.0">' +
         '<metadata>' +
-        '<dc:title id="t1">Title</dc:title>' +
+        '<dc:title id="t1">'+ ebookName + '</dc:title>' +
         '<dc:identifier id="db-id">isbn</dc:identifier>' +
-        '<meta property="dcterms:modified">2014-03-27T09:14:09Z</meta>' +
+        '<meta property="dcterms:modified">' + new Date().toISOString() + '</meta>' +
         '<dc:language>en</dc:language>' +
         '</metadata>' +
         '<manifest>' +
