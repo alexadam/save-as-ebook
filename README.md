@@ -1,6 +1,10 @@
 # save-as-ebook
 
-Save a web page/selection as an eBook (.epub format) - a Chrome/FireFox/Opera Web Extension
+Save a web page/selection as an eBook (.epub format) - a Chrome/Firefox/Opera Web Extension
+
+![alt ex1.png](https://github.com/alexadam/save-as-ebook/blob/master/examples/ex1.png?raw=true)
+
+![alt ex2.png](https://github.com/alexadam/save-as-ebook/blob/master/examples/ex2.png?raw=true)
 
 ## How to install it
 
@@ -43,8 +47,8 @@ Save a web page/selection as an eBook (.epub format) - a Chrome/FireFox/Opera We
  - add settings & options page (ui/ux)
 
 ## Credits
-https://github.com/blowsie/Pure-JavaScript-HTML5-Parser
-https://stuk.github.io/jszip/
-http://johnny.github.io/jquery-sortable/
-https://github.com/eligrey/FileSaver.js/
-https://www.iconfinder.com/icons/1031371/book_empty_library_reading_icon#size=128
+ - https://github.com/blowsie/Pure-JavaScript-HTML5-Parser
+ - https://stuk.github.io/jszip/
+ - http://johnny.github.io/jquery-sortable/
+ - https://github.com/eligrey/FileSaver.js/
+ - https://www.iconfinder.com/icons/1031371/book_empty_library_reading_icon#size=128
