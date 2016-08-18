@@ -10,8 +10,6 @@ showEditor();
 
 var allPagesRef = null;
 
-
-
 function showEditor() {
 
     var body = document.getElementsByTagName('body')[0];
@@ -37,8 +35,6 @@ function showEditor() {
     modalHeader.appendChild(upperCloseButton);
     /////////////////////
     // Content List
-
-    // TODO change ids - add prefix !!!!
 
     var titleHolder = document.createElement('div');
     titleHolder.id = 'chapterEditor-ebookTitleHolder';
@@ -152,7 +148,6 @@ function showEditor() {
     modalContent.style.padding = '0';
     modalContent.style.width = '70%';
 
-    // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
         if (event.target == modal) {
             closeModal();
