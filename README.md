@@ -1,6 +1,6 @@
 # save-as-ebook
 
-Save a web page/selection as an eBook (.epub format) - a Web Extension
+Save a web page/selection as an eBook (.epub format) - a Chrome/FireFox/Opera Web Extension
 
 ## How to install it
 
@@ -30,13 +30,21 @@ Save a web page/selection as an eBook (.epub format) - a Web Extension
 
 ## To-Do
  - fix all 'epubcheck' errors (https://github.com/IDPF/epubcheck)
+ - * there are some issues with relative URLs
  - clean & optimize code
  - create tests
+ - convert svg to png
+ - base64 imgs
+ - 'save as image' option (render a selection and save it as image instead of text)
+ - support other formats (mobi, pdf etc.)
  - show progress indication (ui/ux)
  - show confirmations (ui/ux)
  - display errors (ui/ux)
- - add settings page (ui/ux)
+ - add settings & options page (ui/ux)
 
 ## Credits
-
+https://github.com/blowsie/Pure-JavaScript-HTML5-Parser
+https://stuk.github.io/jszip/
+http://johnny.github.io/jquery-sortable/
+https://github.com/eligrey/FileSaver.js/
 https://www.iconfinder.com/icons/1031371/book_empty_library_reading_icon#size=128
