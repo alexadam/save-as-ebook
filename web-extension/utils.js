@@ -38,14 +38,22 @@ function getOriginUrl() {
 }
 
 function getFileExtension(fileName) {
-    var tmpFileName = fileName.split('.').pop();
-    if (tmpFileName.indexOf('?') > 0) {
-        tmpFileName = tmpFileName.split('?')[0];
+    try {
+        var tmpFileName = fileName.split('.').pop();
+        if (tmpFileName.indexOf('?') > 0) {
+            tmpFileName = tmpFileName.split('?')[0];
+        }
+        tmpFileName = tmpFileName.toLowerCase();
+        if (tmpFileName === 'jpg') {
+            tmpFileName = 'jpeg';
+        } else if (tmpFileName.trim() === '') {
+            return 'jpeg'; //TODO
+        }
+        return tmpFileName;
+    } catch (e) {
+        console.log('Error:', e);
+        return 'jpeg'; //TODO
     }
-    if (tmpFileName.trim() === '') {
-        return 'jpg'; //TODO
-    }
-    return tmpFileName;
 }
 
 function getHref(hrefTxt) {
