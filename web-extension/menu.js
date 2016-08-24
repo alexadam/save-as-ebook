@@ -25,8 +25,6 @@ document.getElementById("editChapters").onclick = function() {
 
          window.close();
     });
-
-
 };
 
 function dispatch(action, justAddToBuffer) {
@@ -37,31 +35,42 @@ function dispatch(action, justAddToBuffer) {
         currentWindow: true,
         active: true
     }, function(tab) {
+        chrome.tabs.sendMessage(tab[0].id, {
+            type: 'echo'
+        }, function(response) {
+            if (!response) {
+                chrome.tabs.executeScript(tab[0].id, {file: '/jquery.js'});
+                chrome.tabs.executeScript(tab[0].id, {file: '/utils.js'});
+                chrome.tabs.executeScript(tab[0].id, {file: '/filesaver.js'});
+                chrome.tabs.executeScript(tab[0].id, {file: '/jszip.js'});
+                chrome.tabs.executeScript(tab[0].id, {file: '/jszip-utils.js'});
+                chrome.tabs.executeScript(tab[0].id, {file: '/pure-parser.js'});
 
-        chrome.tabs.executeScript(tab[0].id, {file: '/jquery.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/utils.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/filesaver.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/jszip.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/jszip-utils.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/pure-parser.js'});
-
-        chrome.tabs.executeScript(tab[0].id, {
-            file: 'extractHtml.js'
-        }, function() {
-            chrome.tabs.sendMessage(tab[0].id, {
-                type: action
-            }, function(response) {
-                if (!justAddToBuffer) {
-                    buildEbook([response]);
-                } else {
-                    getEbookPages(function (allPages) {
-                        allPages.push(response);
-                        saveEbookPages(allPages);
-                        window.close();
-                    });
-                }
-            });
+                chrome.tabs.executeScript(tab[0].id, {
+                    file: 'extractHtml.js'
+                }, function() {
+                    sendMessage(tab[0].id, action, justAddToBuffer);
+                });
+            } else if (response.echo) {
+                sendMessage(tab[0].id, action, justAddToBuffer);
+            }
         });
+    });
+}
+
+function sendMessage(tabId, action, justAddToBuffer) {
+    chrome.tabs.sendMessage(tabId, {
+        type: action
+    }, function(response) {
+        if (!justAddToBuffer) {
+            buildEbook([response]);
+        } else {
+            getEbookPages(function (allPages) {
+                allPages.push(response);
+                saveEbookPages(allPages);
+                window.close();
+            });
+        }
     });
 }
 

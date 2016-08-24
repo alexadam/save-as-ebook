@@ -1,5 +1,5 @@
-var allImgSrc = {};
 var allImages = [];
+var extractedImages = [];
 var maxNrOfElements = 10000;
 //////
 
@@ -7,8 +7,23 @@ function getImageSrc(srcTxt) {
     if (!srcTxt) {
         return '';
     }
-    allImgSrc[srcTxt] = 'img-' + (Math.floor(Math.random()*1000000)) + '.' + getFileExtension(srcTxt);
-    return '../images/' + allImgSrc[srcTxt];
+    var isB64Img = isBase64Img(srcTxt);
+    var fileExtension = getFileExtension(srcTxt);
+    var newImgFileName = 'img-' + (Math.floor(Math.random()*1000000*Math.random()*100000)) + '.' + fileExtension;
+
+    if (isB64Img) {
+        extractedImages.push({
+            filename: newImgFileName, // TODO name
+            data: getBase64ImgData(srcTxt)
+        });
+    } else {
+        allImages.push({
+            originalUrl: getImgDownloadUrl(srcTxt),
+            filename: newImgFileName,  // TODO name
+        });
+    }
+
+    return '../images/' + newImgFileName;
 }
 
 function generateRandomTag() {
@@ -98,11 +113,11 @@ function force(contentString) {
         var $content = $(contentString);
 
         $content.find('img').each(function (index, elem) {
-            $(elem).replaceWith('<span>' + tagOpen + 'img src="' + getImageSrc($(elem).attr('src')) + '"' + tagClose + tagOpen + '/img' + tagClose + '</span>');
+            $(elem).replaceWith('<span>' + tagOpen + 'img src="' + getImageSrc($(elem).attr('src').trim()) + '"' + tagClose + tagOpen + '/img' + tagClose + '</span>');
         });
 
         $content.find('a').each(function (index, elem) {
-            $(elem).replaceWith('<span>' + tagOpen + 'a href="' + getHref($(elem).attr('href')) + '"' + tagClose + $(elem).html() + tagOpen + '/a' + tagClose + '</span>');
+            $(elem).replaceWith('<span>' + tagOpen + 'a href="' + getHref($(elem).attr('href').trim()) + '"' + tagClose + $(elem).html() + tagOpen + '/a' + tagClose + '</span>');
         });
 
         if ($('*').length < maxNrOfElements) {
@@ -144,14 +159,15 @@ function force(contentString) {
 
 // https://github.com/blowsie/Pure-JavaScript-HTML5-Parser
 function sanitize(rawContentString) {
-    allImgSrc = {};
+    allImages = [];
+    extractedImages = [];
     var srcTxt = '';
     var dirty = null;
     try {
         // dirty = getHtmlAsString(rawContent);
-        wdirty = $.parseHTML(rawContentString);
+        var wdirty = $.parseHTML(rawContentString);
         $wdirty = $(wdirty);
-        $wdirty.find('script, style, svg, canvas, noscript').remove();
+        $wdirty.find('script, style, svg, canvas, noscript').remove(); // TODO remove iframes
         $wdirty.find('*:empty').not('img').remove();
 
         dirty = '<div>' + $wdirty.html() + '</div>';
@@ -190,14 +206,14 @@ function sanitize(rawContentString) {
                     tattrs = attrs.filter(function(attr) {
                         return attr.name === 'src';
                     }).map(function(attr) {
-                        return getImageSrc(attr.escaped);
+                        return getImageSrc(decodeHtmlEntity(attr.value).trim());
                     });
                     lastFragment = tattrs.length === 0 ? '<img></img>' : '<img src="' + tattrs[0] + '" alt=""></img>';
                 } else if (tag === 'a') {
                     tattrs = attrs.filter(function(attr) {
                         return attr.name === 'href';
                     }).map(function(attr) {
-                        return getHref(attr.escaped);
+                        return getHref(decodeHtmlEntity(attr.value).trim());
                     });
                     lastFragment = tattrs.length === 0 ? '<a>' : '<a href="' + tattrs[0] + '">';
                 } else {
@@ -282,18 +298,18 @@ function getSelectedNodes() {
 
 /////
 
-function deferredAddZip(url, filename, zip) {
+function deferredAddZip(url, filename) {
     var deferred = $.Deferred();
     JSZipUtils.getBinaryContent(url, function(err, data) {
         if (err) {
             // deferred.reject(err); TODO
+            console.log('Error:', err);
             deferred.resolve();
         } else {
-            var tmpImg = {
+            extractedImages.push({
                 filename: filename,
                 data: base64ArrayBuffer(data)
-            };
-            allImages.push(tmpImg);
+            });
             deferred.resolve();
         }
     });
@@ -301,10 +317,7 @@ function deferredAddZip(url, filename, zip) {
 }
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    console.log('Extract Html...');
     var imgsPromises = [];
-    allImgSrc = {};
-    allImages = [];
     var result = {};
     var pageSrc = '';
     var tmpContent = '';
@@ -317,19 +330,19 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         pageSrc.forEach(function (page) {
             tmpContent += getContent(page);
         });
+    } else if (request.type === 'echo') {
+        sendResponse({
+            echo: true
+        });
+        return;
     }
 
     if (tmpContent.trim() === '') {
         return;
     }
 
-    Object.keys(allImgSrc).forEach(function(imgSrc, index) {
-        try {
-            var tmpDeffered = deferredAddZip(getImgDownloadUrl(imgSrc), allImgSrc[imgSrc]);
-            imgsPromises.push(tmpDeffered);
-        } catch (e) {
-            console.log('Error:', e);
-        }
+    allImages.forEach(function (tmpImg) {
+        imgsPromises.push(deferredAddZip(tmpImg.originalUrl, tmpImg.filename));
     });
 
     $.when.apply($, imgsPromises).done(function() {
@@ -337,7 +350,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             url: getPageUrl(document.title),
             title: getPageTitle(document.title),
             baseUrl: getCurrentUrl(),
-            images: allImages,
+            images: extractedImages,
             content: tmpContent
         };
         sendResponse(result);

@@ -39,7 +39,14 @@ function getOriginUrl() {
 
 function getFileExtension(fileName) {
     try {
-        var tmpFileName = fileName.split('.').pop();
+        var tmpFileName = '';
+
+        if (isBase64Img(fileName)) {
+            tmpFileName = getBase64ImgType(fileName);
+        } else {
+            tmpFileName = fileName.split('.').pop();
+        }
+
         if (tmpFileName.indexOf('?') > 0) {
             tmpFileName = tmpFileName.split('?')[0];
         }
@@ -47,12 +54,12 @@ function getFileExtension(fileName) {
         if (tmpFileName === 'jpg') {
             tmpFileName = 'jpeg';
         } else if (tmpFileName.trim() === '') {
-            return 'jpeg'; //TODO
+            return '';
         }
         return tmpFileName;
     } catch (e) {
         console.log('Error:', e);
-        return 'jpeg'; //TODO
+        return '';
     }
 }
 
@@ -120,4 +127,33 @@ function base64ArrayBuffer(arrayBuffer) {
     }
 
     return base64;
+}
+
+// http://stackoverflow.com/questions/7394748/whats-the-right-way-to-decode-a-string-that-has-special-html-entities-in-it
+function decodeHtmlEntity(str) {
+  return str.replace(/&#(\d+);/g, function(match, dec) {
+    return String.fromCharCode(dec);
+  });
+}
+
+function isBase64Img(srcTxt) {
+    return srcTxt.indexOf('data:image/') === 0 && srcTxt.indexOf(';base64,') > 0;
+}
+
+function getBase64ImgType(srcTxt) {
+    try {
+        return srcTxt.split(';')[0].split('/')[1];
+    } catch (e) {
+        console.log('Error:', e);
+        return '';
+    }
+}
+
+function getBase64ImgData(srcTxt) {
+    try {
+        return srcTxt.split(';base64,')[1];
+    } catch (e) {
+        console.log('Error:', e);
+        return '';
+    }
 }
