@@ -45,7 +45,7 @@ ebook-convert "book.epub" "book.mobi"
  - clean & optimize code
  - create tests
  - convert svg to png
- - base64 imgs
+ - ~~base64 imgs~~
  - 'save as image' option (render a selection and save it as image instead of text)
  - support other formats (mobi, pdf etc.)
  - show progress indication (ui/ux)
