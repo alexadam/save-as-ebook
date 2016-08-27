@@ -36,6 +36,14 @@ function generateRandomTag() {
     return text;
 }
 
+function formatPreCodeElements($jQueryElement) {
+    $jQueryElement.find('pre').each(function (i, pre) {
+        $(pre).replaceWith('<pre>' + pre.innerText + '</pre>');
+    });
+    $jQueryElement.find('code').each(function (i, pre) {
+        $(pre).replaceWith('<pre>' + pre.innerText + '</pre>');
+    });
+}
 
 // function force3(dirty) {
 //     var tagOpen = '@@@';// + generateRandomTag();
@@ -112,6 +120,8 @@ function force(contentString) {
 
         var $content = $(contentString);
 
+        formatPreCodeElements($content);
+
         $content.find('img').each(function (index, elem) {
             $(elem).replaceWith('<span>' + tagOpen + 'img src="' + getImageSrc($(elem).attr('src').trim()) + '"' + tagClose + tagOpen + '/img' + tagClose + '</span>');
         });
@@ -164,15 +174,14 @@ function sanitize(rawContentString) {
     var srcTxt = '';
     var dirty = null;
     try {
-        // dirty = getHtmlAsString(rawContent);
         var wdirty = $.parseHTML(rawContentString);
         $wdirty = $(wdirty);
         $wdirty.find('script, style, svg, canvas, noscript').remove(); // TODO remove iframes
         $wdirty.find('*:empty').not('img').remove();
+        formatPreCodeElements($wdirty);
 
         dirty = '<div>' + $wdirty.html() + '</div>';
 
-        ////////////////
         if ($('*').length > maxNrOfElements) {
             return force(dirty);
         }
