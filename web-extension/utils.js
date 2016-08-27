@@ -70,8 +70,12 @@ function getHref(hrefTxt) {
     if (hrefTxt.indexOf('#') === 0) {
         hrefTxt = window.location.href + hrefTxt;
     }
-    if (hrefTxt.indexOf('/') === 0) {
-        hrefTxt = window.location.protocol + '//' + window.location.hostname + hrefTxt;
+    if (hrefTxt.indexOf('http') !== 0) {
+        var separator = '/';
+        if (hrefTxt.indexOf('/') === 0) {
+            separator = '';
+        }
+        hrefTxt = window.location.protocol + '//' + window.location.hostname + separator + hrefTxt;
     }
     // hrefTxt = escape(hrefTxt);
     return hrefTxt;
