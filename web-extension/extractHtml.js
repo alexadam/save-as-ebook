@@ -158,8 +158,7 @@ function force(contentString) {
         var tagCloseRegex = new RegExp(tagClose, 'gi');
         contentString = contentString.replace(tagOpenRegex, '<');
         contentString = contentString.replace(tagCloseRegex, '>');
-        contentString = contentString.replace(/&amp;/gi, '&');
-        contentString = contentString.replace(/&/gi, '&amp;');
+        contentString = contentString.replace(/&amp;nbsp;/gi, '&#160;');
 
         return contentString;
     } catch (e) {
@@ -257,9 +256,7 @@ function sanitize(rawContentString) {
             }
         });
 
-        results = results.replace(/&amp;/gi, '&');
-        results = results.replace(/&/gi, '&amp;');
-        results = results.replace(/&amp;nbsp;/gi, '&#160;');
+        results = results.replace(/&nbsp;/gi, '&#160;');
 
         return results;
 
