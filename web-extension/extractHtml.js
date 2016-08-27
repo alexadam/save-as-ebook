@@ -41,7 +41,7 @@ function formatPreCodeElements($jQueryElement) {
         $(pre).replaceWith('<pre>' + pre.innerText + '</pre>');
     });
     $jQueryElement.find('code').each(function (i, pre) {
-        $(pre).replaceWith('<pre>' + pre.innerText + '</pre>');
+        $(pre).replaceWith('<code>' + pre.innerText + '</code>');
     });
 }
 
@@ -257,9 +257,9 @@ function sanitize(rawContentString) {
             }
         });
 
-        // results = results.replace(/&[a-z]+;/gim, '');
         results = results.replace(/&amp;/gi, '&');
         results = results.replace(/&/gi, '&amp;');
+        results = results.replace(/&amp;nbsp;/gi, '&#160;');
 
         return results;
 
