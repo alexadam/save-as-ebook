@@ -4,6 +4,10 @@
 <head>
     <meta charset="utf-8">
     <style>
+        html, body {
+            padding: 0;
+            margin: 0;
+        }
         .menu-holder {
             padding: 2px;
             margin: 0;
@@ -30,6 +34,39 @@
         button:hover {
             background-color: #007fff;
             color: white;
+            cursor: pointer;
+        }
+
+        #busy {
+            background-color: rgba(0, 0, 0, 0.75);
+            width: 100%;
+            height: 100%;
+            display: none;
+            position: fixed;
+            top: 0;
+            margin: 0;
+            padding: 0;
+        }
+        .spinner {
+          height: 28px;
+          width: 28px;
+          animation: rotate 0.8s infinite linear;
+          border: 8px solid #fff;
+          border-right-color: transparent;
+          border-radius: 50%;
+          left: 40%;
+          top: 40%;
+          position: absolute;
+        }
+        .wait-message {
+            font-size: 20px;
+            color: white;
+            padding: 5px;
+        }
+
+        @keyframes rotate {
+          0%    { transform: rotate(0deg); }
+          100%  { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -44,6 +81,10 @@
         <button id="selectionChapter" type="button" name="button">Add Selection as Chapter</button>
         <hr/>
         <button id="editChapters" type="button" name="button">Edit Chapters ...</button>
+    </div>
+    <div id="busy">
+        <div class="spinner"></div>
+        <div class="wait-message">Please Wait...</div>
     </div>
 
     <script src="jquery.js" charset="utf-8"></script>

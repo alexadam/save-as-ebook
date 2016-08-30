@@ -28,6 +28,7 @@ document.getElementById("editChapters").onclick = function() {
 };
 
 function dispatch(action, justAddToBuffer) {
+    document.getElementById('busy').style.display = 'block';
     if (!justAddToBuffer) {
         removeEbook();
     }
@@ -71,6 +72,9 @@ function sendMessage(tabId, action, justAddToBuffer) {
                 window.close();
             });
         }
+        setTimeout(function () {
+            document.getElementById('busy').style.display = 'none';
+        }, 500);
     });
 }
 
