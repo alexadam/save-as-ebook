@@ -1,13 +1,16 @@
 var allImages = [];
 var extractedImages = [];
-var maxNrOfElements = 10000;
+var maxNrOfElements = 20000;
 var allowedTags = [
     'address', 'article', 'aside', 'footer', 'header', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
     'hgroup', 'nav', 'section', 'dd', 'div', 'dl', 'dt', 'figcaption', 'figure', 'hr', 'li',
     'main', 'ol', 'p', 'pre', 'ul', 'a', 'abbr', 'b', 'bdi', 'bdo', 'br', 'cite', 'code', 'data',
     'dfn', 'em', 'i', 'img', 'kbd', 'mark', 'q', 'rp', 'rt', 'rtc', 'ruby', 's', 'samp', 'small', 'span',
     'strong', 'sub', 'sup', 'time', 'u', 'var', 'wbr', 'del', 'ins', 'caption', 'col', 'colgroup',
-    'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr'
+    'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr',
+    'math', 'maction', 'menclose', 'merror', 'mfenced', 'mfrac', 'mglyph', 'mi', 'mlabeledtr', 'mmultiscripts', 'mn', 'mo', 'mover', 'mpadded', 'mphantom', 'mroot',
+    'mrow', 'ms', 'mspace', 'msqrt', 'mstyle', 'msub', 'msup', 'msubsup', 'mtable', 'mtd', 'mtext', 'mtr', 'munder', 'munderover', 'msgroup', 'mlongdiv', 'mscarries',
+    'mscarry', 'mstack'
 ];
 
 //////
@@ -54,16 +57,27 @@ function formatPreCodeElements($jQueryElement) {
     });
 }
 
-function force(contentString) {
+function preProcess($htmlObject) {
+    $htmlObject.find('script[type="math/mml"]').each(function (i, el) {
+        $(el).replaceWith('<span>' + el.innerHTML + '</span>');
+    });
+    $htmlObject.find('script, style, svg, canvas, noscript, iframe').remove();
+    $htmlObject.find('*:empty').not('img').remove();
+    $htmlObject.find('*[class^="mjx-chtml"]').remove(); // MathJax formatting
+    formatPreCodeElements($htmlObject);
+}
+
+function force($content, withError) {
     try {
         var tagOpen = '@@@' + generateRandomTag();
         var tagClose = '###' + generateRandomTag();
         var startEl = '<object>';
         var endEl = '</object>';
 
-        var $content = $(contentString);
-
-        formatPreCodeElements($content);
+        if (withError) {
+            $content = $(content);
+            preProcess($content);
+        }
 
         $content.find('img').each(function (index, elem) {
             $(elem).replaceWith(startEl + tagOpen + 'img src="' + getImageSrc($(elem).attr('src').trim()) + '"' + tagClose + tagOpen + '/img' + tagClose + endEl);
@@ -84,7 +98,7 @@ function force(contentString) {
             });
         }
 
-        contentString = $content.text();
+        var contentString = $content.text();
 
         var tagOpenRegex = new RegExp(tagOpen, 'gi');
         var tagCloseRegex = new RegExp(tagClose, 'gi');
@@ -98,7 +112,6 @@ function force(contentString) {
     }
 }
 
-// https://github.com/blowsie/Pure-JavaScript-HTML5-Parser
 function sanitize(rawContentString) {
     allImages = [];
     extractedImages = [];
@@ -107,15 +120,14 @@ function sanitize(rawContentString) {
     try {
         var wdirty = $.parseHTML(rawContentString);
         $wdirty = $(wdirty);
-        $wdirty.find('script, style, svg, canvas, noscript, iframe').remove();
-        $wdirty.find('*:empty').not('img').remove();
-        formatPreCodeElements($wdirty);
 
-        dirty = '<div>' + $wdirty.html() + '</div>';
+        preProcess($wdirty);
 
         if ($('*').length > maxNrOfElements) {
-            return force(dirty);
+            return force($wdirty, false);
         }
+
+        dirty = '<div>' + $wdirty.html() + '</div>';
 
         var results = '';
         var lastFragment = '';
@@ -174,7 +186,7 @@ function sanitize(rawContentString) {
 
     } catch (e) {
         console.log('Error:', e);
-        return force(dirty);
+        return force(dirty, true);
     }
 
 }
