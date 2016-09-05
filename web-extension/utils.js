@@ -67,6 +67,10 @@ function getHref(hrefTxt) {
     if (!hrefTxt) {
         return '';
     }
+    hrefTxt = hrefTxt.trim();
+    if (hrefTxt === '') {
+        return '';
+    }
     if (hrefTxt.indexOf('#') === 0) {
         hrefTxt = window.location.href + hrefTxt;
     }

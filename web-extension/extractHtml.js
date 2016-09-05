@@ -19,6 +19,10 @@ function getImageSrc(srcTxt) {
     if (!srcTxt) {
         return '';
     }
+    srcTxt = srcTxt.trim();
+    if (srcTxt === '') {
+        return '';
+    }
     var isB64Img = isBase64Img(srcTxt);
     var fileExtension = getFileExtension(srcTxt);
     var newImgFileName = 'img-' + (Math.floor(Math.random()*1000000*Math.random()*100000)) + '.' + fileExtension;
@@ -75,16 +79,26 @@ function force($content, withError) {
         var endEl = '</object>';
 
         if (withError) {
-            $content = $(content);
+            $content = $($content);
             preProcess($content);
         }
 
         $content.find('img').each(function (index, elem) {
-            $(elem).replaceWith(startEl + tagOpen + 'img src="' + getImageSrc($(elem).attr('src').trim()) + '"' + tagClose + tagOpen + '/img' + tagClose + endEl);
+            var imgSrc = getImageSrc($(elem).attr('src'));
+            if (imgSrc === '') {
+                $(elem).replaceWith('');
+            } else {
+                $(elem).replaceWith(startEl + tagOpen + 'img src="' + imgSrc + '"' + tagClose + tagOpen + '/img' + tagClose + endEl);
+            }
         });
 
         $content.find('a').each(function (index, elem) {
-            $(elem).replaceWith(startEl + tagOpen + 'a href="' + getHref($(elem).attr('href').trim()) + '"' + tagClose + $(elem).html() + tagOpen + '/a' + tagClose + endEl);
+            var aHref = getHref($(elem).attr('href'));
+            if (aHref === '') {
+                $(elem).replaceWith('');
+            } else {
+                $(elem).replaceWith(startEl + tagOpen + 'a href="' + aHref + '"' + tagClose + $(elem).html() + tagOpen + '/a' + tagClose + endEl);
+            }
         });
 
         if ($('*').length < maxNrOfElements) {
@@ -109,6 +123,7 @@ function force($content, withError) {
         return contentString;
     } catch (e) {
         console.log('Error:', e);
+        return '';
     }
 }
 
@@ -145,14 +160,14 @@ function sanitize(rawContentString) {
                     tattrs = attrs.filter(function(attr) {
                         return attr.name === 'src';
                     }).map(function(attr) {
-                        return getImageSrc(decodeHtmlEntity(attr.value).trim());
+                        return getImageSrc(decodeHtmlEntity(attr.value));
                     });
                     lastFragment = tattrs.length === 0 ? '<img></img>' : '<img src="' + tattrs[0] + '" alt=""></img>';
                 } else if (tag === 'a') {
                     tattrs = attrs.filter(function(attr) {
                         return attr.name === 'href';
                     }).map(function(attr) {
-                        return getHref(decodeHtmlEntity(attr.value).trim());
+                        return getHref(decodeHtmlEntity(attr.value));
                     });
                     lastFragment = tattrs.length === 0 ? '<a>' : '<a href="' + tattrs[0] + '">';
                 } else {
