@@ -61,13 +61,16 @@ function formatPreCodeElements($jQueryElement) {
     });
 }
 
-function preProcess($htmlObject) {
-    $htmlObject.find('script[type="math/mml"]').each(function (i, el) {
-        $(el).replaceWith('<span>' + el.innerHTML + '</span>');
+function extractMathMl($htmlObject) {
+    $htmlObject.find('span[id^="MathJax-Element-"]').each(function (i, el) {
+        $(el).replaceWith('<span>' + el.getAttribute('data-mathml') + '</span>');
     });
+}
+
+function preProcess($htmlObject) {
+    extractMathMl($htmlObject);
     $htmlObject.find('script, style, svg, canvas, noscript, iframe').remove();
     $htmlObject.find('*:empty').not('img').remove();
-    $htmlObject.find('*[class^="mjx-chtml"]').remove(); // MathJax formatting
     formatPreCodeElements($htmlObject);
 }
 
