@@ -163,14 +163,14 @@ function sanitize(rawContentString) {
                     tattrs = attrs.filter(function(attr) {
                         return attr.name === 'src';
                     }).map(function(attr) {
-                        return getImageSrc(decodeHtmlEntity(attr.value));
+                        return getImageSrc(attr.value);
                     });
                     lastFragment = tattrs.length === 0 ? '<img></img>' : '<img src="' + tattrs[0] + '" alt=""></img>';
                 } else if (tag === 'a') {
                     tattrs = attrs.filter(function(attr) {
                         return attr.name === 'href';
                     }).map(function(attr) {
-                        return getHref(decodeHtmlEntity(attr.value));
+                        return getHref(attr.value);
                     });
                     lastFragment = tattrs.length === 0 ? '<a>' : '<a href="' + tattrs[0] + '">';
                 } else {

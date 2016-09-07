@@ -54,7 +54,7 @@ function getFileExtension(fileName) {
         if (tmpFileName === 'jpg') {
             tmpFileName = 'jpeg';
         } else if (tmpFileName.trim() === '') {
-            return '';
+            tmpFileName = '';
         }
         return tmpFileName;
     } catch (e) {
@@ -72,39 +72,41 @@ function getImageType(fileName) {
 }
 
 function getHref(hrefTxt) {
-    if (!hrefTxt) {
-        return '';
-    }
-    hrefTxt = hrefTxt.trim();
-    if (hrefTxt === '') {
-        return '';
-    }
-    if (hrefTxt.indexOf('#') === 0) {
-        hrefTxt = window.location.href + hrefTxt;
-    }
-    if (hrefTxt.indexOf('http') !== 0) {
-        var separator = '/';
-        if (hrefTxt.indexOf('/') === 0) {
-            separator = '';
-        }
-        hrefTxt = window.location.protocol + '//' + window.location.hostname + separator + hrefTxt;
-    }
-    // hrefTxt = escape(hrefTxt);
-    return hrefTxt;
+    return getAbsoluteUrl(hrefTxt);
 }
 
 function getImgDownloadUrl(imgSrc) {
-    var baseUrl = getOriginUrl();
-    if (imgSrc.indexOf('//') === 0) {
-        return baseUrl.split('//')[0] + imgSrc;
+    return getAbsoluteUrl(imgSrc);
+}
+
+function getAbsoluteUrl(urlStr) {
+    if (!urlStr) {
+        return '';
     }
-    if (imgSrc.indexOf('http') !== 0) {
-        if (imgSrc.indexOf('/') === 0) {
-            return baseUrl + imgSrc;
+    try {
+        urlStr = urlStr.trim().toLowerCase();
+        if (urlStr.length === 0) {
+            return '';
         }
-        return baseUrl + '/' + imgSrc;
+        urlStr = decodeHtmlEntity(urlStr);
+        var currentUrl = getCurrentUrl();
+        var originUrl = getOriginUrl();
+        var absoluteUrl = urlStr;
+
+        if (urlStr.indexOf('//') === 0) {
+            absoluteUrl = window.location.protocol + urlStr;
+        } else if (urlStr.indexOf('/') === 0) {
+            absoluteUrl = originUrl + urlStr;
+        } else if (urlStr.indexOf('#') === 0) {
+            absoluteUrl = currentUrl + urlStr;
+        } else if (urlStr.indexOf('http') !== 0) {
+            absoluteUrl = currentUrl + '/' + urlStr;
+        }
+        return absoluteUrl;
+    } catch (e) {
+        console.log('Error:', e);
+        return urlStr;
     }
-    return imgSrc;
 }
 
 // https://gist.github.com/jonleighton/958841
