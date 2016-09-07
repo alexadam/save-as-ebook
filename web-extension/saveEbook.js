@@ -2,7 +2,7 @@ var cssFileName = 'ebook.css';
 
 function getImagesIndex(allImages) {
     return allImages.reduce(function(prev, elem, index) {
-        return prev + '\n' + '<item href="images/' + elem.filename + '" id="img' + elem.filename + '" media-type="image/' + getFileExtension(elem.filename) + '"/>';
+        return prev + '\n' + '<item href="images/' + elem.filename + '" id="img' + elem.filename + '" media-type="image/' + getImageType(elem.filename) + '"/>';
     }, '');
 }
 

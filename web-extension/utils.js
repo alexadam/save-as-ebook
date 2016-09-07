@@ -63,6 +63,14 @@ function getFileExtension(fileName) {
     }
 }
 
+function getImageType(fileName) {
+    var imageType = getFileExtension(fileName);
+    if (imageType === 'svg') {
+        imageType = 'svg+xml';
+    }
+    return imageType;
+}
+
 function getHref(hrefTxt) {
     if (!hrefTxt) {
         return '';
