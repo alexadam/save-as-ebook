@@ -42,16 +42,6 @@ function getImageSrc(srcTxt) {
     return '../images/' + newImgFileName;
 }
 
-function generateRandomTag() {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
-    for(var i = 0; i < 5; i++)
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-    return text;
-}
-
 function formatPreCodeElements($jQueryElement) {
     $jQueryElement.find('pre').each(function (i, pre) {
         $(pre).replaceWith('<pre>' + pre.innerText + '</pre>');
@@ -67,9 +57,20 @@ function extractMathMl($htmlObject) {
     });
 }
 
+function extractCanvasToImg($htmlObject) {
+    $htmlObject.find('canvas').each(function (index, elem) {
+        var tmpXP = getXPath(elem);
+        tmpXP = tmpXP.replace(/^\/div\[1\]/m, '/html[1]/body[1]');
+        var docEl = lookupElementByXPath(tmpXP);
+        var jpegUrl = docEl.toDataURL('image/png');
+        $(elem).replaceWith('<img src="' + jpegUrl + '" alt=""></img>');
+    });
+}
+
 function preProcess($htmlObject) {
     extractMathMl($htmlObject);
-    $htmlObject.find('script, style, svg, canvas, noscript, iframe').remove();
+    extractCanvasToImg($htmlObject);
+    $htmlObject.find('script, style, svg, noscript, iframe').remove();
     $htmlObject.find('*:empty').not('img').remove();
     formatPreCodeElements($htmlObject);
 }
