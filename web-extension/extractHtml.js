@@ -67,10 +67,20 @@ function extractCanvasToImg($htmlObject) {
     });
 }
 
+function extractSvgToImg($htmlObject) {
+    var serializer = new XMLSerializer();
+    $htmlObject.find('svg').each(function (index, elem) {
+        var svgXml = serializer.serializeToString(elem);
+        var imgSrc = 'data:image/svg+xml;base64,' + window.btoa(svgXml);
+        $(elem).replaceWith('<img src="' + imgSrc + '">' + '</img>');
+    });
+}
+
 function preProcess($htmlObject) {
     extractMathMl($htmlObject);
     extractCanvasToImg($htmlObject);
-    $htmlObject.find('script, style, svg, noscript, iframe').remove();
+    extractSvgToImg($htmlObject);
+    $htmlObject.find('script, style, noscript, iframe').remove();
     $htmlObject.find('*:empty').not('img').remove();
     formatPreCodeElements($htmlObject);
 }

@@ -53,6 +53,8 @@ function getFileExtension(fileName) {
         tmpFileName = tmpFileName.toLowerCase();
         if (tmpFileName === 'jpg') {
             tmpFileName = 'jpeg';
+        } else if (tmpFileName === 'svg+xml') {
+            tmpFileName = 'svg';
         } else if (tmpFileName.trim() === '') {
             tmpFileName = '';
         }
