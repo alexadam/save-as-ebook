@@ -86,7 +86,6 @@ function getAbsoluteUrl(urlStr) {
         return '';
     }
     try {
-        urlStr = urlStr.trim().toLowerCase();
         if (urlStr.length === 0) {
             return '';
         }
