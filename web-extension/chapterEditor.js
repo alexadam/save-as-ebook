@@ -182,7 +182,7 @@ function showEditor() {
 
     function previewListItem(atIndex) {
         return function() {
-            alert(allPagesRef[atIndex].content.trim().substring(0, 500).replace(/<[^>]+>/gi, '') + ' ...');
+            alert(allPagesRef[atIndex].content.trim().replace(/<[^>]+>/gi, '').replace(/\s+/g, ' ').substring(0, 1000) + ' ...');
         };
     }
 
