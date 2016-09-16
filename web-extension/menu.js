@@ -63,6 +63,14 @@ function sendMessage(tabId, action, justAddToBuffer) {
     chrome.tabs.sendMessage(tabId, {
         type: action
     }, function(response) {
+        if (response.length === 0) {
+            if (justAddToBuffer) {
+                alert('Cannot add an empty selection as chapter!');
+            } else {
+                alert('Cannot generate the eBook from an empty selection!');
+            }
+            window.close();
+        }
         if (!justAddToBuffer) {
             buildEbook([response]);
         } else {
