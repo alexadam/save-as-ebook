@@ -115,15 +115,18 @@ function force($content, withError) {
             }
         });
 
-        if ($('*').length < maxNrOfElements) {
-            allowedTags.forEach(function (tagName) {
-                var tmpElems = $content.find(tagName);
-                while (tmpElems.length > 0) {
-                    $tmpElem = $(tmpElems[0]);
-                    $tmpElem.replaceWith(startEl + tagOpen + tagName + tagClose + $tmpElem.html() + tagOpen + '/' + tagName + tagClose + endEl);
-                    tmpElems = $content.find(tagName);
+        all($content);
+
+        function all($startElement) {
+            var tagName = $startElement.get(0).tagName.toLowerCase();
+            if (allowedTags.indexOf(tagName) >= 0) {
+                var children = $startElement.children();
+                var childrenLen = children.length;
+                while (childrenLen--) {
+                    all($(children[childrenLen]));
                 }
-            });
+                $startElement.replaceWith(startEl + tagOpen + tagName + tagClose + $startElement.html() + tagOpen + '/' + tagName + tagClose + endEl);
+            }
         }
 
         var contentString = $content.text();
