@@ -241,7 +241,10 @@ function getPageUrl(url) {
     return url.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'') + Math.floor(Math.random() * 10000) + '.xhtml';
 }
 
-function getPageTitle(title) { //TODO
+function getPageTitle(title) {
+    if (title.trim().length === 0) {
+        return 'ebook';
+    }
     return title;
 }
 
@@ -309,9 +312,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     });
 
     $.when.apply($, imgsPromises).done(function() {
+        var tmpTitle = getPageTitle(document.title);
         result = {
-            url: getPageUrl(document.title),
-            title: getPageTitle(document.title),
+            url: getPageUrl(tmpTitle),
+            title: tmpTitle,
             baseUrl: getCurrentUrl(),
             images: extractedImages,
             content: tmpContent
