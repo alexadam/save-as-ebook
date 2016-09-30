@@ -8,9 +8,9 @@ Save a web page/selection as an eBook (.epub format) - a Chrome/Firefox/Opera We
 
 ## How to install it
 
-### [Chrome Web Store](https://chrome.google.com/webstore/detail/save-as-ebook/haaplkpoiimngbppjihnegfmpejdnffj)
+### From [Chrome Web Store](https://chrome.google.com/webstore/detail/save-as-ebook/haaplkpoiimngbppjihnegfmpejdnffj)
 
-OR (tested on v. 52.0.2743.116)
+or manually (tested on v. 52.0.2743.116)
 
 ```
 1. Navigate to chrome://extensions/
