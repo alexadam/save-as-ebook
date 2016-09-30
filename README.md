@@ -8,7 +8,9 @@ Save a web page/selection as an eBook (.epub format) - a Chrome/Firefox/Opera We
 
 ## How to install it
 
-### Chrome (tested on v. 52.0.2743.116)
+### [Chrome Web Store](https://chrome.google.com/webstore/detail/save-as-ebook/haaplkpoiimngbppjihnegfmpejdnffj)
+
+OR (tested on v. 52.0.2743.116)
 
 ```
 1. Navigate to chrome://extensions/
@@ -41,17 +43,14 @@ ebook-convert "book.epub" "book.mobi"
 
 ## To-Do
  - fix all 'epubcheck' errors (https://github.com/IDPF/epubcheck)
- - * there are some issues with relative URLs
  - clean & optimize code
  - create tests
- - convert svg to png
- - ~~base64 imgs~~
  - 'save as image' option (render a selection and save it as image instead of text)
  - support other formats (mobi, pdf etc.)
- - show progress indication (ui/ux)
  - show confirmations (ui/ux)
  - display errors (ui/ux)
  - add settings & options page (ui/ux)
+ - support custom style
 
 ## Credits
  - http://ebooks.stackexchange.com/questions/1183/what-is-the-minimum-required-content-for-a-valid-epub
