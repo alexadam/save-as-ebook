@@ -1,44 +1,31 @@
-var customStorage = null;
-
-function _getEbookPages() {
-    try {
-        // var allPages = localStorage.getItem('ebook');
-        var allPages = customStorage;
-        if (!allPages) {
-            allPages = [];
-        } else {
-            allPages = JSON.parse(allPages);
-        }
-        return allPages;
-    } catch (e) {
-        alert(e);
-        return [];
-    }
-}
-
-function _saveEbookPages(pages) {
-    try {
-        // localStorage.setItem('ebook', JSON.stringify(pages));
-        customStorage = JSON.stringify(pages);
-    } catch (e) {
-        alert(e);
-    }
-}
-
-function _removeEbook() {
-    // localStorage.removeItem('ebook');
-    customStorage = null;
-}
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.type === 'get') {
-        sendResponse({allPages: _getEbookPages()});
+        chrome.storage.local.get('allPages', function (data) {
+            if (!data || !data.allPages) {
+                sendResponse({allPages: []});
+            }
+            sendResponse({allPages: data.allPages});
+        })
     }
     if (request.type === 'set') {
-        _saveEbookPages(request.pages);
+        chrome.storage.local.set({'allPages': request.pages});
     }
     if (request.type === 'remove') {
-        _removeEbook();
+        chrome.storage.local.remove('allPages');
+        chrome.storage.local.remove('title');
+    }
+    if (request.type === 'get title') {
+        chrome.storage.local.get('title', function (data) {
+            if (!data || !data.title || data.title.trim().length === 0) {
+                sendResponse({title: 'eBook'});
+            } else {
+                sendResponse({title: data.title});
+            }
+        })
+    }
+    if (request.type === 'set title') {
+        chrome.storage.local.set({'title': request.title});
     }
     return true;
 });

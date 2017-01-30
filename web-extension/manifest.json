@@ -24,6 +24,7 @@
         "contextMenus",
         "activeTab",
         "storage",
+        "unlimitedStorage",
         "tabs",
         "notifications",
         "http://*/*",

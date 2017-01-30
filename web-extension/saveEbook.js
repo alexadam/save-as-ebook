@@ -1,4 +1,5 @@
 var cssFileName = 'ebook.css';
+var ebookTitle = null;
 
 function getImagesIndex(allImages) {
     return allImages.reduce(function(prev, elem, index) {
@@ -13,7 +14,13 @@ function getExternalLinksIndex() { // TODO
 }
 
 function buildEbookFromChapters() {
-    getEbookPages(_buildEbook);
+    getEbookTitle(function (title) {
+        ebookTitle = title;
+        if (!ebookTitle || ebookTitle.trim().length === 0) {
+            ebookTitle = 'eBook';
+        }
+        getEbookPages(_buildEbook);
+    })
 }
 
 function buildEbook(allPages) {
@@ -28,9 +35,10 @@ function _buildEbook(allPages) {
 
     console.log('Prepare Content...');
 
-    ebookName = allPages[0].title + '.epub';
-    if (allPages[0].type === 'title') {
-        allPages.shift();
+    if (ebookTitle) {
+        ebookName = ebookTitle + '.epub';
+    } else {
+        ebookName = allPages[0].title + '.epub';
     }
 
     var zip = new JSZip();
@@ -168,7 +176,5 @@ function _buildEbook(allPages) {
                 saveAs(content, ebookName);
             });
     }, 60000);
-
-    removeEbook();
 
 }

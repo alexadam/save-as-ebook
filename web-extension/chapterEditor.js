@@ -47,7 +47,9 @@ function showEditor() {
     var ebookTilte = document.createElement('input');
     ebookTilte.id = 'chapterEditor-ebookTitle';
     ebookTilte.type = 'text';
-    ebookTilte.value = 'eBook';
+    getEbookTitle(function (title) {
+        ebookTilte.value = title;
+    });
     titleHolder.appendChild(ebookTilte);
     modalList.appendChild(titleHolder);
 
@@ -111,13 +113,35 @@ function showEditor() {
     closeButton.onclick = closeModal;
     buttons.appendChild(closeButton);
 
+    var removeButton = document.createElement('button');
+    removeButton.innerText = 'Remove Chapters';
+    removeButton.className = 'chapterEditor-footer-button hapterEditor-float-left';
+    removeButton.onclick = function() {
+        var result = confirm("Do you want to remove all chapters?");
+        if (result) {
+            removeEbook();
+            closeModal();
+        }
+    };
+    buttons.appendChild(removeButton);
+
     var saveButton = document.createElement('button');
     saveButton.onclick = function() {
-        prepareEbook();
+        var newChapters = saveChanges();
+        prepareEbook(newChapters);
     };
     saveButton.innerText = 'Generate eBook ...';
     saveButton.className = 'chapterEditor-footer-button chapterEditor-float-right chapterEditor-generate-button';
     buttons.appendChild(saveButton);
+
+    var saveChangesButton = document.createElement('button');
+    saveChangesButton.onclick = function() {
+        saveChanges();
+    };
+    saveChangesButton.innerText = 'Save changes';
+    saveChangesButton.className = 'chapterEditor-footer-button chapterEditor-float-right';
+    buttons.appendChild(saveChangesButton);
+
     modalFooter.appendChild(buttons);
 
     /////////////////////
@@ -186,7 +210,19 @@ function showEditor() {
         };
     }
 
-    function prepareEbook() {
+    function prepareEbook(newChapters) {
+        try {
+            if (newChapters.length === 0) {
+                alert('Can\'t generate an empty eBook!');
+                return;
+            }
+            buildEbookFromChapters();
+        } catch (e) {
+            console.log('Error:', e);
+        }
+    }
+
+    function saveChanges() {
         var newChapters = [];
         var newEbookTitle = ebookTilte.value;
         if (newEbookTitle.trim() === '') {
@@ -194,7 +230,6 @@ function showEditor() {
         }
 
         try {
-
             var tmpChaptersList = document.getElementsByClassName('chapterEditor-chapter-item');
             if (!tmpChaptersList || !allPagesRef) {
                 return;
@@ -207,22 +242,12 @@ function showEditor() {
                 }
             }
 
-            if (newChapters.length === 0) {
-                alert('Can\'t generate an empty eBook!');
-                return;
-            }
-
-            newChapters.splice(0, 0, {
-                type: 'title',
-                title: newEbookTitle
-            });
-
+            saveEbookTitle(newEbookTitle);
             saveEbookPages(newChapters);
-            buildEbookFromChapters();
+            return newChapters;
         } catch (e) {
             console.log('Error:', e);
         }
-
     }
 
     /////////////////////

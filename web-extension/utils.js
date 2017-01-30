@@ -1,3 +1,19 @@
+function getEbookTitle(callback) {
+    chrome.runtime.sendMessage({
+        type: "get title"
+    }, function(response) {
+        callback(response.title);
+    });
+}
+
+function saveEbookTitle(title) {
+    chrome.runtime.sendMessage({
+        type: "set title",
+        title: title
+    }, function(response) {
+    });
+}
+
 function getEbookPages(callback) {
     chrome.runtime.sendMessage({
         type: "get"
