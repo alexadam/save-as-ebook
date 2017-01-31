@@ -43,6 +43,11 @@ sudo apt-get install calibre
 ebook-convert "book.epub" "book.mobi"
 ```
 
+## Added in v1.1
+ - Chapter Editor: option to save changes
+ - Chapter Editor: option to remove all chapters
+ - persist Chapter Editor changes & chapters after generating an eBook or after a browser restart
+
 ## To-Do
  - fix all 'epubcheck' errors (https://github.com/IDPF/epubcheck)
  - clean & optimize code
