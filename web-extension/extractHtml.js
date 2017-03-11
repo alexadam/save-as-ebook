@@ -12,6 +12,8 @@ var allowedTags = [
     'mrow', 'ms', 'mspace', 'msqrt', 'mstyle', 'msub', 'msup', 'msubsup', 'mtable', 'mtd', 'mtext', 'mtr', 'munder', 'munderover', 'msgroup', 'mlongdiv', 'mscarries',
     'mscarry', 'mstack'
 ];
+var cssClassesToTmpIds = {};
+var tmpIdsToNewCss = {};
 
 //////
 
@@ -188,8 +190,15 @@ function sanitize(rawContentString) {
                     });
                     lastFragment = tattrs.length === 0 ? '<a>' : '<a href="' + tattrs[0] + '">';
                 } else {
-                    lastFragment = '<' + tag + '>';
                 }
+
+                // TODO ???
+                tattrs = attrs.filter(function(attr) {
+                    return attr.name === 'data-class';
+                }).map(function(attr) {
+                    return attr.value;
+                });
+                lastFragment = '<' + tag + ' class="' + tattrs[0] + '"' + '>';
 
                 results += lastFragment;
                 lastFragment = '';
@@ -263,6 +272,74 @@ function getSelectedNodes() {
 
 /////
 
+function jsonToCss(jsonObj) {
+    var keys = Object.keys(jsonObj);
+    var result = '';
+    for (var i = 0; i < keys.length; i++) {
+        var tmpJsonObj = jsonObj[keys[i]];
+        var tmpKeys = Object.keys(tmpJsonObj);
+        result += '.' + keys[i] + ' {';
+        for (var j = 0; j < tmpKeys.length; j++) {
+            result += tmpKeys[j] + ':' + tmpJsonObj[tmpKeys[j]] + ';';
+        }
+        result += '} ';
+    }
+    return result;
+}
+
+function extractCss(callback) {
+    $('body').find('*').each(function (i, pre) {
+        if (!$(pre).is(':visible')) {
+            $(pre).replaceWith('');
+        } else {
+            var classNames = pre.getAttribute('class');
+            var tmpName = cssClassesToTmpIds[classNames];
+            var tmpNewCss = tmpIdsToNewCss[tmpName];
+            if (!tmpName) {
+                tmpName = 'class-' + Math.floor(Math.random()*100000);
+                cssClassesToTmpIds[classNames] = tmpName;
+                tmpIdsToNewCss[tmpName] = {};
+            }
+            if (!tmpNewCss) {
+                var style = window.getComputedStyle(pre);
+                tmpNewCss = {};
+                tmpNewCss['font-size'] = style['font-size'];
+                tmpNewCss['font-weight'] = style['font-weight'];
+                tmpNewCss['color'] = style['color'];
+                tmpNewCss['background-color'] = style['background-color'];
+                tmpIdsToNewCss[tmpName] = tmpNewCss;
+            }
+            pre.setAttribute('data-class', tmpName);
+        }
+    });
+    getCurrentStyle(function (currentStyle) {
+        var styleText = currentStyle.style;
+        var json = CSSJSON.toJSON(styleText);
+        var keys = Object.keys(json.children);
+        for (var i = 0; i < keys.length; i++) {
+            if (json.children[keys[i]].children['display'] && json.children[keys[i]].children['display'] === 'none') {
+                continue;
+            }
+            var cEls = document.querySelectorAll(keys[i]);
+            for (var j = 0; j < cEls.length; j++) {
+                var style = window.getComputedStyle(cEls[j]);
+                tmpNewCss = {};
+                tmpNewCss['font-size'] = style['font-size'];
+                tmpNewCss['font-weight'] = style['font-weight'];
+                tmpNewCss['color'] = style['color'];
+                tmpNewCss['background-color'] = style['background-color'];
+                tmpName = 'class-' + Math.floor(Math.random()*100000);
+                tmpIdsToNewCss[tmpName] = tmpNewCss;
+                var oldClass = cEls[j].getAttribute('data-class');
+                cEls[j].setAttribute('data-class', oldClass + ' ' + tmpName);
+            }
+        }
+        callback(jsonToCss(tmpIdsToNewCss));
+    });
+}
+
+/////
+
 function deferredAddZip(url, filename) {
     var deferred = $.Deferred();
     JSZipUtils.getBinaryContent(url, function(err, data) {
@@ -286,43 +363,47 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     var result = {};
     var pageSrc = '';
     var tmpContent = '';
+    // var styleFile =
+    extractCss(function (styleFile) {
+        if (request.type === 'extract-page') {
+            pageSrc = document.getElementsByTagName('body')[0];
+            tmpContent = getContent(pageSrc);
+        } else if (request.type === 'extract-selection') {
+            pageSrc = getSelectedNodes();
+            pageSrc.forEach(function (page) {
+                tmpContent += getContent(page);
+            });
+        } else if (request.type === 'echo') {
+            sendResponse({
+                echo: true
+            });
+            return;
+        }
 
-    if (request.type === 'extract-page') {
-        pageSrc = document.getElementsByTagName('body')[0];
-        tmpContent = getContent(pageSrc);
-    } else if (request.type === 'extract-selection') {
-        pageSrc = getSelectedNodes();
-        pageSrc.forEach(function (page) {
-            tmpContent += getContent(page);
+        if (tmpContent.trim() === '') {
+            sendResponse('');
+            return;
+        }
+
+        allImages.forEach(function (tmpImg) {
+            imgsPromises.push(deferredAddZip(tmpImg.originalUrl, tmpImg.filename));
         });
-    } else if (request.type === 'echo') {
-        sendResponse({
-            echo: true
+
+        $.when.apply($, imgsPromises).done(function() {
+            var tmpTitle = getPageTitle(document.title);
+            result = {
+                url: getPageUrl(tmpTitle),
+                title: tmpTitle,
+                baseUrl: getCurrentUrl(),
+                styleFileContent: styleFile,
+                styleFileName: 'style'+Math.floor(Math.random()*100000)+'.css',
+                images: extractedImages,
+                content: tmpContent
+            };
+            sendResponse(result);
+        }).fail(function(e) {
+            console.log('Error:', e);
         });
-        return;
-    }
-
-    if (tmpContent.trim() === '') {
-        sendResponse('');
-        return;
-    }
-
-    allImages.forEach(function (tmpImg) {
-        imgsPromises.push(deferredAddZip(tmpImg.originalUrl, tmpImg.filename));
-    });
-
-    $.when.apply($, imgsPromises).done(function() {
-        var tmpTitle = getPageTitle(document.title);
-        result = {
-            url: getPageUrl(tmpTitle),
-            title: tmpTitle,
-            baseUrl: getCurrentUrl(),
-            images: extractedImages,
-            content: tmpContent
-        };
-        sendResponse(result);
-    }).fail(function(e) {
-        console.log('Error:', e);
     });
 
     return true;

@@ -1,0 +1,181 @@
+body.dragging, body.dragging * {
+    cursor: move !important;
+}
+.dragged {
+    position: absolute;
+    opacity: 0.5;
+    z-index: 2000;
+}
+ul.cssEditor-chapters-list li.placeholder {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    border: solid 10px #f5f5f5;
+}
+
+#cssEditor-Title {
+    font-size: 20px;
+    font-weight: bold;
+    float: left;
+    display: inline-block;
+    font-family: "sans-serif";
+}
+
+#cssEditor-ebookTitleHolder {
+    background-color: #eee;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+}
+#cssEditor-ebookTitleLabel {
+    font-weight: bold;
+    font-size: 18px;
+    font-family: sans-serif;
+    margin-right: 10px;
+}
+#cssEditor-ebookTitle {
+    padding: 5px;
+    font-size: 15px;
+    font-family: "sans-serif";
+    width: 85%;
+}
+ul, ul.cssEditor-chapters-list {
+    width: 100%;
+    display: block;
+    padding: 0;
+    margin: 0;
+    list-style-type: none !important;
+}
+.cssEditor-chapter-item {
+    display: block;
+    line-height: 35px;
+    height: 35px;
+    padding: 5px 0;
+    vertical-align: middle;
+    font-size: 17px;
+    list-style-type: none;
+}
+.cssEditor-chapter-item:hover {
+    background-color: #f5f5f5;
+}
+.cssEditor-drag-handler {
+    cursor: move;
+    padding: 3px;
+    margin-right: 5px;
+    border-radius: 5px;
+}
+.cssEditor-chapter-item > input[type="text"] {
+    padding: 5px;
+    font-size: 15px;
+    font-family: "sans-serif";
+    width: 80%;
+    border: none;
+    border-bottom: solid 1px #aaa;
+}
+
+#cssEditor-modalHeader {
+    display: block;
+    overflow: hidden;
+    padding: 20px;
+}
+#cssEditor-modalList {
+    display: block;
+    /*width: 100%;*/
+    /*border-top: solid 1px black;*/
+    /*border-bottom: solid 1px black;*/
+    padding: 20px;
+    padding-top: 0;
+}
+#cssEditor-modalFooter {
+    display: block;
+    overflow: hidden;
+}
+.chapter-item * {
+    vertical-align: middle;
+}
+#dragHandler {
+    padding: 0 5px;
+}
+
+
+.cssEditor-text-button {
+    border: none;
+    font-size: 15px;
+    font-family: "sans-serif";
+    padding: 5px;
+    background-color: rgba(0, 0, 0, 0);
+    margin: 0 3px;
+    outline: none;
+    cursor: pointer;
+}
+.cssEditor-text-button:hover {
+    background-color: #000;
+    color: #fff;
+}
+.cssEditor-text-red {
+    color: red;
+}
+
+.cssEditor-float-left {
+    float: left;
+}
+.cssEditor-float-right {
+    float: right;
+}
+
+.cssEditor-footer-button {
+    padding: 18px 20px;
+    margin: 0;
+    font-size: 18px;
+    border: none;
+    background-color: rgba(0, 0, 0, 0);
+    display: inline-block;
+}
+.cssEditor-footer-button:hover {
+    color: white;
+    background-color: rgba(0, 0, 0, 1);
+    cursor: pointer;
+}
+.cssEditor-save-button {
+    background-color: yellow;
+}
+.cssEditor-cancel-button {
+    /*background-color: black;*/
+}
+
+@media (max-width: 1700px) {
+    .cssEditor-chapter-item {
+        line-height: 30px;
+        height: 30px;
+        padding: 4px 0;
+        font-size: 14px;
+    }
+    .cssEditor-chapter-item > input[type="text"] {
+        padding: 3px;
+        font-size: 12px;
+        width: 75%;
+    }
+    .cssEditor-text-button {
+        font-size: 12px;
+        padding: 3px;
+        margin: 0 2px;
+    }
+    .cssEditor-footer-button {
+        padding: 15px 20px;
+        margin: 0;
+        font-size: 15px;
+        border: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+}
+
+@media (max-width: 1100px) {
+    .cssEditor-chapter-item {
+        line-height: 30px;
+        height: 60px;
+        padding: 4px 0;
+        font-size: 14px;
+    }
+    .cssEditor-chapter-item > input[type="text"] {
+        width: 90%;
+    }
+}

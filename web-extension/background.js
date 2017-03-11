@@ -1,3 +1,5 @@
+// var GLOBAL_CURRENT_STYLE = null;
+
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.type === 'get') {
@@ -26,6 +28,30 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     }
     if (request.type === 'set title') {
         chrome.storage.local.set({'title': request.title});
+    }
+    if (request.type === 'get styles') {
+        chrome.storage.local.get('styles', function (data) {
+            if (!data || !data.styles) {
+                sendResponse({styles: []});
+            } else {
+                sendResponse({styles: data.styles});
+            }
+        });
+    }
+    if (request.type === 'set styles') {
+        chrome.storage.local.set({'styles': request.styles});
+    }
+    if (request.type === 'get current style') {
+        chrome.storage.local.get('currentStyle', function (data) {
+            if (!data || !data.currentStyle) {
+                sendResponse({currentStyle: 0});
+            } else {
+                sendResponse({currentStyle: data.currentStyle});
+            }
+        });
+    }
+    if (request.type === 'set current style') {
+        chrome.storage.local.set({'currentStyle': request.currentStyle});
     }
     return true;
 });

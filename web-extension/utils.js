@@ -1,3 +1,36 @@
+
+function setCurrentStyle(currentStyle) {
+    chrome.runtime.sendMessage({
+        type: "set current style",
+        currentStyle: currentStyle
+    }, function(response) {
+    });
+}
+
+function getCurrentStyle(callback) {
+    chrome.runtime.sendMessage({
+        type: "get current style"
+    }, function(response) {
+        callback(response.currentStyle);
+    });
+}
+
+function getStyles(callback) {
+    chrome.runtime.sendMessage({
+        type: "get styles"
+    }, function(response) {
+        callback(response.styles);
+    });
+}
+
+function setStyles(styles) {
+    chrome.runtime.sendMessage({
+        type: "set styles",
+        styles: styles
+    }, function(response) {
+    });
+}
+
 function getEbookTitle(callback) {
     chrome.runtime.sendMessage({
         type: "get title"
@@ -119,6 +152,7 @@ function getAbsoluteUrl(urlStr) {
         } else if (urlStr.indexOf('http') !== 0) {
             absoluteUrl = currentUrl + '/' + urlStr;
         }
+        absoluteUrl = absoluteUrl.replace(/&amp;/ig, '&'); //TODO ?
         return absoluteUrl;
     } catch (e) {
         console.log('Error:', e);

@@ -1,3 +1,93 @@
+var allStyles = [];
+var currentStyle = null;
+
+getStyles(createStyleList);
+
+function createStyleList(styles) {
+    allStyles = styles;
+    chrome.tabs.query({'active': true}, function (tabs) {
+        var currentUrl = tabs[0].url;
+
+        if (!styles || styles.length === 0) {
+            return;
+        }
+
+        var existingStyles = document.getElementById('allStylesList');
+        var foundMatchingUrl = false;
+
+        while (existingStyles.hasChildNodes() && existingStyles.childElementCount > 1) {
+            existingStyles.removeChild(existingStyles.lastChild);
+        }
+
+        for (var i = 0; i < styles.length; i++) {
+            var listItem = document.createElement('option');
+            listItem.id = 'option_' + i;
+            listItem.className = 'cssEditor-chapter-item';
+            listItem.value = 'option_' + i;
+            listItem.innerText = styles[i].title;
+
+            if (!foundMatchingUrl) {
+                currentUrl = currentUrl.replace(/(http[s]?:\/\/|www\.)/gi, '').toLowerCase();
+                var styleUrl = styles[i].url.replace(/(http[s]?:\/\/|www\.)/gi, '').toLowerCase();
+
+                if (currentUrl.startsWith(styleUrl)) {
+                    listItem.selected = 'selected';
+                    foundMatchingUrl = true;
+                    currentStyle = styles[i];
+                    setCurrentStyle(currentStyle);
+                }
+            }
+
+            existingStyles.appendChild(listItem);
+        }
+    });
+}
+
+document.getElementById('allStylesList').onchange = function () {
+    var newValue = this.value;
+    newValue = newValue.replace('option_', '');
+    newValue = parseInt(newValue);
+    currentStyle = allStyles[newValue];
+    setCurrentStyle(currentStyle);
+}
+
+document.getElementById("applyStyle").onclick = function() {
+    chrome.tabs.query({
+        currentWindow: true,
+        active: true
+    }, function(tab) {
+        chrome.tabs.insertCSS(tab[0].id, {code: currentStyle.style});
+        // window.close();  TODO ?
+    });
+}
+
+document.getElementById("editStyles").onclick = function() {
+
+    if (document.getElementById('cssEditor-Modal')) {
+        return;
+    }
+
+    chrome.tabs.query({
+        currentWindow: true,
+        active: true
+    }, function(tab) {
+
+        chrome.tabs.executeScript(tab[0].id, {file: '/jquery.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/utils.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/filesaver.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/jszip.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/jszip-utils.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/saveEbook.js'});
+        chrome.tabs.executeScript(tab[0].id, {file: '/jquery-sortable.js'});
+        chrome.tabs.insertCSS(tab[0].id, {file: '/cssEditor.css'});
+
+        chrome.tabs.executeScript(tab[0].id, {
+            file: '/cssEditor.js'
+        });
+
+         window.close();
+    });
+};
 
 document.getElementById("editChapters").onclick = function() {
 
@@ -46,6 +136,7 @@ function dispatch(action, justAddToBuffer) {
                 chrome.tabs.executeScript(tab[0].id, {file: '/jszip.js'});
                 chrome.tabs.executeScript(tab[0].id, {file: '/jszip-utils.js'});
                 chrome.tabs.executeScript(tab[0].id, {file: '/pure-parser.js'});
+                chrome.tabs.executeScript(tab[0].id, {file: '/cssjson.js'});
 
                 chrome.tabs.executeScript(tab[0].id, {
                     file: 'extractHtml.js'

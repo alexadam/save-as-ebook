@@ -98,7 +98,11 @@ function _buildEbook(allPages) {
         '</ncx>'
     );
 
-    oebps.file(cssFileName, '');
+    oebps.file(cssFileName, ''); //TODO
+    var styleFolder = oebps.folder('style');
+    allPages.forEach(function(page) {
+        styleFolder.file(page.styleFileName, page.styleFileContent);
+    });
 
     var pagesFolder = oebps.folder('pages');
     allPages.forEach(function(page) {
@@ -107,7 +111,7 @@ function _buildEbook(allPages) {
             '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">' +
             '<head>' +
             '<title>' + page.title + '</title>' +
-            '<link href="../' + cssFileName + '" rel="stylesheet" type="text/css" />' +
+            '<link href="../style/' + page.styleFileName + '" rel="stylesheet" type="text/css" />' +
             '</head><body>' +
             page.content +
             '</body></html>'
