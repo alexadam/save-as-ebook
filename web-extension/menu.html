@@ -63,10 +63,17 @@
             color: white;
             padding: 5px;
         }
-
         @keyframes rotate {
           0%    { transform: rotate(0deg); }
           100%  { transform: rotate(360deg); }
+        }
+        #styleLabel {
+           padding-bottom: 5px;
+        }
+        #allStylesList {
+            display: inline-block;
+            width: 100%;
+            padding: 3px;
         }
     </style>
 </head>
@@ -75,10 +82,9 @@
     <div class="menu-holder">
         <div id="menuTitle">Save as eBook:</div>
         <hr/>
-        <div><label for="">Custom Styles:</label></div>
+        <div id="styleLabel"><label>Custom Styles:</label></div>
         <div>
-            <select id="allStylesList" class="" name="" style="display:inline-block;width:100%;">
-            </select>
+            <select id="allStylesList"></select>
         </div>
         <div class="">
             <button id="applyStyle" type="button" name="button" style="display:inline-block;width:47%;border-right:solid 1px black;">Apply</button>

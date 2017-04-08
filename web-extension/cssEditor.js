@@ -54,12 +54,14 @@ function showEditor() {
     titleHolder.id = 'cssEditor-ebookTitleHolder';
 
     var existingStyles = document.createElement('select');
-    existingStyles.id = "selectStyle";
+    existingStyles.id = "cssEditor-selectStyle";
     existingStyles.onchange = function (event) {
         if (existingStyles.selectedIndex === 0) {
             currentStyle = null;
             currentStyleIndex = -1;
             hideStyleEditor();
+            hideRemoveStyle();
+            hideSaveStyle();
             return;
         }
         currentStyle = allStyles[existingStyles.selectedIndex - 1];
@@ -72,12 +74,13 @@ function showEditor() {
     titleHolder.appendChild(existingStyles);
 
     var titleLabel = document.createElement('label');
-    titleLabel.innerText = ' or ';
+    titleLabel.id = 'cssEditor-orLabel';
+    titleLabel.innerText = 'or';
     titleHolder.appendChild(titleLabel);
 
     var createNewStyleButton = document.createElement('button');
+    createNewStyleButton.id = 'cssEditor-createNewStyle';
     createNewStyleButton.innerText = 'Create New Style';
-    createNewStyleButton.className = 'cssEditor-cancel-button';
     createNewStyleButton.onclick = createNewStyle;
     titleHolder.appendChild(createNewStyleButton);
 
@@ -88,6 +91,7 @@ function showEditor() {
         currentStyleIndex = -1;
         resetFields();
         showStyleEditor();
+        showSaveStyle();
         hideRemoveStyle();
         createStyleList();
     }
@@ -99,12 +103,15 @@ function showEditor() {
     editorHolder.id = 'cssEditor-styleEditor';
 
     var nameLabelHolder = document.createElement('div');
+    nameLabelHolder.className = 'cssEditor-field-label-holder';
     var nameLabel = document.createElement('label');
+    nameLabel.className = 'cssEditor-field-label';
     nameLabel.innerText = 'Name';
     nameLabelHolder.appendChild(nameLabel);
     editorHolder.appendChild(nameLabelHolder);
 
     var nameInputHolder = document.createElement('div');
+    nameInputHolder.className = 'cssEditor-field-holder';
     var cssNameInput = document.createElement('input');
     cssNameInput.id = 'cssEditor-styleName';
     cssNameInput.type = 'text';
@@ -113,12 +120,15 @@ function showEditor() {
 
 
     var urlLabelHolder = document.createElement('div');
+    urlLabelHolder.className = 'cssEditor-field-label-holder';
     var urlLabel = document.createElement('label');
+    urlLabel.className = 'cssEditor-field-label';
     urlLabel.innerText = 'URL Starts With';
     urlLabelHolder.appendChild(urlLabel);
     editorHolder.appendChild(urlLabelHolder);
 
     var urlInputHolder = document.createElement('div');
+    urlInputHolder.className = 'cssEditor-field-holder';
     var urlInput = document.createElement('input');
     urlInput.id = 'cssEditor-matchUrl';
     urlInput.type = 'text';
@@ -126,14 +136,18 @@ function showEditor() {
     editorHolder.appendChild(urlInputHolder);
 
     var contentLabelHolder = document.createElement('div');
+    contentLabelHolder.className = 'cssEditor-field-label-holder';
     var contentLabel = document.createElement('label');
+    contentLabel.className = 'cssEditor-field-label';
     contentLabel.innerText = 'CSS';
     contentLabelHolder.appendChild(contentLabel);
     editorHolder.appendChild(contentLabelHolder);
 
     var contentInputHolder = document.createElement('div');
+    contentInputHolder.className = 'cssEditor-field-holder';
     var contentInput = document.createElement('textarea');
     contentInput.id = 'cssEditor-styleContent';
+    contentInput.setAttribute('data', 'language: css');
     contentInputHolder.appendChild(contentInput);
     editorHolder.appendChild(contentInputHolder);
 
@@ -151,6 +165,7 @@ function showEditor() {
     saveButtonsHolder.appendChild(removeCssButton);
 
     var saveCssButton = document.createElement('button');
+    saveCssButton.id = 'cssEditor-saveStyle';
     saveCssButton.innerText = 'Save Style';
     saveCssButton.className = 'cssEditor-footer-button cssEditor-float-right cssEditor-save-button';
     saveCssButton.onclick = saveStyle;
@@ -189,6 +204,7 @@ function showEditor() {
 
         showStyleEditor();
         showRemoveStyle();
+        showSaveStyle();
 
         document.getElementById('cssEditor-styleName').value = currentStyle.title;
         document.getElementById('cssEditor-matchUrl').value = currentStyle.url;
@@ -216,6 +232,14 @@ function showEditor() {
 
     function hideRemoveStyle() {
         document.getElementById('cssEditor-removeStyle').style.display = 'none';
+    }
+
+    function showSaveStyle() {
+        document.getElementById('cssEditor-saveStyle').style.display = 'inline-block';
+    }
+
+    function hideSaveStyle() {
+        document.getElementById('cssEditor-saveStyle').style.display = 'none';
     }
 
     function saveStyle() {

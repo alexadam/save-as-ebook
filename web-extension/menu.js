@@ -78,7 +78,6 @@ document.getElementById("editStyles").onclick = function() {
         chrome.tabs.executeScript(tab[0].id, {file: '/jszip.js'});
         chrome.tabs.executeScript(tab[0].id, {file: '/jszip-utils.js'});
         chrome.tabs.executeScript(tab[0].id, {file: '/saveEbook.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/jquery-sortable.js'});
         chrome.tabs.insertCSS(tab[0].id, {file: '/cssEditor.css'});
 
         chrome.tabs.executeScript(tab[0].id, {

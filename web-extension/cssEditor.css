@@ -1,16 +1,68 @@
-body.dragging, body.dragging * {
-    cursor: move !important;
+#cssEditor-removeStyle {
+    display: none;
 }
-.dragged {
-    position: absolute;
-    opacity: 0.5;
-    z-index: 2000;
+#cssEditor-saveStyle {
+    display: none;
 }
-ul.cssEditor-chapters-list li.placeholder {
-    position: relative;
-    margin: 0;
-    padding: 0;
-    border: solid 10px #f5f5f5;
+#cssEditor-selectStyle {
+    padding: 3px;
+    cursor: pointer;
+    font-size: 15px;
+    font-family: "sans-serif";
+}
+#cssEditor-selectStyle > option {
+    padding: 3px;
+    font-size: 1em;
+    cursor: pointer;
+    font-size: 15px;
+    font-family: "sans-serif";
+}
+#cssEditor-orLabel {
+    padding: 3px;
+    margin: 0 3px;
+    font-size: 15px;
+    font-family: "sans-serif";
+}
+#cssEditor-createNewStyle {
+    padding: 3px;
+    cursor: pointer;
+    font-size: 15px;
+    font-family: "sans-serif";
+}
+.cssEditor-field-label-holder {
+    margin-top: 10px;
+    font-size: 15px;
+    font-family: "sans-serif";
+}
+.cssEditor-field-holder {
+    padding: 3px;
+}
+.cssEditor-field-label {
+    padding: 0 3px;
+    margin-top: 5px;
+}
+
+#cssEditor-styleName {
+    width: 50%;
+    padding: 5px;
+    border: solid rgba(0, 0, 0, 0.25) 1px;
+    font-size: 15px;
+    font-family: "sans-serif";
+}
+#cssEditor-matchUrl {
+    width: 50%;
+    padding: 5px;
+    border: solid rgba(0, 0, 0, 0.25) 1px;
+    font-size: 15px;
+    font-family: "sans-serif";
+}
+#cssEditor-styleContent {
+    width: 100%;
+    height: 100px;
+    padding: 5px;
+    border: solid rgba(0, 0, 0, 0.25) 1px;
+    font-size: 15px;
+    font-family: "sans-serif";
 }
 
 #cssEditor-Title {
@@ -26,51 +78,6 @@ ul.cssEditor-chapters-list li.placeholder {
     padding: 10px 20px;
     margin-bottom: 10px;
 }
-#cssEditor-ebookTitleLabel {
-    font-weight: bold;
-    font-size: 18px;
-    font-family: sans-serif;
-    margin-right: 10px;
-}
-#cssEditor-ebookTitle {
-    padding: 5px;
-    font-size: 15px;
-    font-family: "sans-serif";
-    width: 85%;
-}
-ul, ul.cssEditor-chapters-list {
-    width: 100%;
-    display: block;
-    padding: 0;
-    margin: 0;
-    list-style-type: none !important;
-}
-.cssEditor-chapter-item {
-    display: block;
-    line-height: 35px;
-    height: 35px;
-    padding: 5px 0;
-    vertical-align: middle;
-    font-size: 17px;
-    list-style-type: none;
-}
-.cssEditor-chapter-item:hover {
-    background-color: #f5f5f5;
-}
-.cssEditor-drag-handler {
-    cursor: move;
-    padding: 3px;
-    margin-right: 5px;
-    border-radius: 5px;
-}
-.cssEditor-chapter-item > input[type="text"] {
-    padding: 5px;
-    font-size: 15px;
-    font-family: "sans-serif";
-    width: 80%;
-    border: none;
-    border-bottom: solid 1px #aaa;
-}
 
 #cssEditor-modalHeader {
     display: block;
@@ -79,9 +86,6 @@ ul, ul.cssEditor-chapters-list {
 }
 #cssEditor-modalList {
     display: block;
-    /*width: 100%;*/
-    /*border-top: solid 1px black;*/
-    /*border-bottom: solid 1px black;*/
     padding: 20px;
     padding-top: 0;
 }
@@ -89,13 +93,6 @@ ul, ul.cssEditor-chapters-list {
     display: block;
     overflow: hidden;
 }
-.chapter-item * {
-    vertical-align: middle;
-}
-#dragHandler {
-    padding: 0 5px;
-}
-
 
 .cssEditor-text-button {
     border: none;
@@ -143,17 +140,6 @@ ul, ul.cssEditor-chapters-list {
 }
 
 @media (max-width: 1700px) {
-    .cssEditor-chapter-item {
-        line-height: 30px;
-        height: 30px;
-        padding: 4px 0;
-        font-size: 14px;
-    }
-    .cssEditor-chapter-item > input[type="text"] {
-        padding: 3px;
-        font-size: 12px;
-        width: 75%;
-    }
     .cssEditor-text-button {
         font-size: 12px;
         padding: 3px;
