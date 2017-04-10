@@ -176,29 +176,34 @@ function sanitize(rawContentString) {
 
                 var tattrs = null;
                 if (tag === 'img') {
-                    tattrs = attrs.filter(function(attr) {
-                        return attr.name === 'src';
-                    }).map(function(attr) {
-                        return getImageSrc(attr.value);
-                    });
-                    lastFragment = tattrs.length === 0 ? '<img></img>' : '<img src="' + tattrs[0] + '" alt=""></img>';
+                    var tmpAttrsTxt = '';
+                    for (var i = 0; i < attrs.length; i++) {
+                        if (attrs[i].name === 'src') {
+                            tmpAttrsTxt += ' src="' + getImageSrc(attrs[i].value) + '"';
+                        } else if (attrs[i].name === 'data-class') {
+                            tmpAttrsTxt += ' class="' + attrs[i].value + '"';
+                        }
+                    }
+                    lastFragment = tattrs.length === 0 ? '<img></img>' : '<img ' + tmpAttrsTxt + '" alt=""></img>';
                 } else if (tag === 'a') {
-                    tattrs = attrs.filter(function(attr) {
-                        return attr.name === 'href';
-                    }).map(function(attr) {
-                        return getHref(attr.value);
-                    });
-                    lastFragment = tattrs.length === 0 ? '<a>' : '<a href="' + tattrs[0] + '">';
+                    var tmpAttrsTxt = '';
+                    for (var i = 0; i < attrs.length; i++) {
+                        if (attrs[i].name === 'href') {
+                            tmpAttrsTxt += ' href="' + getImageSrc(attrs[i].value) + '"';
+                        } else if (attrs[i].name === 'data-class') {
+                            tmpAttrsTxt += ' class="' + attrs[i].value + '"';
+                        }
+                    }
+                    lastFragment = tattrs.length === 0 ? '<a>' : '<a href="' + tmpAttrsTxt + '">';
                 } else {
+                    // TODO ???
+                    tattrs = attrs.filter(function(attr) {
+                        return attr.name === 'data-class';
+                    }).map(function(attr) {
+                        return attr.value;
+                    });
+                    lastFragment = '<' + tag + ' class="' + tattrs[0] + '"' + '>';
                 }
-
-                // TODO ???
-                tattrs = attrs.filter(function(attr) {
-                    return attr.name === 'data-class';
-                }).map(function(attr) {
-                    return attr.value;
-                });
-                lastFragment = '<' + tag + ' class="' + tattrs[0] + '"' + '>';
 
                 results += lastFragment;
                 lastFragment = '';
