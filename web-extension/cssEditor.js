@@ -8,15 +8,7 @@ if (tmp) {
 }
 
 var allPagesRef = null;
-var allStyles = [{
-    title: 'reddit',
-    url: 'reddit.com',
-    style: `
-        .class: {
-            display: none;
-        }
-    `
-}];
+var allStyles = [];
 var currentStyle = null;
 var currentStyleIndex = -1;
 
@@ -177,7 +169,7 @@ function showEditor() {
 
     function createStyleList(allStylesTmp) {
         if (allStylesTmp && allStylesTmp.length > 0) {
-            allStyles = allStyles.slice(0, 0).concat(allStylesTmp);
+            allStyles = allStyles.concat(allStylesTmp);
         }
 
         while (existingStyles.hasChildNodes() && existingStyles.childElementCount > 1) {

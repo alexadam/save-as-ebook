@@ -32,7 +32,18 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.type === 'get styles') {
         chrome.storage.local.get('styles', function (data) {
             if (!data || !data.styles) {
-                sendResponse({styles: []});
+                // TODO move defaultStyles in a different file/location ?
+                var defaultStyles = [
+                    {
+                        title: 'reddit',
+                        url: 'reddit.com',
+                        style: `.class: {
+    display: none;
+}
+`
+                    }
+                ];
+                sendResponse({styles: defaultStyles});
             } else {
                 sendResponse({styles: data.styles});
             }
