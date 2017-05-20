@@ -14,7 +14,29 @@ var allowedTags = [
 ];
 var cssClassesToTmpIds = {};
 var tmpIdsToNewCss = {};
-
+// src: https://idpf.github.io/a11y-guidelines/content/style/reference.html
+// var supportedCss = [
+//     'background', 'background-attachment', 'background-color', 'background-image', 'background-position', 'background-repeat', 'border', 'border-top', 'border-right',
+//     'border-bottom', 'border-left', 'border-collapse', 'border-color', 'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color', 'border-spacing',
+//     'border-style', 'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style', 'border-width', 'border-top-width', 'border-right-width',
+//     'border-bottom-width', 'border-left-width', 'bottom', 'left', 'right', 'top', 'caption-side', 'clear', 'clip', 'color', 'content', 'counter-increment',
+//     'counter-reset', 'cursor', 'display', 'empty-cells', 'float', 'font', 'font-family', 'font-size', 'font-style', 'font-variant', 'font-weight', 'height',
+//     'letter-spacing', 'line-height', 'list-style', 'list-style-image', 'list-style-position', 'list-style-type', 'margin', 'margin-top', 'margin-right', 'margin-bottom',
+//     'margin-left', 'max-height', 'max-width', 'min-height', 'min-width', 'orphans', 'widows', 'outline', 'outline-color', 'outline-style', 'outline-width', 'overflow', 'padding',
+//     'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'page-break-after', 'page-break-before', 'page-break-inside', 'position', 'quotes', 'table-layout',
+//     'text-align', 'text-decoration', 'text-indent', 'text-transform', 'vertical-align', 'visibility', 'white-space', 'width', 'word-spacing', 'z-index'
+// ];
+var supportedCss = [
+    'background-color', 'border', 'border-top', 'border-right',
+    'border-bottom', 'border-left', 'border-collapse', 'border-color', 'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color', 'border-spacing',
+    'border-style', 'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style', 'border-width', 'border-top-width', 'border-right-width',
+    'border-bottom-width', 'border-left-width', 'bottom', 'left', 'right', 'top', 'caption-side', 'clear', 'color', 'content',
+    'display', 'float', 'font', 'font-family',  'font-size', 'font-style', 'font-variant', 'font-weight', 'height',
+    'letter-spacing', 'line-height', 'list-style', 'list-style-image', 'list-style-position', 'list-style-type', 'margin', 'margin-top', 'margin-right', 'margin-bottom',
+    'margin-left', 'max-height', 'max-width', 'min-height', 'min-width', 'overflow', 'padding',
+    'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'position', 'quotes', 'table-layout',
+    'text-align', 'text-decoration', 'text-indent', 'text-transform', 'vertical-align', 'visibility', 'white-space', 'width', 'word-spacing', 'z-index'
+];
 //////
 
 function getImageSrc(srcTxt) {
@@ -174,7 +196,6 @@ function sanitize(rawContentString) {
                     return;
                 }
 
-                var tattrs = null;
                 if (tag === 'img') {
                     var tmpAttrsTxt = '';
                     for (var i = 0; i < attrs.length; i++) {
@@ -184,25 +205,25 @@ function sanitize(rawContentString) {
                             tmpAttrsTxt += ' class="' + attrs[i].value + '"';
                         }
                     }
-                    lastFragment = tattrs.length === 0 ? '<img></img>' : '<img ' + tmpAttrsTxt + '" alt=""></img>';
+                    lastFragment = tmpAttrsTxt.length === 0 ? '<img></img>' : '<img ' + tmpAttrsTxt + '" alt=""></img>';
                 } else if (tag === 'a') {
                     var tmpAttrsTxt = '';
                     for (var i = 0; i < attrs.length; i++) {
                         if (attrs[i].name === 'href') {
-                            tmpAttrsTxt += ' href="' + getImageSrc(attrs[i].value) + '"';
+                            tmpAttrsTxt += ' href="' + getHref(attrs[i].value) + '"';
                         } else if (attrs[i].name === 'data-class') {
                             tmpAttrsTxt += ' class="' + attrs[i].value + '"';
                         }
                     }
-                    lastFragment = tattrs.length === 0 ? '<a>' : '<a href="' + tmpAttrsTxt + '">';
+                    lastFragment = tmpAttrsTxt.length === 0 ? '<a>' : '<a href="' + tmpAttrsTxt + '">';
                 } else {
-                    // TODO ???
-                    tattrs = attrs.filter(function(attr) {
-                        return attr.name === 'data-class';
-                    }).map(function(attr) {
-                        return attr.value;
-                    });
-                    lastFragment = '<' + tag + ' class="' + tattrs[0] + '"' + '>';
+                    var tmpAttrsTxt = '';
+                    for (var i = 0; i < attrs.length; i++) {
+                        if (attrs[i].name === 'data-class') {
+                            tmpAttrsTxt += ' class="' + attrs[i].value + '"';
+                        }
+                    }
+                    lastFragment = '<' + tag + ' ' + tmpAttrsTxt + '>';
                 }
 
                 results += lastFragment;
@@ -308,39 +329,15 @@ function extractCss(callback) {
             if (!tmpNewCss) {
                 var style = window.getComputedStyle(pre);
                 tmpNewCss = {};
-                tmpNewCss['font-size'] = style['font-size'];
-                tmpNewCss['font-weight'] = style['font-weight'];
-                tmpNewCss['color'] = style['color'];
-                tmpNewCss['background-color'] = style['background-color'];
+                for (var cssTagName of supportedCss) {
+                    tmpNewCss[cssTagName] = style.getPropertyValue(cssTagName);
+                }
                 tmpIdsToNewCss[tmpName] = tmpNewCss;
             }
             pre.setAttribute('data-class', tmpName);
         }
     });
-    getCurrentStyle(function (currentStyle) {
-        var styleText = currentStyle.style;
-        var json = CSSJSON.toJSON(styleText);
-        var keys = Object.keys(json.children);
-        for (var i = 0; i < keys.length; i++) {
-            if (json.children[keys[i]].children['display'] && json.children[keys[i]].children['display'] === 'none') {
-                continue;
-            }
-            var cEls = document.querySelectorAll(keys[i]);
-            for (var j = 0; j < cEls.length; j++) {
-                var style = window.getComputedStyle(cEls[j]);
-                tmpNewCss = {};
-                tmpNewCss['font-size'] = style['font-size'];
-                tmpNewCss['font-weight'] = style['font-weight'];
-                tmpNewCss['color'] = style['color'];
-                tmpNewCss['background-color'] = style['background-color'];
-                tmpName = 'class-' + Math.floor(Math.random()*100000);
-                tmpIdsToNewCss[tmpName] = tmpNewCss;
-                var oldClass = cEls[j].getAttribute('data-class');
-                cEls[j].setAttribute('data-class', oldClass + ' ' + tmpName);
-            }
-        }
-        callback(jsonToCss(tmpIdsToNewCss));
-    });
+    callback(jsonToCss(tmpIdsToNewCss));
 }
 
 /////

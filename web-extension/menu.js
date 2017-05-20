@@ -137,6 +137,8 @@ function dispatch(action, justAddToBuffer) {
                 chrome.tabs.executeScript(tab[0].id, {file: '/pure-parser.js'});
                 chrome.tabs.executeScript(tab[0].id, {file: '/cssjson.js'});
 
+                chrome.tabs.insertCSS(tab[0].id, {code: currentStyle.style}); // TODO remove from here --- see if it still works
+
                 chrome.tabs.executeScript(tab[0].id, {
                     file: 'extractHtml.js'
                 }, function() {
