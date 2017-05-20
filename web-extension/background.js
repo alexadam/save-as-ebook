@@ -37,7 +37,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                     {
                         title: 'reddit',
                         url: 'reddit.com',
-                        style: `.class: {
+                        style: `.class {
     display: none;
 }
 `
