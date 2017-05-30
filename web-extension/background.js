@@ -64,5 +64,17 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.type === 'set current style') {
         chrome.storage.local.set({'currentStyle': request.currentStyle});
     }
+    if (request.type === 'get include style') {
+        chrome.storage.local.get('includeStyle', function (data) {
+            if (!data) {
+                sendResponse({includeStyle: true});
+            } else {
+                sendResponse({includeStyle: data.includeStyle});
+            }
+        });
+    }
+    if (request.type === 'set include style') {
+        chrome.storage.local.set({'includeStyle': request.includeStyle});
+    }
     return true;
 });

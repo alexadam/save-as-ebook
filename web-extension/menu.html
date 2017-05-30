@@ -68,12 +68,21 @@
           100%  { transform: rotate(360deg); }
         }
         #styleLabel {
-           padding-bottom: 5px;
+           padding: 5px 0;
         }
         #allStylesList {
             display: inline-block;
             width: 100%;
             padding: 3px;
+        }
+        #includeStyle {
+            font-family: sans-serif;
+            font-size: 14px;
+            padding: 0;
+            padding-bottom: 8px;
+            border-bottom: dashed 1px #ccc;
+            background-color: white;
+            text-align: left;
         }
     </style>
 </head>
@@ -82,7 +91,8 @@
     <div class="menu-holder">
         <div id="menuTitle">Save as eBook:</div>
         <hr/>
-        <div id="styleLabel"><label>Custom Styles:</label></div>
+        <div id="includeStyle" ><input type="checkbox" name="button" id="includeStyleCheck"></input>Include Style</div>
+        <div id="styleLabel"><label>Custom Style:</label></div>
         <div>
             <select id="allStylesList"></select>
         </div>

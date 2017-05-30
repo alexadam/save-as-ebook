@@ -1,3 +1,18 @@
+function setIncludeStyle(includeStyle) {
+    chrome.runtime.sendMessage({
+        type: "set include style",
+        includeStyle: includeStyle
+    }, function(response) {
+    });
+}
+
+function getIncludeStyle(callback) {
+    chrome.runtime.sendMessage({
+        type: "get include style"
+    }, function(response) {
+        callback(response.includeStyle);
+    });
+}
 
 function setCurrentStyle(currentStyle) {
     chrome.runtime.sendMessage({

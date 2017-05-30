@@ -43,6 +43,18 @@ function createStyleList(styles) {
     });
 }
 
+function createIncludeStyle(data) {
+    var includeStyleCheck = document.getElementById('includeStyleCheck');
+    includeStyleCheck.checked = data;
+}
+
+getIncludeStyle(createIncludeStyle);
+
+document.getElementById('includeStyleCheck').onclick = function () {
+    var includeStyleCheck = document.getElementById('includeStyleCheck');
+    setIncludeStyle(includeStyleCheck.checked);
+}
+
 document.getElementById('allStylesList').onchange = function () {
     var newValue = this.value;
     newValue = newValue.replace('option_', '');
