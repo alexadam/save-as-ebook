@@ -325,63 +325,38 @@ function jsonToCss(jsonObj) {
 }
 
 function extractCss(callback) {
-    // getIncludeStyle(function (result) {
-    //     if (result) {
-    //         $('body').find('*').each(function (i, pre) {
-    //             if (!$(pre).is(':visible')) {
-    //                 $(pre).replaceWith('');
-    //             } else {
-    //                 var classNames = pre.getAttribute('class');
-    //                 var tmpName = cssClassesToTmpIds[classNames];
-    //                 var tmpNewCss = tmpIdsToNewCss[tmpName];
-    //                 if (!tmpName) {
-    //                     tmpName = 'class-' + Math.floor(Math.random()*100000);
-    //                     cssClassesToTmpIds[classNames] = tmpName;
-    //                     tmpIdsToNewCss[tmpName] = {};
-    //                 }
-    //                 if (!tmpNewCss) {
-    //                     var style = window.getComputedStyle(pre);
-    //                     tmpNewCss = {};
-    //                     for (var cssTagName of supportedCss) {
-    //                         tmpNewCss[cssTagName] = style.getPropertyValue(cssTagName);
-    //                     }
-    //                     tmpIdsToNewCss[tmpName] = tmpNewCss;
-    //                 }
-    //                 pre.setAttribute('data-class', tmpName);
-    //             }
-    //         });
-    //         callback(jsonToCss(tmpIdsToNewCss));
-    //     } else {
-    //         callback();
-    //     }
-    // });
-
-    $('body').find('*').each(function (i, pre) {
-        if (!$(pre).is(':visible')) {
-            $(pre).replaceWith('');
-        } else {
-            var classNames = pre.getAttribute('class');
-            if (!classNames) {
-                return;
-            }
-            var tmpName = cssClassesToTmpIds[classNames];
-            var tmpNewCss = tmpIdsToNewCss[tmpName];
-            if (!tmpName) {
-                tmpName = 'class-' + Math.floor(Math.random()*100000);
-                cssClassesToTmpIds[classNames] = tmpName;
-            }
-            if (!tmpNewCss) {
-                var style = window.getComputedStyle(pre);
-                tmpNewCss = {};
-                for (var cssTagName of supportedCss) {
-                    tmpNewCss[cssTagName] = style.getPropertyValue(cssTagName);
+    getIncludeStyle(function (result) {
+        if (result) {
+            $('body').find('*').each(function (i, pre) {
+                if (!$(pre).is(':visible')) {
+                    $(pre).replaceWith('');
+                } else {
+                    var classNames = pre.getAttribute('class');
+                    if (!classNames) {
+                        return;
+                    }
+                    var tmpName = cssClassesToTmpIds[classNames];
+                    var tmpNewCss = tmpIdsToNewCss[tmpName];
+                    if (!tmpName) {
+                        tmpName = 'class-' + Math.floor(Math.random()*100000);
+                        cssClassesToTmpIds[classNames] = tmpName;
+                    }
+                    if (!tmpNewCss) {
+                        var style = window.getComputedStyle(pre);
+                        tmpNewCss = {};
+                        for (var cssTagName of supportedCss) {
+                            tmpNewCss[cssTagName] = style.getPropertyValue(cssTagName);
+                        }
+                        tmpIdsToNewCss[tmpName] = tmpNewCss;
+                    }
+                    pre.setAttribute('data-class', tmpName);
                 }
-                tmpIdsToNewCss[tmpName] = tmpNewCss;
-            }
-            pre.setAttribute('data-class', tmpName);
+            });
+            callback(jsonToCss(tmpIdsToNewCss));
+        } else {
+            callback();
         }
     });
-    callback(jsonToCss(tmpIdsToNewCss));
 }
 
 /////
