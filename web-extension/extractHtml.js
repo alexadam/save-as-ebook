@@ -26,16 +26,27 @@ var tmpIdsToNewCss = {};
 //     'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'page-break-after', 'page-break-before', 'page-break-inside', 'position', 'quotes', 'table-layout',
 //     'text-align', 'text-decoration', 'text-indent', 'text-transform', 'vertical-align', 'visibility', 'white-space', 'width', 'word-spacing', 'z-index'
 // ];
+// var supportedCss = [
+//     'background-color', 'border', 'border-top', 'border-right',
+//     'border-bottom', 'border-left', 'border-collapse', 'border-color', 'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color', 'border-spacing',
+//     'border-style', 'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style', 'border-width', 'border-top-width', 'border-right-width',
+//     'border-bottom-width', 'border-left-width', 'bottom', 'left', 'right', 'top', 'caption-side', 'clear', 'color', 'content',
+//     'display', 'float', 'font', 'font-family',  'font-size', 'font-style', 'font-variant', 'font-weight', 'height',
+//     'letter-spacing', 'line-height', 'list-style', 'list-style-image', 'list-style-position', 'list-style-type', 'margin', 'margin-top', 'margin-right', 'margin-bottom',
+//     'margin-left', 'max-height', 'max-width', 'min-height', 'min-width', 'overflow', 'padding',
+//     'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'position', 'quotes', 'table-layout',
+//     'text-align', 'text-decoration', 'text-indent', 'text-transform', 'vertical-align', 'visibility', 'white-space', 'width', 'word-spacing', 'z-index'
+// ];
 var supportedCss = [
     'background-color', 'border', 'border-top', 'border-right',
-    'border-bottom', 'border-left', 'border-collapse', 'border-color', 'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color', 'border-spacing',
+    'border-bottom', 'border-left', 'border-color', 'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color', 'border-spacing',
     'border-style', 'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style', 'border-width', 'border-top-width', 'border-right-width',
-    'border-bottom-width', 'border-left-width', 'bottom', 'left', 'right', 'top', 'caption-side', 'clear', 'color', 'content',
-    'display', 'float', 'font', 'font-family',  'font-size', 'font-style', 'font-variant', 'font-weight', 'height',
+    'border-bottom-width', 'border-left-width', 'color',
+    'font', 'font-family',  'font-size', 'font-style', 'font-variant', 'font-weight', 'height',
     'letter-spacing', 'line-height', 'list-style', 'list-style-image', 'list-style-position', 'list-style-type', 'margin', 'margin-top', 'margin-right', 'margin-bottom',
-    'margin-left', 'max-height', 'max-width', 'min-height', 'min-width', 'overflow', 'padding',
-    'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'position', 'quotes', 'table-layout',
-    'text-align', 'text-decoration', 'text-indent', 'text-transform', 'vertical-align', 'visibility', 'white-space', 'width', 'word-spacing', 'z-index'
+    'margin-left', 'max-height', 'max-width', 'min-height', 'min-width', 'padding',
+    'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'quotes',
+    'text-align', 'text-decoration', 'text-indent', 'text-transform', 'vertical-align', 'visibility', 'white-space', 'width', 'word-spacing',
 ];
 //////
 
@@ -215,7 +226,7 @@ function sanitize(rawContentString) {
                             tmpAttrsTxt += ' class="' + attrs[i].value + '"';
                         }
                     }
-                    lastFragment = tmpAttrsTxt.length === 0 ? '<a>' : '<a href="' + tmpAttrsTxt + '">';
+                    lastFragment = tmpAttrsTxt.length === 0 ? '<a>' : '<a ' + tmpAttrsTxt + '>';
                 } else {
                     var tmpAttrsTxt = '';
                     for (var i = 0; i < attrs.length; i++) {
@@ -314,17 +325,50 @@ function jsonToCss(jsonObj) {
 }
 
 function extractCss(callback) {
+    // getIncludeStyle(function (result) {
+    //     if (result) {
+    //         $('body').find('*').each(function (i, pre) {
+    //             if (!$(pre).is(':visible')) {
+    //                 $(pre).replaceWith('');
+    //             } else {
+    //                 var classNames = pre.getAttribute('class');
+    //                 var tmpName = cssClassesToTmpIds[classNames];
+    //                 var tmpNewCss = tmpIdsToNewCss[tmpName];
+    //                 if (!tmpName) {
+    //                     tmpName = 'class-' + Math.floor(Math.random()*100000);
+    //                     cssClassesToTmpIds[classNames] = tmpName;
+    //                     tmpIdsToNewCss[tmpName] = {};
+    //                 }
+    //                 if (!tmpNewCss) {
+    //                     var style = window.getComputedStyle(pre);
+    //                     tmpNewCss = {};
+    //                     for (var cssTagName of supportedCss) {
+    //                         tmpNewCss[cssTagName] = style.getPropertyValue(cssTagName);
+    //                     }
+    //                     tmpIdsToNewCss[tmpName] = tmpNewCss;
+    //                 }
+    //                 pre.setAttribute('data-class', tmpName);
+    //             }
+    //         });
+    //         callback(jsonToCss(tmpIdsToNewCss));
+    //     } else {
+    //         callback();
+    //     }
+    // });
+
     $('body').find('*').each(function (i, pre) {
         if (!$(pre).is(':visible')) {
             $(pre).replaceWith('');
         } else {
             var classNames = pre.getAttribute('class');
+            if (!classNames) {
+                return;
+            }
             var tmpName = cssClassesToTmpIds[classNames];
             var tmpNewCss = tmpIdsToNewCss[tmpName];
             if (!tmpName) {
                 tmpName = 'class-' + Math.floor(Math.random()*100000);
                 cssClassesToTmpIds[classNames] = tmpName;
-                tmpIdsToNewCss[tmpName] = {};
             }
             if (!tmpNewCss) {
                 var style = window.getComputedStyle(pre);
