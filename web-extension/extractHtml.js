@@ -328,12 +328,16 @@ function extractCss(callback) {
     getIncludeStyle(function (result) {
         if (result) {
             $('body').find('*').each(function (i, pre) {
-                if (!$(pre).is(':visible')) {
-                    $(pre).replaceWith('');
+                var $pre = $(pre);
+                if (!$pre.is(':visible')) {
+                    $pre.replaceWith('');
                 } else {
                     var classNames = pre.getAttribute('class');
                     if (!classNames) {
-                        return;
+                        classNames = pre.getAttribute('id');
+                        if (!classNames) {
+                            classNames = pre.tagName;
+                        }
                     }
                     var tmpName = cssClassesToTmpIds[classNames];
                     var tmpNewCss = tmpIdsToNewCss[tmpName];
@@ -345,7 +349,7 @@ function extractCss(callback) {
                         var style = window.getComputedStyle(pre);
                         tmpNewCss = {};
                         for (var cssTagName of supportedCss) {
-                            tmpNewCss[cssTagName] = style.getPropertyValue(cssTagName);
+                            tmpNewCss[cssTagName] = $pre.css(cssTagName);
                         }
                         tmpIdsToNewCss[tmpName] = tmpNewCss;
                     }
