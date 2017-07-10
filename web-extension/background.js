@@ -35,8 +35,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                 // TODO move defaultStyles in a different file/location ?
                 var defaultStyles = [
                     {
-                        title: 'reddit',
-                        url: 'reddit.com',
+                        title: 'Reddit Comments',
+                        url: 'reddit\.com\/r\/[^\/]+\/comments',
                         style: `.class {
     display: none;
 }

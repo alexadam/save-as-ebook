@@ -115,7 +115,7 @@ function showEditor() {
     urlLabelHolder.className = 'cssEditor-field-label-holder';
     var urlLabel = document.createElement('label');
     urlLabel.className = 'cssEditor-field-label';
-    urlLabel.innerText = 'URL Starts With';
+    urlLabel.innerText = 'URL Regex'; // TODO addd link to regex tutorial
     urlLabelHolder.appendChild(urlLabel);
     editorHolder.appendChild(urlLabelHolder);
 
