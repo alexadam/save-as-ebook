@@ -324,7 +324,7 @@ function jsonToCss(jsonObj) {
     return result;
 }
 
-function extractCss(callback) {
+function extractCss(appliedStyles, callback) {
     getIncludeStyle(function (result) {
         if (result) {
             $('body').find('*').each(function (i, pre) {
@@ -358,6 +358,14 @@ function extractCss(callback) {
             });
             callback(jsonToCss(tmpIdsToNewCss));
         } else {
+            var mergedCss = '';
+            if (appliedStyles && appliedStyles.length > 0) {
+                for (var i = 0; i < appliedStyles.length; i++) {
+                    mergedCss += appliedStyles[i].style;
+                }
+                callback(mergedCss);
+                return;
+            }
             callback();
         }
     });
@@ -388,8 +396,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     var result = {};
     var pageSrc = '';
     var tmpContent = '';
-    // var styleFile =
-    extractCss(function (styleFile) {
+
+    extractCss(request.appliedStyles, function (styleFile) {
         if (request.type === 'extract-page') {
             pageSrc = document.getElementsByTagName('body')[0];
             tmpContent = getContent(pageSrc);

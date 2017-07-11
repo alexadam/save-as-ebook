@@ -1,5 +1,6 @@
 var allStyles = [];
 var currentStyle = null;
+var appliedStyles = [];
 
 getStyles(createStyleList);
 
@@ -83,7 +84,7 @@ document.getElementById("applyStyle").onclick = function() {
         active: true
     }, function(tab) {
         chrome.tabs.insertCSS(tab[0].id, {code: currentStyle.style});
-        // window.close();  TODO ?
+        appliedStyles.push(currentStyle);
     });
 }
 
@@ -168,18 +169,19 @@ function dispatch(action, justAddToBuffer) {
                 chrome.tabs.executeScript(tab[0].id, {
                     file: 'extractHtml.js'
                 }, function() {
-                    sendMessage(tab[0].id, action, justAddToBuffer);
+                    sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
                 });
             } else if (response.echo) {
-                sendMessage(tab[0].id, action, justAddToBuffer);
+                sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
             }
         });
     });
 }
 
-function sendMessage(tabId, action, justAddToBuffer) {
+function sendMessage(tabId, action, justAddToBuffer, appliedStyles) {
     chrome.tabs.sendMessage(tabId, {
-        type: action
+        type: action,
+        appliedStyles: appliedStyles
     }, function(response) {
         if (response.length === 0) {
             if (justAddToBuffer) {
