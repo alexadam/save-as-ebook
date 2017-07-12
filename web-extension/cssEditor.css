@@ -36,21 +36,41 @@
 }
 .cssEditor-field-holder {
     padding: 3px;
+    width: 100%;
 }
 .cssEditor-field-label {
     padding: 0 3px;
     margin-top: 5px;
 }
 
+#cssEditor-styleEditor {
+    display: flex;
+    flex-flow: row;
+}
+
+.cssEditor-left-panel {
+    width: 48%;
+    display: flex;
+    flex-flow: column;
+}
+
+.cssEditor-right-panel {
+    width: 48%;
+    display: flex;
+    flex-flow: column;
+}
+
 #cssEditor-styleName {
-    width: 50%;
+    width: 90%;
+    min-width: 90%;
     padding: 5px;
     border: solid rgba(0, 0, 0, 0.25) 1px;
     font-size: 15px;
     font-family: "sans-serif";
 }
 #cssEditor-matchUrl {
-    width: 50%;
+    width: 90%;
+    min-width: 90%;
     padding: 5px;
     border: solid rgba(0, 0, 0, 0.25) 1px;
     font-size: 15px;
@@ -58,7 +78,7 @@
 }
 #cssEditor-styleContent {
     width: 100%;
-    height: 100px;
+    height: 150px;
     padding: 5px;
     border: solid rgba(0, 0, 0, 0.25) 1px;
     font-size: 15px;

@@ -94,13 +94,18 @@ function showEditor() {
     editorHolder.style.display = 'none';
     editorHolder.id = 'cssEditor-styleEditor';
 
+    var editorHolderLeft = document.createElement('div');
+    editorHolderLeft.className = 'cssEditor-left-panel';
+    var editorHolderRight = document.createElement('div');
+    editorHolderRight.className = 'cssEditor-right-panel';
+
     var nameLabelHolder = document.createElement('div');
     nameLabelHolder.className = 'cssEditor-field-label-holder';
     var nameLabel = document.createElement('label');
     nameLabel.className = 'cssEditor-field-label';
     nameLabel.innerText = 'Name';
     nameLabelHolder.appendChild(nameLabel);
-    editorHolder.appendChild(nameLabelHolder);
+    editorHolderLeft.appendChild(nameLabelHolder);
 
     var nameInputHolder = document.createElement('div');
     nameInputHolder.className = 'cssEditor-field-holder';
@@ -108,7 +113,7 @@ function showEditor() {
     cssNameInput.id = 'cssEditor-styleName';
     cssNameInput.type = 'text';
     nameInputHolder.appendChild(cssNameInput);
-    editorHolder.appendChild(nameInputHolder);
+    editorHolderLeft.appendChild(nameInputHolder);
 
 
     var urlLabelHolder = document.createElement('div');
@@ -117,7 +122,7 @@ function showEditor() {
     urlLabel.className = 'cssEditor-field-label';
     urlLabel.innerText = 'URL Regex'; // TODO addd link to regex tutorial
     urlLabelHolder.appendChild(urlLabel);
-    editorHolder.appendChild(urlLabelHolder);
+    editorHolderLeft.appendChild(urlLabelHolder);
 
     var urlInputHolder = document.createElement('div');
     urlInputHolder.className = 'cssEditor-field-holder';
@@ -125,7 +130,7 @@ function showEditor() {
     urlInput.id = 'cssEditor-matchUrl';
     urlInput.type = 'text';
     urlInputHolder.appendChild(urlInput);
-    editorHolder.appendChild(urlInputHolder);
+    editorHolderLeft.appendChild(urlInputHolder);
 
     var contentLabelHolder = document.createElement('div');
     contentLabelHolder.className = 'cssEditor-field-label-holder';
@@ -133,7 +138,7 @@ function showEditor() {
     contentLabel.className = 'cssEditor-field-label';
     contentLabel.innerText = 'CSS';
     contentLabelHolder.appendChild(contentLabel);
-    editorHolder.appendChild(contentLabelHolder);
+    editorHolderRight.appendChild(contentLabelHolder);
 
     var contentInputHolder = document.createElement('div');
     contentInputHolder.className = 'cssEditor-field-holder';
@@ -141,8 +146,10 @@ function showEditor() {
     contentInput.id = 'cssEditor-styleContent';
     contentInput.setAttribute('data', 'language: css');
     contentInputHolder.appendChild(contentInput);
-    editorHolder.appendChild(contentInputHolder);
+    editorHolderRight.appendChild(contentInputHolder);
 
+    editorHolder.appendChild(editorHolderLeft);
+    editorHolder.appendChild(editorHolderRight);
     modalList.appendChild(editorHolder);
 
 
@@ -215,7 +222,7 @@ function showEditor() {
     }
 
     function showStyleEditor() {
-        document.getElementById('cssEditor-styleEditor').style.display = 'block';
+        document.getElementById('cssEditor-styleEditor').style.display = 'flex';
     }
 
     function showRemoveStyle() {
@@ -250,13 +257,19 @@ function showEditor() {
         }
         setStyles(allStyles);
         createStyleList();
+        showRemoveStyle();
+        alert('Style saved!');
     }
 
     function removeStyle() {
-        allStyles.splice(currentStyleIndex, 1);
-        setStyles(allStyles);
-        hideStyleEditor();
-        createStyleList();
+        if (confirm('Are you sure you want to delete this style?') == true) {
+            allStyles.splice(currentStyleIndex, 1);
+            setStyles(allStyles);
+            hideSaveStyle();
+            hideRemoveStyle();
+            hideStyleEditor();
+            createStyleList();
+        }
     }
 
 
