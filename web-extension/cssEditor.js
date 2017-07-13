@@ -121,7 +121,11 @@ function showEditor() {
     var urlLabel = document.createElement('label');
     urlLabel.className = 'cssEditor-field-label';
     urlLabel.innerText = 'URL Regex'; // TODO addd link to regex tutorial
+    var regexHelp = document.createElement('a');
+    regexHelp.innerText = 'How to write a regular expression pattern';
+    regexHelp.setAttribute('href', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions');
     urlLabelHolder.appendChild(urlLabel);
+    urlLabelHolder.appendChild(regexHelp);
     editorHolderLeft.appendChild(urlLabelHolder);
 
     var urlInputHolder = document.createElement('div');
@@ -242,6 +246,11 @@ function showEditor() {
     }
 
     function saveStyle() {
+        var isRegexValid = checkRegex();
+        if (!isRegexValid) {
+            alert("Invalid regular expression");
+            return;
+        }
         var tmpValue = {
             title: document.getElementById('cssEditor-styleName').value,
             url: document.getElementById('cssEditor-matchUrl').value,
@@ -259,6 +268,17 @@ function showEditor() {
         createStyleList();
         showRemoveStyle();
         alert('Style saved!');
+    }
+
+    function checkRegex() {
+        var regexContent = document.getElementById('cssEditor-matchUrl').value;
+        var isValid = true;
+        try {
+            new RegExp(regexContent);
+        } catch(e) {
+            isValid = false;
+        }
+        return isValid;
     }
 
     function removeStyle() {
@@ -323,32 +343,6 @@ function showEditor() {
         modal.style.display = "none";
         modalContent.parentNode.removeChild(modalContent);
         modal.parentNode.removeChild(modal);
-    }
-
-    function removeListItem(atIndex) {
-        return function() {
-            allPagesRef[atIndex].removed = true;
-            var tmpListElem = document.getElementById('li' + atIndex);
-            tmpListElem.style.display = 'none';
-        };
-    }
-
-    function previewListItem(atIndex) {
-        return function() {
-            alert(allPagesRef[atIndex].content.trim().replace(/<[^>]+>/gi, '').replace(/\s+/g, ' ').substring(0, 1000) + ' ...');
-        };
-    }
-
-    function prepareEbook(newChapters) {
-        try {
-            if (newChapters.length === 0) {
-                alert('Can\'t generate an empty eBook!');
-                return;
-            }
-            buildEbookFromChapters();
-        } catch (e) {
-            console.log('Error:', e);
-        }
     }
 
     function saveChanges() {

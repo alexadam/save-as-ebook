@@ -32,9 +32,14 @@ function createStyleList(styles) {
 
             currentUrl = currentUrl.replace(/(http[s]?:\/\/|www\.)/i, '').toLowerCase();
             var styleUrl = styles[i].url;
-            var styleUrlRegex = new RegExp('.*' + styleUrl + '.*', 'i');
+            var styleUrlRegex = null;
 
-            if (styleUrlRegex.test(currentUrl)) {
+            try {
+                styleUrlRegex =  new RegExp('.*' + styleUrl + '.*', 'i');
+            } catch (e) {
+            }
+
+            if (styleUrlRegex && styleUrlRegex.test(currentUrl)) {
                 allMatchingStyles.push({
                     index: i,
                     length: styleUrl.length

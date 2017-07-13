@@ -33,10 +33,13 @@
     margin-top: 10px;
     font-size: 15px;
     font-family: "sans-serif";
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
 }
 .cssEditor-field-holder {
     padding: 3px;
-    width: 100%;
+    width: 90%;
 }
 .cssEditor-field-label {
     padding: 0 3px;
@@ -61,16 +64,16 @@
 }
 
 #cssEditor-styleName {
-    width: 90%;
-    min-width: 90%;
+    width: 100%;
+    min-width: 100%;
     padding: 5px;
     border: solid rgba(0, 0, 0, 0.25) 1px;
     font-size: 15px;
     font-family: "sans-serif";
 }
 #cssEditor-matchUrl {
-    width: 90%;
-    min-width: 90%;
+    width: 100%;
+    min-width: 100%;
     padding: 5px;
     border: solid rgba(0, 0, 0, 0.25) 1px;
     font-size: 15px;
