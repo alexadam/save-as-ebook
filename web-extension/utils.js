@@ -167,7 +167,8 @@ function getAbsoluteUrl(urlStr) {
         } else if (urlStr.indexOf('http') !== 0) {
             absoluteUrl = currentUrl + '/' + urlStr;
         }
-        absoluteUrl = absoluteUrl.replace(/&amp;/ig, '&'); //TODO ?
+        absoluteUrl = absoluteUrl.replace(/&amp;/ig, '&');
+        absoluteUrl = absoluteUrl.replace(/&/ig, '&amp;');
         return absoluteUrl;
     } catch (e) {
         console.log('Error:', e);

@@ -216,7 +216,7 @@ function sanitize(rawContentString) {
                             tmpAttrsTxt += ' class="' + attrs[i].value + '"';
                         }
                     }
-                    lastFragment = tmpAttrsTxt.length === 0 ? '<img></img>' : '<img ' + tmpAttrsTxt + '" alt=""></img>';
+                    lastFragment = tmpAttrsTxt.length === 0 ? '<img></img>' : '<img ' + tmpAttrsTxt + ' alt=""></img>';
                 } else if (tag === 'a') {
                     var tmpAttrsTxt = '';
                     for (var i = 0; i < attrs.length; i++) {

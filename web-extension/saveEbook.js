@@ -124,7 +124,7 @@ function _buildEbook(allPages) {
         '<metadata>' +
         '<dc:title id="t1">'+ ebookName + '</dc:title>' +
         '<dc:identifier id="db-id">isbn</dc:identifier>' +
-        '<meta property="dcterms:modified">' + new Date().toISOString() + '</meta>' +
+        '<meta property="dcterms:modified">' + new Date().toISOString().replace(/\.[0-9]+Z/i, 'Z') + '</meta>' +
         '<dc:language>en</dc:language>' +
         '</metadata>' +
         '<manifest>' +
@@ -135,9 +135,11 @@ function _buildEbook(allPages) {
             return prev + '\n' + '<item id="ebook' + index + '" href="pages/' + page.url + '" media-type="application/xhtml+xml" />';
         }, '') +
         allPages.reduce(function(prev, page, index) {
+            return prev + '\n' + '<item id="style' + index + '" href="style/' + page.styleFileName + '" media-type="text/css" />';
+        }, '') +
+        allPages.reduce(function(prev, page, index) {
             return prev + '\n' + getImagesIndex(page.images);
         }, '') +
-        // getExternalLinksIndex() +
         '</manifest>' +
         '<spine toc="ncx">' +
         allPages.reduce(function(prev, page, index) {
