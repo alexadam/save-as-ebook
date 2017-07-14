@@ -67,7 +67,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.type === 'get include style') {
         chrome.storage.local.get('includeStyle', function (data) {
             if (!data) {
-                sendResponse({includeStyle: true});
+                sendResponse({includeStyle: false});
             } else {
                 sendResponse({includeStyle: data.includeStyle});
             }

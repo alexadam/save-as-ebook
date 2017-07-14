@@ -88,6 +88,9 @@ document.getElementById("applyStyle").onclick = function() {
         currentWindow: true,
         active: true
     }, function(tab) {
+        if (!currentStyle || !currentStyle.style) {
+            return;
+        }
         chrome.tabs.insertCSS(tab[0].id, {code: currentStyle.style});
         appliedStyles.push(currentStyle);
     });
