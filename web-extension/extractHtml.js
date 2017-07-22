@@ -133,20 +133,24 @@ function force($content, withError) {
         }
 
         $content.find('img').each(function (index, elem) {
-            var imgSrc = getImageSrc($(elem).attr('src'));
+            var $elem = $(elem);
+            var imgSrc = getImageSrc($elem.attr('src'));
             if (imgSrc === '') {
-                $(elem).replaceWith('');
+                $elem.replaceWith('');
             } else {
-                $(elem).replaceWith(startEl + tagOpen + 'img src="' + imgSrc + '"' + tagClose + tagOpen + '/img' + tagClose + endEl);
+                var className = $elem.attr('data-class');
+                $elem.replaceWith(startEl + tagOpen + 'img src="' + imgSrc + '" class="' + className + '"' + tagClose + tagOpen + '/img' + tagClose + endEl);
             }
         });
 
         $content.find('a').each(function (index, elem) {
-            var aHref = getHref($(elem).attr('href'));
+            var $elem = $(elem);
+            var aHref = getHref($elem.attr('href'));
             if (aHref === '') {
-                $(elem).replaceWith('');
+                $elem.replaceWith('');
             } else {
-                $(elem).replaceWith(startEl + tagOpen + 'a href="' + aHref + '"' + tagClose + $(elem).html() + tagOpen + '/a' + tagClose + endEl);
+                var className = $elem.attr('data-class');
+                $elem.replaceWith(startEl + tagOpen + 'a href="' + aHref + '" class="' + className + '"' + tagClose + $(elem).html() + tagOpen + '/a' + tagClose + endEl);
             }
         });
 
@@ -160,7 +164,8 @@ function force($content, withError) {
                 while (childrenLen--) {
                     all($(children[childrenLen]));
                 }
-                $startElement.replaceWith(startEl + tagOpen + tagName + tagClose + $startElement.html() + tagOpen + '/' + tagName + tagClose + endEl);
+                var className = $startElement.attr('data-class');
+                $startElement.replaceWith(startEl + tagOpen + tagName + ' class="' + className + '"' + tagClose + $startElement.html() + tagOpen + '/' + tagName + tagClose + endEl);
             }
         }
 
@@ -171,6 +176,10 @@ function force($content, withError) {
         contentString = contentString.replace(tagOpenRegex, '<');
         contentString = contentString.replace(tagCloseRegex, '>');
         contentString = contentString.replace(/&nbsp;/gi, '&#160;');
+
+        // getHref() replace does not work (&amp; is overwritten)
+        contentString = contentString.replace(/&amp;/ig, '&');
+        contentString = contentString.replace(/&/ig, '&amp;');
 
         return contentString;
     } catch (e) {
@@ -346,10 +355,13 @@ function extractCss(appliedStyles, callback) {
                         cssClassesToTmpIds[classNames] = tmpName;
                     }
                     if (!tmpNewCss) {
-                        var style = window.getComputedStyle(pre);
+                        // var style = window.getComputedStyle(pre);
                         tmpNewCss = {};
                         for (var cssTagName of supportedCss) {
-                            tmpNewCss[cssTagName] = $pre.css(cssTagName);
+                            var cssValue = $pre.css(cssTagName);
+                            if (cssValue && cssValue.length > 0) {
+                                tmpNewCss[cssTagName] = cssValue;
+                            }
                         }
                         tmpIdsToNewCss[tmpName] = tmpNewCss;
                     }
