@@ -18,7 +18,7 @@ ul.chapterEditor-chapters-list li.placeholder {
     font-weight: bold;
     float: left;
     display: inline-block;
-    font-family: "sans-serif";
+    font-family: sans-serif;
 }
 
 #chapterEditor-ebookTitleHolder {
@@ -35,7 +35,7 @@ ul.chapterEditor-chapters-list li.placeholder {
 #chapterEditor-ebookTitle {
     padding: 5px;
     font-size: 15px;
-    font-family: "sans-serif";
+    font-family: sans-serif;
     width: 85%;
 }
 ul, ul.chapterEditor-chapters-list {
@@ -66,7 +66,7 @@ ul, ul.chapterEditor-chapters-list {
 .chapterEditor-chapter-item > input[type="text"] {
     padding: 5px;
     font-size: 15px;
-    font-family: "sans-serif";
+    font-family: sans-serif;
     width: 80%;
     border: none;
     border-bottom: solid 1px #aaa;
@@ -79,9 +79,6 @@ ul, ul.chapterEditor-chapters-list {
 }
 #chapterEditor-modalList {
     display: block;
-    /*width: 100%;*/
-    /*border-top: solid 1px black;*/
-    /*border-bottom: solid 1px black;*/
     padding: 20px;
     padding-top: 0;
 }
@@ -100,7 +97,7 @@ ul, ul.chapterEditor-chapters-list {
 .chapterEditor-text-button {
     border: none;
     font-size: 15px;
-    font-family: "sans-serif";
+    font-family: sans-serif;
     padding: 5px;
     background-color: rgba(0, 0, 0, 0);
     margin: 0 3px;

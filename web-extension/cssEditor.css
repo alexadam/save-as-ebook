@@ -8,31 +8,31 @@
     padding: 3px;
     cursor: pointer;
     font-size: 15px;
-    font-family: "sans-serif";
+    font-family: sans-serif;
 }
 #cssEditor-selectStyle > option {
     padding: 3px;
     font-size: 1em;
     cursor: pointer;
     font-size: 15px;
-    font-family: "sans-serif";
+    font-family: sans-serif;
 }
 #cssEditor-orLabel {
     padding: 3px;
     margin: 0 3px;
     font-size: 15px;
-    font-family: "sans-serif";
+    font-family: sans-serif;
 }
 #cssEditor-createNewStyle {
     padding: 3px;
     cursor: pointer;
     font-size: 15px;
-    font-family: "sans-serif";
+    font-family: sans-serif;
 }
 .cssEditor-field-label-holder {
     margin-top: 10px;
     font-size: 15px;
-    font-family: "sans-serif";
+    font-family: sans-serif;
     display: flex;
     justify-content: space-between;
     width: 90%;
@@ -69,7 +69,7 @@
     padding: 5px;
     border: solid rgba(0, 0, 0, 0.25) 1px;
     font-size: 15px;
-    font-family: "sans-serif";
+    font-family: sans-serif;
 }
 #cssEditor-matchUrl {
     width: 100%;
@@ -77,7 +77,7 @@
     padding: 5px;
     border: solid rgba(0, 0, 0, 0.25) 1px;
     font-size: 15px;
-    font-family: "sans-serif";
+    font-family: sans-serif;
 }
 #cssEditor-styleContent {
     width: 100%;
@@ -85,7 +85,7 @@
     padding: 5px;
     border: solid rgba(0, 0, 0, 0.25) 1px;
     font-size: 15px;
-    font-family: "sans-serif";
+    font-family: sans-serif;
 }
 
 #cssEditor-Title {
@@ -93,7 +93,7 @@
     font-weight: bold;
     float: left;
     display: inline-block;
-    font-family: "sans-serif";
+    font-family: sans-serif;
 }
 
 #cssEditor-ebookTitleHolder {
@@ -120,7 +120,7 @@
 .cssEditor-text-button {
     border: none;
     font-size: 15px;
-    font-family: "sans-serif";
+    font-family: sans-serif;
     padding: 5px;
     background-color: rgba(0, 0, 0, 0);
     margin: 0 3px;
