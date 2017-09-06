@@ -18,7 +18,7 @@ var tmpIdsToNewCss = {};
 var supportedCss = [
     'background-color',
     'border', 'border-top', 'border-right', 'border-bottom', 'border-left',
-    'color', 'font',
+    'color', 'font', 'font-size', 'font-weight', 'font-family',
     'letter-spacing', 'line-height',
     'list-style', 'outline',
     'padding', 'quotes',

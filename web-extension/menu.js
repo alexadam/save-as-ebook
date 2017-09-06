@@ -35,7 +35,7 @@ function createStyleList(styles) {
             var styleUrlRegex = null;
 
             try {
-                styleUrlRegex =  new RegExp('.*' + styleUrl + '.*', 'i');
+                styleUrlRegex =  new RegExp(styleUrl, 'i');
             } catch (e) {
             }
 

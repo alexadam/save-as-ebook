@@ -36,12 +36,81 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                 var defaultStyles = [
                     {
                         title: 'Reddit Comments',
-                        url: 'reddit\.com\/r\/[^\/]+\/comments',
+                        url: 'reddit\\.com\\/r\\/[^\\/]+\\/comments',
                         style: `.class {
     display: none;
 }
 `
+                    },{
+                        title: 'Wikipedia Article',
+                        url: 'wikipedia\\.org\\/wiki\\/',
+                        style: `#mw-navigation {
+    display: none;
+}
+#footer {
+    display: none;
+}
+#mw-panel {
+    display: none;
+}
+#mw-head {
+    display: none;
+}
+`
+                    },{
+                        title: 'YCombinator News Comments',
+                        url: 'news\\.ycombinator\\.com\\/item\\?id=[0-9]+',
+                        style: `#hnmain > tbody > tr:nth-child(1) > td > table {
+    display: none;
+}
+* {
+    background-color: white;
+}
+.title, .storylink {
+    text-align: left;
+    font-weight: bold;
+    font-size: 20px;
+}
+.score {
+    display: none;
+}
+.age {
+    display: none;
+}
+.hnpast {
+    display: none;
+}
+.togg {
+    display: none;
+}
+.votelinks, .rank {
+    display: none;
+}
+.votearrow {
+    display: none;
+}
+.yclinks {
+    display: none;
+}
+form {
+    display: none;
+}
+a.hnuser {
+    font-weight: bold;
+    color: black !important;
+    padding: 3px;
+}
+.subtext > span, .subtext > a:not(:nth-child(2)) {
+    display: none;
+}
+`
                     }
+
+/*
+
+
+*/
+
                 ];
                 sendResponse({styles: defaultStyles});
             } else {
