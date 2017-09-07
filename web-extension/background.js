@@ -104,6 +104,25 @@ a.hnuser {
     display: none;
 }
 `
+                    },{
+                        title: 'Medium Article',
+                        url: 'medium\\.com',
+                        style: `.metabar {
+    display: none !important;
+}
+header.container {
+    display: none;
+}
+.js-postShareWidget {
+    display: none;
+}
+footer, canvas {
+    display: none !important;
+}
+.u-fixed, .u-bottom0 {
+    display: none;
+}
+`
                     }
 
 /*
