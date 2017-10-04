@@ -37,8 +37,14 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                     {
                         title: 'Reddit Comments',
                         url: 'reddit\\.com\\/r\\/[^\\/]+\\/comments',
-                        style: `.class {
+                        style: `.side {
     display: none;
+}
+#header {
+    display: none;
+}
+.arrow, .expand, .score, .live-timestamp, .flat-list, .buttons, .morecomments, .footer-parent, .icon {
+    display: none !important;
 }
 `
                     },{
@@ -120,6 +126,25 @@ footer, canvas {
     display: none !important;
 }
 .u-fixed, .u-bottom0 {
+    display: none;
+}
+`
+                    },{
+                        title: 'Twitter',
+                        url: 'twitter\\.com\\/.+',
+                        style: `.topbar {
+    display: none !important;
+}
+.ProfileCanopy, .ProfileCanopy-inner {
+    display: none;
+}
+.ProfileSidebar {
+    display: none;
+}
+.ProfileHeading {
+    display: none !important;
+}
+.ProfileTweet-actionList {
     display: none;
 }
 `
