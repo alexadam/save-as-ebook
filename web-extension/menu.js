@@ -51,7 +51,6 @@ function createStyleList(styles) {
 
         if (allMatchingStyles.length >= 1) {
             allMatchingStyles.sort(function (a, b) {
-                console.log(a.length, b.length);
                 return b.length - a.length;
             });
             var selStyle = allMatchingStyles[0];
@@ -66,6 +65,10 @@ function createStyleList(styles) {
 function createIncludeStyle(data) {
     var includeStyleCheck = document.getElementById('includeStyleCheck');
     includeStyleCheck.checked = data;
+    document.getElementById('styleLabel').disabled = !includeStyleCheck.checked;
+    document.getElementById('allStylesList').disabled = !includeStyleCheck.checked;
+    document.getElementById('applyStyle').disabled = !includeStyleCheck.checked;
+    document.getElementById('editStyles').disabled = !includeStyleCheck.checked;
 }
 
 getIncludeStyle(createIncludeStyle);
@@ -73,6 +76,10 @@ getIncludeStyle(createIncludeStyle);
 document.getElementById('includeStyleCheck').onclick = function () {
     var includeStyleCheck = document.getElementById('includeStyleCheck');
     setIncludeStyle(includeStyleCheck.checked);
+    document.getElementById('styleLabel').disabled = !includeStyleCheck.checked;
+    document.getElementById('allStylesList').disabled = !includeStyleCheck.checked;
+    document.getElementById('applyStyle').disabled = !includeStyleCheck.checked;
+    document.getElementById('editStyles').disabled = !includeStyleCheck.checked;
 }
 
 document.getElementById('allStylesList').onchange = function () {
