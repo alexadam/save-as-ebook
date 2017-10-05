@@ -2,9 +2,7 @@
 
 Save a web page/selection as an eBook (.epub format) - a Chrome/Firefox/Opera Web Extension
 
-<img src="https://github.com/alexadam/save-as-ebook/blob/master/ex1.png?raw=true">
-
-![alt ex2.png](https://github.com/alexadam/save-as-ebook/blob/master/ex1.png?raw=true)
+![alt ex11.png](https://github.com/alexadam/save-as-ebook/blob/master/ex11.png?raw=true)
 
 ![alt ex2.png](https://github.com/alexadam/save-as-ebook/blob/master/ex2.png?raw=true)
 
