@@ -45,21 +45,27 @@ sudo apt-get install calibre
 ebook-convert "book.epub" "book.mobi"
 ```
 
+## Added in v1.2
+ - BETA: Support for CSS
+ - BETA: Create / edit custom Styles
+ - No errors from EPUB Validator (http://validator.idpf.org/) + this should fix the Google Play upload issue
+
 ## Added in v1.1
  - Chapter Editor: option to save changes
  - Chapter Editor: option to remove all chapters
  - persist Chapter Editor changes & chapters after generating an eBook or after a browser restart
 
 ## To-Do
- - fix all 'epubcheck' errors (https://github.com/IDPF/epubcheck)
+ - make the Custom Style Editor more user friendly
+ - support backup / restore for Custom Styles
+ - DONE fix all 'epubcheck' errors (https://github.com/IDPF/epubcheck)
  - clean & optimize code
  - create tests
- - 'save as image' option (render a selection and save it as image instead of text)
  - support other formats (mobi, pdf etc.)
  - show confirmations (ui/ux)
  - display errors (ui/ux)
- - add settings & options page (ui/ux)
- - support custom style
+ - DONE support custom style
+ - add 'remove from ebook' right click menu action
 
 ## Credits
  - http://ebooks.stackexchange.com/questions/1183/what-is-the-minimum-required-content-for-a-valid-epub
@@ -67,4 +73,4 @@ ebook-convert "book.epub" "book.mobi"
  - https://stuk.github.io/jszip/
  - http://johnny.github.io/jquery-sortable/
  - https://github.com/eligrey/FileSaver.js/
- - https://www.iconfinder.com/icons/1031371/book_empty_library_reading_icon#size=128
+ - https://www.iconfinder.com/icons/753890/book_books_education_library_study_icon#size=128
