@@ -65,10 +65,7 @@ function createStyleList(styles) {
 function createIncludeStyle(data) {
     var includeStyleCheck = document.getElementById('includeStyleCheck');
     includeStyleCheck.checked = data;
-    document.getElementById('styleLabel').disabled = !includeStyleCheck.checked;
-    document.getElementById('allStylesList').disabled = !includeStyleCheck.checked;
-    document.getElementById('applyStyle').disabled = !includeStyleCheck.checked;
-    document.getElementById('editStyles').disabled = !includeStyleCheck.checked;
+    document.getElementById('customStyles').style.display = !includeStyleCheck.checked ? 'none' : 'block';
 }
 
 getIncludeStyle(createIncludeStyle);
@@ -76,10 +73,7 @@ getIncludeStyle(createIncludeStyle);
 document.getElementById('includeStyleCheck').onclick = function () {
     var includeStyleCheck = document.getElementById('includeStyleCheck');
     setIncludeStyle(includeStyleCheck.checked);
-    document.getElementById('styleLabel').disabled = !includeStyleCheck.checked;
-    document.getElementById('allStylesList').disabled = !includeStyleCheck.checked;
-    document.getElementById('applyStyle').disabled = !includeStyleCheck.checked;
-    document.getElementById('editStyles').disabled = !includeStyleCheck.checked;
+    document.getElementById('customStyles').style.display = !includeStyleCheck.checked ? 'none' : 'block';
 }
 
 document.getElementById('allStylesList').onchange = function () {
