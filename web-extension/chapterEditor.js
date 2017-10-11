@@ -236,8 +236,11 @@ function showEditor() {
             }
 
             for (var i = 0; i < tmpChaptersList.length; i++) {
-                var listIndex = Number(tmpChaptersList[i].id.replace('li', ''));
+                var tmpChapterItem = tmpChaptersList[i];
+                var listIndex = Number(tmpChapterItem.id.replace('li', ''));
                 if (allPagesRef[listIndex].removed === false) {
+                    var newChapterTitle = tmpChapterItem.children.namedItem('text'+listIndex).value;
+                    allPagesRef[listIndex].title = newChapterTitle;
                     newChapters.push(allPagesRef[listIndex]);
                 }
             }

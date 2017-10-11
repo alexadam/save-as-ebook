@@ -120,6 +120,8 @@ ul, ul.chapterEditor-chapters-list {
 }
 
 .chapterEditor-footer-button {
+    position: relative;
+    overflow: hidden;
     padding: 18px 20px;
     margin: 0;
     font-size: 18px;
@@ -132,10 +134,34 @@ ul, ul.chapterEditor-chapters-list {
     background-color: rgba(0, 0, 0, 1);
     cursor: pointer;
 }
-.chapterEditor-generate-button {
+.chapterEditor-footer-button:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, .5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+@keyframes ripple {
+    0%   { transform: scale( 0,  0); opacity: 1; }
+    20%  { transform: scale(25, 25); opacity: 1; }
+    100% { transform: scale(40, 40); opacity: 0; }
+}
+.chapterEditor-footer-button:focus:not(:active)::after {
+  animation: ripple 1s ease-out;
+}
+.chapterEditor-footer-button.chapterEditor-generate-button {
     background-color: yellow;
 }
-.chapterEditor-cancel-button {
+.chapterEditor-footer-button.chapterEditor-generate-button:hover {
+    background-color: rgba(0, 0, 0, 1);
+}
+.chapterEditor-footer-button.chapterEditor-cancel-button {
     /*background-color: black;*/
 }
 
