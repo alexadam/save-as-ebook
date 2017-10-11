@@ -92,7 +92,7 @@ function preProcess($htmlObject) {
     extractCanvasToImg($htmlObject);
     extractSvgToImg($htmlObject);
     $htmlObject.find('script, style, noscript, iframe').remove();
-    $htmlObject.find('*:empty').not('img').remove();
+    $htmlObject.find('*:empty').not('img').not('br').not('hr').remove();
     formatPreCodeElements($htmlObject);
 }
 
@@ -212,6 +212,14 @@ function sanitize(rawContentString) {
                         }
                     }
                     lastFragment = tmpAttrsTxt.length === 0 ? '<a>' : '<a ' + tmpAttrsTxt + '>';
+                } else if (tag === 'br' || tag === 'hr') {
+                    var tmpAttrsTxt = '';
+                    for (var i = 0; i < attrs.length; i++) {
+                        if (attrs[i].name === 'data-class') {
+                            tmpAttrsTxt += ' class="' + attrs[i].value + '"';
+                        }
+                    }
+                    lastFragment = '<' + tag + ' ' + tmpAttrsTxt + '></' + tag + '>';
                 } else {
                     var tmpAttrsTxt = '';
                     for (var i = 0; i < attrs.length; i++) {
@@ -226,7 +234,7 @@ function sanitize(rawContentString) {
                 lastFragment = '';
             },
             end: function(tag) {
-                if (allowedTags.indexOf(tag) < 0 || tag === 'img') {
+                if (allowedTags.indexOf(tag) < 0 || tag === 'img' || tag === 'br' || tag === 'hr') {
                     return;
                 }
 
