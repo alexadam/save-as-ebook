@@ -45,6 +45,9 @@ sudo apt-get install calibre
 ebook-convert "book.epub" "book.mobi"
 ```
 
+## Added in v1.2.1
+ - support for hr/br html tags
+
 ## Added in v1.2
  - BETA: Support for CSS
  - BETA: Create / edit custom Styles
