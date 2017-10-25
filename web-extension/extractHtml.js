@@ -283,7 +283,6 @@ function getPageTitle(title) {
     if (title.trim().length === 0) {
         return 'ebook';
     }
-    title = escapeAmp(title);
     return title;
 }
 
