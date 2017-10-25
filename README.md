@@ -46,7 +46,7 @@ ebook-convert "book.epub" "book.mobi"
 ```
 
 ## Added in v1.2.2
- - fixed &  &amp; issue in tile; Issue # 10
+ - fixed &  &amp; issue in title; Issue # 10
 
 ## Added in v1.2.1
  - support for hr/br html tags
