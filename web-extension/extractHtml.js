@@ -154,8 +154,7 @@ function force($content, withError) {
         contentString = contentString.replace(/&nbsp;/gi, '&#160;');
 
         // getHref() replace does not work (&amp; is overwritten)
-        contentString = contentString.replace(/&amp;/ig, '&');
-        contentString = contentString.replace(/&/ig, '&amp;');
+        contentString = escapeAmp(contentString);
 
         return contentString;
     } catch (e) {
@@ -284,6 +283,7 @@ function getPageTitle(title) {
     if (title.trim().length === 0) {
         return 'ebook';
     }
+    title = escapeAmp(title);
     return title;
 }
 

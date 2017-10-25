@@ -35,10 +35,14 @@ function _buildEbook(allPages) {
 
     console.log('Prepare Content...');
 
+    var ebookFileName = 'eBook.epub';
+
     if (ebookTitle) {
-        ebookName = ebookTitle + '.epub';
+        ebookName = ebookTitle;
+        ebookFileName = getEbookFileName(bookTitle) + '.epub';
     } else {
-        ebookName = allPages[0].title + '.epub';
+        ebookName = allPages[0].title;
+        ebookFileName = getEbookFileName(allPages[0].title) + '.epub';
     }
 
     var zip = new JSZip();
@@ -168,7 +172,7 @@ function _buildEbook(allPages) {
         .then(function(content) {
             done = true;
             console.log("done !");
-            saveAs(content, ebookName);
+            saveAs(content, ebookFileName);
         });
 
     setTimeout(function() {
@@ -179,7 +183,7 @@ function _buildEbook(allPages) {
                 type: "blob"
             })
             .then(function(content) {
-                saveAs(content, ebookName);
+                saveAs(content, ebookFileName);
             });
     }, 60000);
 

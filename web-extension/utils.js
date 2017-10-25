@@ -167,8 +167,7 @@ function getAbsoluteUrl(urlStr) {
         } else if (urlStr.indexOf('http') !== 0) {
             absoluteUrl = currentUrl + '/' + urlStr;
         }
-        absoluteUrl = absoluteUrl.replace(/&amp;/ig, '&');
-        absoluteUrl = absoluteUrl.replace(/&/ig, '&amp;');
+        absoluteUrl = escapeAmp(absoluteUrl);
         return absoluteUrl;
     } catch (e) {
         console.log('Error:', e);
@@ -290,4 +289,15 @@ function generateRandomTag(tagLen) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
+}
+
+function escapeAmp(text) {
+    var newText = text.replace(/&amp;/ig, '&');
+    newText = newText.replace(/&/ig, '&amp;');
+    return newText;
+}
+
+function getEbookFileName(name) {
+    var newName = name.replace(/&amp;/ig, '&');
+    return newName;
 }
