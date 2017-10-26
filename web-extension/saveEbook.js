@@ -38,11 +38,11 @@ function _buildEbook(allPages) {
     var ebookFileName = 'eBook.epub';
 
     if (ebookTitle) {
-        // ~TODO a pre-processing function to apply escapeAmp to all page.titles
-        ebookName = escapeAmp(ebookTitle);
+        // ~TODO a pre-processing function to apply escapeXMLChars to all page.titles
+        ebookName = escapeXMLChars(ebookTitle);
         ebookFileName = getEbookFileName(ebookTitle) + '.epub';
     } else {
-        ebookName = escapeAmp(allPages[0].title);
+        ebookName = escapeXMLChars(allPages[0].title);
         ebookFileName = getEbookFileName(allPages[0].title) + '.epub';
     }
 
@@ -73,7 +73,7 @@ function _buildEbook(allPages) {
         '<h1 class="frontmatter">Table of Contents</h1>' +
         '<ol class="contents">' +
         allPages.reduce(function(prev, page) {
-            var tmpPageTitle = escapeAmp(page.title);
+            var tmpPageTitle = escapeXMLChars(page.title);
             return prev + '\n' + '<li><a href="pages/' + page.url + '">' + tmpPageTitle + '</a></li>';
         }, '') +
         '</ol>' +
@@ -94,7 +94,7 @@ function _buildEbook(allPages) {
         '</docTitle>' +
         '<navMap>' +
         allPages.reduce(function(prev, page, index) {
-            var tmpPageTitle = escapeAmp(page.title);
+            var tmpPageTitle = escapeXMLChars(page.title);
             return prev + '\n' +
                 '<navPoint id="ebook' + index + '" playOrder="' + (index + 1) + '">' +
                 '<navLabel><text>' + tmpPageTitle + '</text></navLabel>' +
@@ -113,7 +113,7 @@ function _buildEbook(allPages) {
 
     var pagesFolder = oebps.folder('pages');
     allPages.forEach(function(page) {
-        var tmpPageTitle = escapeAmp(page.title);
+        var tmpPageTitle = escapeXMLChars(page.title);
         pagesFolder.file(page.url,
             '<?xml version="1.0" encoding="utf-8"?>' +
             '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">' +

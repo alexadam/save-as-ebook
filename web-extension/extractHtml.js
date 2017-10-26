@@ -154,7 +154,7 @@ function force($content, withError) {
         contentString = contentString.replace(/&nbsp;/gi, '&#160;');
 
         // getHref() replace does not work (&amp; is overwritten)
-        contentString = escapeAmp(contentString);
+        contentString = escapeXMLChars(contentString);
 
         return contentString;
     } catch (e) {
