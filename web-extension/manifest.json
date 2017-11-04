@@ -1,7 +1,8 @@
 {
     "manifest_version": 2,
-    "name": "Save As eBook",
+    "name": "__MSG_extName__",
     "version": "1.2.2",
+    "default_locale": "en",
     "author": "Alex Adam",
     "homepage_url": "https://github.com/alexadam/save-as-ebook",
     "description": "Save a web page or selection as eBook (.epub)",

@@ -1,0 +1,100 @@
+{
+    "extName": {
+        "message": "Save as eBook",
+        "description": "Extension name"
+    },
+    "includeStyle": {
+        "message": "Inclure le Style"
+    },
+    "styleLabel": {
+        "message": "Custom Style:"
+    },
+    "applyStyle": {
+        "message": "Apply"
+    },
+    "editStyles": {
+        "message": "Edit Styles ..."
+    },
+    "savePage": {
+        "message": "Save Page"
+    },
+    "saveSelection": {
+        "message": "Save Selection"
+    },
+    "pageChapter": {
+        "message": "Ajouter une page en tant que chapitre"
+    },
+    "selectionChapter": {
+        "message": "Ajouter une sélection en tant que chapitre"
+    },
+    "editChapters": {
+        "message": "Modifier les chapitres ..."
+    },
+    "waitMessage": {
+        "message": "S'il vous plaît, attendez ..."
+    },
+    "chapterEditorTitle": {
+        "message": "Éditeur de chapitre"
+    },
+    "ebookTitleLabel": {
+        "message": "eBook Titre:"
+    },
+    "rawPreview": {
+        "message": "Raw Preview"
+    },
+    "remove": {
+        "message": "Retirer"
+    },
+    "removeChapters": {
+        "message": "Supprimer les chapitres"
+    },
+    "removeChaptersConfirm": {
+        "message": "Voulez-vous supprimer tous les chapitres?"
+    },
+    "cancel": {
+        "message": "Annuler"
+    },
+    "generateEbook": {
+        "message": "Générer eBook ..."
+    },
+    "saveChanges": {
+        "message": "Enregistrer les modifications"
+    },
+    "emptyBookWarning": {
+        "message": "Can't generate an empty eBook!"
+    },
+    "confirmDeleteStyle": {
+        "message": "Êtes-vous sûr de vouloir supprimer ce style?"
+    },
+    "invalidRegex": {
+        "message": "Invalid regular expression"
+    },
+    "styleSaved": {
+        "message": "Style saved!"
+    },
+    "styleEditor": {
+        "message": "Style Editor"
+    },
+    "selectExistingCSS": {
+        "message": "Select Existing CSS"
+    },
+    "orLabel": {
+        "message": "or"
+    },
+    "createNewStyle": {
+        "message": "Create New Style"
+    },
+    "styleNameLabel": {
+        "message": "Name"
+    },
+    "howToWriteRegexLabel": {
+        "message": "How to write a regular expression pattern"
+    },
+    "removeStyle": {
+        "message": "Remove Style"
+    },
+    "saveStyle": {
+        "message": "Save Style"
+    }
+
+}

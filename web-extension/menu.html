@@ -124,31 +124,31 @@
 
 <body>
   <div class="menu-holder">
-    <div id="menuTitle">Save as eBook:</div>
+    <div id="menuTitle"></div>
     <hr/>
-    <div id="includeStyle"><input type="checkbox" name="button" id="includeStyleCheck"></input>Include Style</div>
+    <div><input type="checkbox" name="button" id="includeStyleCheck"></input><span id="includeStyle"></span></div>
     <div id="customStyles">
-        <div id="styleLabel">Custom Style:</div>
+        <div id="styleLabel"></div>
         <div>
           <select id="allStylesList"></select>
         </div>
         <div class="">
-          <button id="applyStyle" type="button" name="button" style="display:inline-block;width:47%;border-right:solid 1px black;">Apply</button>
-          <button id="editStyles" type="button" name="button" style="display:inline-block;width:47%;">Edit Styles ...</button>
+          <button id="applyStyle" type="button" name="button" style="display:inline-block;width:47%;border-right:solid 1px black;"></button>
+          <button id="editStyles" type="button" name="button" style="display:inline-block;width:47%;"></button>
         </div>
     </div>
     <hr/>
-    <button id="savePage" type="button" name="button">Save Page</button>
-    <button id="saveSelection" type="button" name="button">Save Selection</button>
+    <button id="savePage" type="button" name="button"></button>
+    <button id="saveSelection" type="button" name="button"></button>
     <hr/>
-    <button id="pageChapter" type="button" name="button">Add Page as Chapter</button>
-    <button id="selectionChapter" type="button" name="button">Add Selection as Chapter</button>
+    <button id="pageChapter" type="button" name="button"></button>
+    <button id="selectionChapter" type="button" name="button"></button>
     <hr/>
-    <button id="editChapters" type="button" name="button">Edit Chapters ...</button>
+    <button id="editChapters" type="button" name="button"></button>
   </div>
   <div id="busy">
     <div class="spinner"></div>
-    <div class="wait-message">Please Wait...</div>
+    <div id="waitMessage" class="wait-message"></div>
   </div>
 
   <script src="jquery.js" charset="utf-8"></script>

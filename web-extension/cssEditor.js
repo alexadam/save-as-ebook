@@ -32,7 +32,7 @@ function showEditor() {
     // Header
     var title = document.createElement('span');
     title.id = "cssEditor-Title";
-    title.innerText = "Style Editor";
+    title.innerText = chrome.i18n.getMessage('styleEditor');
     var upperCloseButton = document.createElement('button');
     modalHeader.appendChild(title);
     upperCloseButton.onclick = closeModal;
@@ -61,18 +61,18 @@ function showEditor() {
         editCurrentStyle();
     };
     var defaultOption = document.createElement('option');
-    defaultOption.innerText = 'Select Existing CSS';
+    defaultOption.innerText = chrome.i18n.getMessage('selectExistingCSS');
     existingStyles.appendChild(defaultOption);
     titleHolder.appendChild(existingStyles);
 
     var titleLabel = document.createElement('label');
     titleLabel.id = 'cssEditor-orLabel';
-    titleLabel.innerText = 'or';
+    titleLabel.innerText = chrome.i18n.getMessage('orLabel');
     titleHolder.appendChild(titleLabel);
 
     var createNewStyleButton = document.createElement('button');
     createNewStyleButton.id = 'cssEditor-createNewStyle';
-    createNewStyleButton.innerText = 'Create New Style';
+    createNewStyleButton.innerText = chrome.i18n.getMessage('createNewStyle');
     createNewStyleButton.onclick = createNewStyle;
     titleHolder.appendChild(createNewStyleButton);
 
@@ -103,7 +103,7 @@ function showEditor() {
     nameLabelHolder.className = 'cssEditor-field-label-holder';
     var nameLabel = document.createElement('label');
     nameLabel.className = 'cssEditor-field-label';
-    nameLabel.innerText = 'Name';
+    nameLabel.innerText = chrome.i18n.getMessage('styleNameLabel');
     nameLabelHolder.appendChild(nameLabel);
     editorHolderLeft.appendChild(nameLabelHolder);
 
@@ -122,7 +122,7 @@ function showEditor() {
     urlLabel.className = 'cssEditor-field-label';
     urlLabel.innerText = 'URL Regex'; // TODO addd link to regex tutorial
     var regexHelp = document.createElement('a');
-    regexHelp.innerText = 'How to write a regular expression pattern';
+    regexHelp.innerText = chrome.i18n.getMessage('howToWriteRegexLabel');
     regexHelp.setAttribute('href', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions');
     urlLabelHolder.appendChild(urlLabel);
     urlLabelHolder.appendChild(regexHelp);
@@ -162,14 +162,14 @@ function showEditor() {
 
     var removeCssButton = document.createElement('button');
     removeCssButton.id = 'cssEditor-removeStyle';
-    removeCssButton.innerText = 'Remove Style';
+    removeCssButton.innerText = chrome.i18n.getMessage('removeStyle');
     removeCssButton.className = 'cssEditor-footer-button cssEditor-float-left cssEditor-cancel-button';
     removeCssButton.onclick = removeStyle;
     saveButtonsHolder.appendChild(removeCssButton);
 
     var saveCssButton = document.createElement('button');
     saveCssButton.id = 'cssEditor-saveStyle';
-    saveCssButton.innerText = 'Save Style';
+    saveCssButton.innerText = chrome.i18n.getMessage('saveStyle');
     saveCssButton.className = 'cssEditor-footer-button cssEditor-float-right cssEditor-save-button';
     saveCssButton.onclick = saveStyle;
     saveButtonsHolder.appendChild(saveCssButton);
@@ -248,7 +248,7 @@ function showEditor() {
     function saveStyle() {
         var isRegexValid = checkRegex();
         if (!isRegexValid) {
-            alert("Invalid regular expression");
+            alert(chrome.i18n.getMessage('invalidRegex'));
             return;
         }
         var tmpValue = {
@@ -267,7 +267,7 @@ function showEditor() {
         setStyles(allStyles);
         createStyleList();
         showRemoveStyle();
-        alert('Style saved!');
+        alert(chrome.i18n.getMessage('styleSaved'));
     }
 
     function checkRegex() {
@@ -282,7 +282,7 @@ function showEditor() {
     }
 
     function removeStyle() {
-        if (confirm('Are you sure you want to delete this style?') == true) {
+        if (confirm(chrome.i18n.getMessage('confirmDeleteStyle')) == true) {
             allStyles.splice(currentStyleIndex, 1);
             setStyles(allStyles);
             hideSaveStyle();

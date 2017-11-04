@@ -2,6 +2,20 @@ var allStyles = [];
 var currentStyle = null;
 var appliedStyles = [];
 
+
+// create menu labels
+document.getElementById('menuTitle').innerHTML = chrome.i18n.getMessage('extName');
+document.getElementById('includeStyle').innerHTML = chrome.i18n.getMessage('includeStyle');
+document.getElementById('styleLabel').innerHTML = chrome.i18n.getMessage('styleLabel');
+document.getElementById('applyStyle').innerHTML = chrome.i18n.getMessage('applyStyle');
+document.getElementById('editStyles').innerHTML = chrome.i18n.getMessage('editStyles');
+document.getElementById('savePage').innerHTML = chrome.i18n.getMessage('savePage');
+document.getElementById('saveSelection').innerHTML = chrome.i18n.getMessage('saveSelection');
+document.getElementById('pageChapter').innerHTML = chrome.i18n.getMessage('pageChapter');
+document.getElementById('selectionChapter').innerHTML = chrome.i18n.getMessage('selectionChapter');
+document.getElementById('editChapters').innerHTML = chrome.i18n.getMessage('editChapters');
+document.getElementById('waitMessage').innerHTML = chrome.i18n.getMessage('waitMessage');
+
 getStyles(createStyleList);
 
 function createStyleList(styles) {

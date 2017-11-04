@@ -26,7 +26,7 @@ function showEditor() {
     // Header
     var title = document.createElement('span');
     title.id = "chapterEditor-Title";
-    title.innerText = "Chapter Editor";
+    title.innerText = chrome.i18n.getMessage('chapterEditorTitle');
     var upperCloseButton = document.createElement('button');
     modalHeader.appendChild(title);
     upperCloseButton.onclick = closeModal;
@@ -41,7 +41,7 @@ function showEditor() {
 
     var ebookTilteLabel = document.createElement('span');
     ebookTilteLabel.id = 'chapterEditor-ebookTitleLabel';
-    ebookTilteLabel.innerText = 'eBook Title: ';
+    ebookTilteLabel.innerText = chrome.i18n.getMessage('ebookTitleLabel');
     titleHolder.appendChild(ebookTilteLabel);
 
     var ebookTilte = document.createElement('input');
@@ -81,12 +81,12 @@ function showEditor() {
             var buttons = document.createElement('span');
 
             var previewButton = document.createElement('button');
-            previewButton.innerText = 'Raw Preview';
+            previewButton.innerText = chrome.i18n.getMessage('rawPreview');
             previewButton.className = 'chapterEditor-text-button';
             previewButton.onclick = previewListItem(i);
 
             var removeButton = document.createElement('button');
-            removeButton.innerText = 'Remove';
+            removeButton.innerText = chrome.i18n.getMessage('remove');
             removeButton.className = 'chapterEditor-text-button chapterEditor-text-red';
             removeButton.onclick = removeListItem(i);
 
@@ -108,16 +108,16 @@ function showEditor() {
     // Footer
     var buttons = document.createElement('div');
     var closeButton = document.createElement('button');
-    closeButton.innerText = 'Cancel';
+    closeButton.innerText = chrome.i18n.getMessage('cancel');
     closeButton.className = 'chapterEditor-footer-button chapterEditor-float-left chapterEditor-cancel-button';
     closeButton.onclick = closeModal;
     buttons.appendChild(closeButton);
 
     var removeButton = document.createElement('button');
-    removeButton.innerText = 'Remove Chapters';
+    removeButton.innerText = chrome.i18n.getMessage('removeChapters');
     removeButton.className = 'chapterEditor-footer-button hapterEditor-float-left';
     removeButton.onclick = function() {
-        var result = confirm("Do you want to remove all chapters?");
+        var result = confirm(chrome.i18n.getMessage('removeChaptersConfirm'));
         if (result) {
             removeEbook();
             closeModal();
@@ -130,7 +130,7 @@ function showEditor() {
         var newChapters = saveChanges();
         prepareEbook(newChapters);
     };
-    saveButton.innerText = 'Generate eBook ...';
+    saveButton.innerText = chrome.i18n.getMessage('generateEbook');
     saveButton.className = 'chapterEditor-footer-button chapterEditor-float-right chapterEditor-generate-button';
     buttons.appendChild(saveButton);
 
@@ -138,7 +138,7 @@ function showEditor() {
     saveChangesButton.onclick = function() {
         saveChanges();
     };
-    saveChangesButton.innerText = 'Save changes';
+    saveChangesButton.innerText = chrome.i18n.getMessage('saveChanges');
     saveChangesButton.className = 'chapterEditor-footer-button chapterEditor-float-right';
     buttons.appendChild(saveChangesButton);
 
@@ -213,7 +213,7 @@ function showEditor() {
     function prepareEbook(newChapters) {
         try {
             if (newChapters.length === 0) {
-                alert('Can\'t generate an empty eBook!');
+                alert(chrome.i18n.getMessage('emptyBookWarning'));
                 return;
             }
             buildEbookFromChapters();
