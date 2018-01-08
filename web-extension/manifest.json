@@ -14,7 +14,7 @@
         "js": ["jquery.js", "jszip.js", "jszip-utils.js", "utils.js", "pure-parser.js", "cssjson.js", "extractHtml.js"]
     }],
     "background": {
-        "scripts": ["background.js"]
+        "scripts": ["background.js", "saveEbook.js", "jszip.js", "jszip-utils.js", "filesaver.js", "utils.js"]
     },
     "browser_action": {
         "default_icon": "icons/book32.png",
@@ -31,5 +31,31 @@
         "http://*/*",
         "https://*/*",
         "<all_urls>"
-    ]
+    ],
+    "commands": {
+        "save-page": {
+            "suggested_key": {
+              "default": "Alt+Shift+1"
+            },
+            "description": "Save current page as eBook"
+        },
+        "save-selection": {
+            "suggested_key": {
+              "default": "Alt+Shift+2"
+            },
+            "description": "Save current selection as eBook"
+        },
+        "add-page": {
+            "suggested_key": {
+              "default": "Alt+Shift+3"
+            },
+            "description": "Add current page as chapter"
+        },
+        "add-selection": {
+            "suggested_key": {
+              "default": "Alt+Shift+4"
+            },
+            "description": "Add current selection as chapter"
+        }
+    }
 }

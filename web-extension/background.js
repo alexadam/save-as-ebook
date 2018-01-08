@@ -1,4 +1,75 @@
-// var GLOBAL_CURRENT_STYLE = null;
+chrome.commands.onCommand.addListener(function(command) {
+    if (command === 'save-page') {
+        dispatch('extract-page', false, false);
+    } else if (command === 'save-selection') {
+        dispatch('extract-selection', false, false);
+    } else if (command === 'add-page') {
+        dispatch('extract-page', true, false);
+    } else if (command === 'add-selection') {
+        dispatch('extract-selection', true, false);
+    }
+});
+
+function dispatch(action, justAddToBuffer, appliedStyles) {
+    if (!justAddToBuffer) {
+        removeEbook();
+    }
+    chrome.tabs.query({
+        currentWindow: true,
+        active: true
+    }, function(tab) {
+        chrome.tabs.sendMessage(tab[0].id, {
+            type: 'echo'
+        }, function(response) {
+            if (!response) {
+                chrome.tabs.executeScript(tab[0].id, {file: '/jquery.js'});
+                chrome.tabs.executeScript(tab[0].id, {file: '/pure-parser.js'});
+                chrome.tabs.executeScript(tab[0].id, {file: '/cssjson.js'});
+
+                chrome.tabs.executeScript(tab[0].id, {
+                    file: 'extractHtml.js'
+                }, function() {
+                    sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
+                });
+            } else if (response.echo) {
+                sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
+            }
+        });
+    });
+}
+
+function sendMessage(tabId, action, justAddToBuffer, appliedStyles) {
+
+    chrome.tabs.sendMessage(tabId, {
+        type: action,
+        appliedStyles: appliedStyles
+    }, function(response) {
+
+        if (response.length === 0) {
+            if (justAddToBuffer) {
+                alert('Cannot add an empty selection as chapter!');
+            } else {
+                alert('Cannot generate the eBook from an empty selection!');
+            }
+        }
+        if (!justAddToBuffer) {
+            buildEbook([response]);
+        } else {
+            chrome.storage.local.get('allPages', function (data) {
+                if (!data || !data.allPages) {
+                    data.allPages = [];
+                }
+                data.allPages.push(response);
+                chrome.storage.local.set({'allPages': data.allPages});
+                alert('Page or selection added as chapter!')
+            })
+        }
+    });
+}
+
+
+
+
 
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
