@@ -1,12 +1,23 @@
+var isBusy = false;
+
 chrome.commands.onCommand.addListener(function(command) {
+    // alert(isBusy)
+    if (isBusy) {
+        alert('BUSY')
+        return;
+    }
     if (command === 'save-page') {
         dispatch('extract-page', false, false);
+        isBusy = true;
     } else if (command === 'save-selection') {
         dispatch('extract-selection', false, false);
+        isBusy = true;
     } else if (command === 'add-page') {
         dispatch('extract-page', true, false);
+        isBusy = true;
     } else if (command === 'add-selection') {
         dispatch('extract-selection', true, false);
+        isBusy = true;
     }
 });
 
@@ -14,6 +25,9 @@ function dispatch(action, justAddToBuffer, appliedStyles) {
     if (!justAddToBuffer) {
         removeEbook();
     }
+    chrome.browserAction.setBadgeBackgroundColor({color:"red"});
+    chrome.browserAction.setBadgeText({text: "Busy"});
+
     chrome.tabs.query({
         currentWindow: true,
         active: true
@@ -51,9 +65,14 @@ function sendMessage(tabId, action, justAddToBuffer, appliedStyles) {
             } else {
                 alert('Cannot generate the eBook from an empty selection!');
             }
+            isBusy = false;
+            chrome.browserAction.setBadgeText({text: ""});
+            return;
         }
         if (!justAddToBuffer) {
             buildEbook([response]);
+            isBusy = false;
+            chrome.browserAction.setBadgeText({text: ""});
         } else {
             chrome.storage.local.get('allPages', function (data) {
                 if (!data || !data.allPages) {
@@ -61,6 +80,8 @@ function sendMessage(tabId, action, justAddToBuffer, appliedStyles) {
                 }
                 data.allPages.push(response);
                 chrome.storage.local.set({'allPages': data.allPages});
+                isBusy = false;
+                chrome.browserAction.setBadgeText({text: ""});
                 alert('Page or selection added as chapter!')
             })
         }
