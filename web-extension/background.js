@@ -92,6 +92,27 @@ function sendMessage(tabId, action, justAddToBuffer, appliedStyles) {
 
 
 
+var chapterCount = 0;
+chrome.storage.local.get('allPages', function (data) {
+    if (!data || !data.allPages) {
+        chapterCount = 0;
+    }
+    else {
+        chapterCount = data.allPages.length;
+    }
+});
+
+chrome.browserAction.setBadgeBackgroundColor({color: [15,127,95,255]});
+function updateBadge() {
+    if(chapterCount === 0)
+    {
+        chrome.browserAction.setBadgeText({text: ''});
+    }
+    else {
+        chrome.browserAction.setBadgeText({text: chapterCount.toString()});
+    }
+}
+updateBadge();
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.type === 'get') {
@@ -104,10 +125,16 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     }
     if (request.type === 'set') {
         chrome.storage.local.set({'allPages': request.pages});
+        
+        chapterCount = request.pages.length;
+        updateBadge();
     }
     if (request.type === 'remove') {
         chrome.storage.local.remove('allPages');
         chrome.storage.local.remove('title');
+        
+        chapterCount = 0;
+        updateBadge();
     }
     if (request.type === 'get title') {
         chrome.storage.local.get('title', function (data) {
