@@ -9,10 +9,10 @@ document.getElementById('includeStyle').innerHTML = chrome.i18n.getMessage('incl
 document.getElementById('styleLabel').innerHTML = chrome.i18n.getMessage('styleLabel');
 document.getElementById('applyStyle').innerHTML = chrome.i18n.getMessage('applyStyle');
 document.getElementById('editStyles').innerHTML = chrome.i18n.getMessage('editStyles');
-document.getElementById('savePage').innerHTML = chrome.i18n.getMessage('savePage');
-document.getElementById('saveSelection').innerHTML = chrome.i18n.getMessage('saveSelection');
-document.getElementById('pageChapter').innerHTML = chrome.i18n.getMessage('pageChapter');
-document.getElementById('selectionChapter').innerHTML = chrome.i18n.getMessage('selectionChapter');
+document.getElementById('savePageLabel').innerHTML = chrome.i18n.getMessage('savePage');
+document.getElementById('saveSelectionLabel').innerHTML = chrome.i18n.getMessage('saveSelection');
+document.getElementById('pageChapterLabel').innerHTML = chrome.i18n.getMessage('pageChapter');
+document.getElementById('selectionChapterLabel').innerHTML = chrome.i18n.getMessage('selectionChapter');
 document.getElementById('editChapters').innerHTML = chrome.i18n.getMessage('editChapters');
 document.getElementById('waitMessage').innerHTML = chrome.i18n.getMessage('waitMessage');
 
@@ -244,3 +244,20 @@ document.getElementById('pageChapter').onclick = function() {
 document.getElementById('selectionChapter').onclick = function() {
     dispatch('extract-selection', true);
 };
+
+// get all shortcuts and display them in the menuTitle
+chrome.commands.getAll((commands) => {
+    for (let command of commands) {
+        if (command.name === 'save-page') {
+            document.getElementById('savePageShortcut').appendChild(document.createTextNode(command.shortcut));
+        } else if (command.name === 'save-selection') {
+            document.getElementById('saveSelectionShortcut').appendChild(document.createTextNode(command.shortcut));
+        } else if (command.name === 'add-page') {
+            document.getElementById('pageChapterShortcut').appendChild(document.createTextNode(command.shortcut));
+        } else if (command.name === 'add-selection') {
+            document.getElementById('selectionChapterShortcut').appendChild(document.createTextNode(command.shortcut));
+        }
+
+    }
+    console.log('ALl commands', commands);
+})
