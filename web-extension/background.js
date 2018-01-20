@@ -1,5 +1,124 @@
 var isBusy = false;
 
+var defaultStyles = [
+    {
+        title: 'Reddit Comments',
+        url: 'reddit\\.com\\/r\\/[^\\/]+\\/comments',
+        style: `.side {
+display: none;
+}
+#header {
+display: none;
+}
+.arrow, .expand, .score, .live-timestamp, .flat-list, .buttons, .morecomments, .footer-parent, .icon {
+display: none !important;
+}
+`
+    },{
+        title: 'Wikipedia Article',
+        url: 'wikipedia\\.org\\/wiki\\/',
+        style: `#mw-navigation {
+display: none;
+}
+#footer {
+display: none;
+}
+#mw-panel {
+display: none;
+}
+#mw-head {
+display: none;
+}
+`
+    },{
+        title: 'YCombinator News Comments',
+        url: 'news\\.ycombinator\\.com\\/item\\?id=[0-9]+',
+        style: `#hnmain > tbody > tr:nth-child(1) > td > table {
+display: none;
+}
+* {
+background-color: white;
+}
+.title, .storylink {
+text-align: left;
+font-weight: bold;
+font-size: 20px;
+}
+.score {
+display: none;
+}
+.age {
+display: none;
+}
+.hnpast {
+display: none;
+}
+.togg {
+display: none;
+}
+.votelinks, .rank {
+display: none;
+}
+.votearrow {
+display: none;
+}
+.yclinks {
+display: none;
+}
+form {
+display: none;
+}
+a.hnuser {
+font-weight: bold;
+color: black !important;
+padding: 3px;
+}
+.subtext > span, .subtext > a:not(:nth-child(2)) {
+display: none;
+}
+`
+    },{
+        title: 'Medium Article',
+        url: 'medium\\.com',
+        style: `.metabar {
+display: none !important;
+}
+header.container {
+display: none;
+}
+.js-postShareWidget {
+display: none;
+}
+footer, canvas {
+display: none !important;
+}
+.u-fixed, .u-bottom0 {
+display: none;
+}
+`
+    },{
+        title: 'Twitter',
+        url: 'twitter\\.com\\/.+',
+        style: `.topbar {
+display: none !important;
+}
+.ProfileCanopy, .ProfileCanopy-inner {
+display: none;
+}
+.ProfileSidebar {
+display: none;
+}
+.ProfileHeading {
+display: none !important;
+}
+.ProfileTweet-actionList {
+display: none;
+}
+`
+    }
+
+];
+
 chrome.commands.onCommand.addListener(function(command) {
     // alert(isBusy)
     if (isBusy) {
@@ -7,16 +126,17 @@ chrome.commands.onCommand.addListener(function(command) {
         return;
     }
     if (command === 'save-page') {
-        dispatch('extract-page', false, false);
+        alert('gigi')
+        dispatch('extract-page', false, []);
         isBusy = true;
     } else if (command === 'save-selection') {
-        dispatch('extract-selection', false, false);
+        dispatch('extract-selection', false, []);
         isBusy = true;
     } else if (command === 'add-page') {
-        dispatch('extract-page', true, false);
+        dispatch('extract-page', true, []);
         isBusy = true;
     } else if (command === 'add-selection') {
-        dispatch('extract-selection', true, false);
+        dispatch('extract-selection', true, []);
         isBusy = true;
     }
 });
@@ -31,22 +151,136 @@ function dispatch(action, justAddToBuffer, appliedStyles) {
     chrome.tabs.query({
         currentWindow: true,
         active: true
-    }, function(tab) {
+    }, (tab) => {
         chrome.tabs.sendMessage(tab[0].id, {
             type: 'echo'
-        }, function(response) {
+        }, (response) => {
             if (!response) {
                 chrome.tabs.executeScript(tab[0].id, {file: '/jquery.js'});
                 chrome.tabs.executeScript(tab[0].id, {file: '/pure-parser.js'});
                 chrome.tabs.executeScript(tab[0].id, {file: '/cssjson.js'});
 
-                chrome.tabs.executeScript(tab[0].id, {
-                    file: 'extractHtml.js'
-                }, function() {
+                chrome.storage.local.get('styles', (data) => {
+                    let styles = defaultStyles;
+                    if (data && data.styles) {
+                        styles = data.styles;
+                    }
+                    // let currentUrl = tabs[0].url;
+                    // let currentStyle = null;
+                    //
+                    // if (!styles || styles.length === 0) {
+                    //     chrome.tabs.executeScript(tab[0].id, {
+                    //         file: 'extractHtml.js'
+                    //     }, function() {
+                    //         sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
+                    //     });
+                    //     return;
+                    // }
+                    //
+                    // let allMatchingStyles = [];
+                    //
+                    // for (let i = 0; i < styles.length; i++) {
+                    //     currentUrl = currentUrl.replace(/(http[s]?:\/\/|www\.)/i, '').toLowerCase();
+                    //     var styleUrl = styles[i].url;
+                    //     var styleUrlRegex = null;
+                    //
+                    //     try {
+                    //         styleUrlRegex =  new RegExp(styleUrl, 'i');
+                    //     } catch (e) {
+                    //     }
+                    //
+                    //     if (styleUrlRegex && styleUrlRegex.test(currentUrl)) {
+                    //         allMatchingStyles.push({
+                    //             index: i,
+                    //             length: styleUrl.length
+                    //         });
+                    //     }
+                    // }
+                    //
+                    // if (allMatchingStyles.length >= 1) {
+                    //     allMatchingStyles.sort(function (a, b) {
+                    //         return b.length - a.length;
+                    //     });
+                    //     var selStyle = allMatchingStyles[0];
+                    //     currentStyle = styles[selStyle.index];
+                    //     // setCurrentStyle(currentStyle);
+                    //
+                    //     chrome.tabs.query({
+                    //         currentWindow: true,
+                    //         active: true
+                    //     }, (tab) => {
+                    //         if (!currentStyle || !currentStyle.style) {
+                    //             return;
+                    //         }
+                    //         chrome.tabs.insertCSS(tab[0].id, {code: currentStyle.style});
+                    //         appliedStyles.push(currentStyle);
+                    //
+                    //         alert('HAU')
+                    //
+                    //         chrome.tabs.executeScript(tab[0].id, {
+                    //             file: 'extractHtml.js'
+                    //         }, function() {
+                    //             sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
+                    //         });
+                    //     });
+                    // }
+                });
+
+                // chrome.tabs.executeScript(tab[0].id, {
+                //     file: 'extractHtml.js'
+                // }, function() {
+                //     sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
+                // });
+            } else if (response.echo) {
+                chrome.storage.local.get('styles', (data) => {
+                    let styles = defaultStyles;
+                    if (data && data.styles) {
+                        styles = data.styles;
+                    }
+                    let currentUrl = tab[0].url;
+                    let currentStyle = null;
+
+                    if (styles && styles.length > 0) {
+                        let allMatchingStyles = [];
+
+                        for (let i = 0; i < styles.length; i++) {
+                            currentUrl = currentUrl.replace(/(http[s]?:\/\/|www\.)/i, '').toLowerCase();
+                            let styleUrl = styles[i].url;
+                            let styleUrlRegex = null;
+
+                            try {
+                                styleUrlRegex =  new RegExp(styleUrl, 'i');
+                            } catch (e) {
+                            }
+
+                            if (styleUrlRegex && styleUrlRegex.test(currentUrl)) {
+                                allMatchingStyles.push({
+                                    index: i,
+                                    length: styleUrl.length
+                                });
+                            }
+                        }
+
+                        if (allMatchingStyles.length >= 1) {
+                            allMatchingStyles.sort(function (a, b) {
+                                return b.length - a.length;
+                            });
+                            let selStyle = allMatchingStyles[0];
+                            currentStyle = styles[selStyle.index];
+                            // setCurrentStyle(currentStyle);
+
+                            if (currentStyle && currentStyle.style) {
+                                chrome.tabs.insertCSS(tab[0].id, {code: currentStyle.style});
+                                appliedStyles.push(currentStyle);
+                            }
+                        }
+                    }
+
                     sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
                 });
-            } else if (response.echo) {
-                sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
+
+
+                // sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
             }
         });
     });
