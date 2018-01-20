@@ -257,7 +257,5 @@ chrome.commands.getAll((commands) => {
         } else if (command.name === 'add-selection') {
             document.getElementById('selectionChapterShortcut').appendChild(document.createTextNode(command.shortcut));
         }
-
     }
-    console.log('ALl commands', commands);
 })
