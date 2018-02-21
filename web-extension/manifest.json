@@ -11,7 +11,7 @@
     },
     "content_scripts": [{
         "matches": ["<all_urls>"],
-        "js": ["jquery.js", "jszip.js", "jszip-utils.js", "utils.js", "pure-parser.js", "cssjson.js", "extractHtml.js"]
+        "js": ["jquery.js", "jszip.js", "jszip-utils.js", "utils.js", "pure-parser.js", "cssjson.js", "extractHtml.js", "saveEbook.js",  "menu.js" ]
     }],
     "background": {
         "scripts": ["background.js", "saveEbook.js", "jszip.js", "jszip-utils.js", "filesaver.js", "utils.js"]

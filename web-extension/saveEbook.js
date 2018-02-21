@@ -170,13 +170,31 @@ function _buildEbook(allPages) {
 
     var done = false;
 
+
+    // FIXME
+    var saveData = (function () {
+            var a = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none";
+            return function (data, fileName) {
+                var blob = new Blob([data], {type: "octet/stream"}),
+                    url = window.URL.createObjectURL(blob);
+                a.href = url;
+                a.download = fileName;
+                a.click();
+                window.URL.revokeObjectURL(url);
+            };
+        }());
+
     zip.generateAsync({
             type: "blob"
         })
         .then(function(content) {
             done = true;
             console.log("done !");
-            saveAs(content, ebookFileName);
+            // saveAs(content, ebookFileName);
+            // FIXME
+            saveData(content, ebookFileName);
         });
 
     setTimeout(function() {

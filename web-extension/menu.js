@@ -2,6 +2,14 @@ var allStyles = [];
 var currentStyle = null;
 var appliedStyles = [];
 
+// FIXME
+chrome.runtime.onMessage.addListener((obj) => {
+    console.log('new MEESSSAAAGGGEE', obj);
+    if (obj.shortcut === 'build-ebook') {
+        // dispatch('extract-page', false);
+        buildEbook(obj.response);
+    }
+})
 
 // create menu labels
 document.getElementById('menuTitle').innerHTML = chrome.i18n.getMessage('extName');
