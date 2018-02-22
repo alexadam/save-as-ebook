@@ -24,13 +24,22 @@
       font-weight: bold;
       padding: 5px 0;
       font-family: sans-serif;
+      padding-top: 10px;
+      padding-left: 5px;
+    }
+
+    .optionContainer {
+        font-family: sans-serif;
+        font-size: 14px;
+        padding: 6px 0;
+        padding-left: 3px;
     }
 
     button {
       font-family: sans-serif;
       font-size: 14px;
       width: 100%;
-      padding: 4px 0;
+      padding: 6px 0;
       padding-left: 8px;
       border: none;
       background-color: white;
@@ -82,29 +91,11 @@
       }
     }
 
-    #styleLabel {
-      padding: 5px 0;
-      font-family: sans-serif;
-      font-size: 15px;
-      padding: 7px 0;
-      background-color: white;
-    }
-    #styleLabel:disabled {
-        color: gray;
-    }
-
-    #allStylesList {
-      display: inline-block;
-      width: 100%;
-      padding: 3px;
-    }
-
     #includeStyle {
       font-family: sans-serif;
       font-size: 14px;
       padding: 0;
       padding-bottom: 8px;
-      border-bottom: dashed 1px #ccc;
       background-color: white;
       text-align: left;
     }
@@ -116,8 +107,15 @@
       outline: none;
     }
 
-    #includeStyleCheck {
-      outline: none;
+    input[type="checkbox"] {
+        outline: none;
+        font-family: sans-serif;
+        font-size: 14px;
+    }
+    #applyStyle, #includeStyle {
+        outline: none;
+        font-family: sans-serif;
+        font-size: 14px;
     }
     .shortcut {
         font-size: 10px;
@@ -130,17 +128,13 @@
   <div class="menu-holder">
     <div id="menuTitle"></div>
     <hr/>
-    <div><input type="checkbox" name="button" id="includeStyleCheck"></input><span id="includeStyle"></span></div>
-    <div id="customStyles">
-        <div id="styleLabel"></div>
-        <div>
-          <select id="allStylesList"></select>
-        </div>
-        <div class="">
-          <button id="applyStyle" type="button" name="button" style="display:inline-block;width:47%;border-right:solid 1px black;"></button>
-          <button id="editStyles" type="button" name="button" style="display:inline-block;width:47%;"></button>
-        </div>
+    <div class="optionContainer">
+        <input type="checkbox" name="button" id="includeStyleCheck"></input><span id="includeStyle"></span>
     </div>
+    <div class="optionContainer">
+        <input type="checkbox" name="button" id="applyStyleCheck"></input><span id="applyStyle"></span>
+    </div>
+    <button id="editStyles" type="button" name="button"></button>
     <hr/>
     <button id="savePage" type="button" name="button">
         <div id="savePageLabel"></div>

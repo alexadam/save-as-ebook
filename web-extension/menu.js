@@ -5,7 +5,7 @@ var appliedStyles = [];
 // create menu labels
 document.getElementById('menuTitle').innerHTML = chrome.i18n.getMessage('extName');
 document.getElementById('includeStyle').innerHTML = chrome.i18n.getMessage('includeStyle');
-document.getElementById('styleLabel').innerHTML = chrome.i18n.getMessage('styleLabel');
+// document.getElementById('styleLabel').innerHTML = chrome.i18n.getMessage('styleLabel');
 document.getElementById('applyStyle').innerHTML = chrome.i18n.getMessage('applyStyle');
 document.getElementById('editStyles').innerHTML = chrome.i18n.getMessage('editStyles');
 document.getElementById('savePageLabel').innerHTML = chrome.i18n.getMessage('savePage');
@@ -26,7 +26,7 @@ function createStyleList(styles) {
             return;
         }
 
-        var existingStyles = document.getElementById('allStylesList');
+        var existingStyles = {} //document.getElementById('allStylesList');
         var foundMatchingUrl = false;
 
         while (existingStyles.hasChildNodes() && existingStyles.childElementCount > 1) {
@@ -78,7 +78,7 @@ function createStyleList(styles) {
 function createIncludeStyle(data) {
     var includeStyleCheck = document.getElementById('includeStyleCheck');
     includeStyleCheck.checked = data;
-    document.getElementById('customStyles').style.display = !includeStyleCheck.checked ? 'none' : 'block';
+    // document.getElementById('customStyles').style.display = !includeStyleCheck.checked ? 'none' : 'block';
 }
 
 getIncludeStyle(createIncludeStyle);
@@ -86,17 +86,18 @@ getIncludeStyle(createIncludeStyle);
 document.getElementById('includeStyleCheck').onclick = function () {
     var includeStyleCheck = document.getElementById('includeStyleCheck');
     setIncludeStyle(includeStyleCheck.checked);
-    document.getElementById('customStyles').style.display = !includeStyleCheck.checked ? 'none' : 'block';
+    // document.getElementById('customStyles').style.display = !includeStyleCheck.checked ? 'none' : 'block';
 }
 
-document.getElementById('allStylesList').onchange = function () {
-    var newValue = this.value;
-    newValue = newValue.replace('option_', '');
-    newValue = parseInt(newValue);
-    currentStyle = allStyles[newValue];
-    setCurrentStyle(currentStyle);
-}
+// document.getElementById('allStylesList').onchange = function () {
+//     var newValue = this.value;
+//     newValue = newValue.replace('option_', '');
+//     newValue = parseInt(newValue);
+//     currentStyle = allStyles[newValue];
+//     setCurrentStyle(currentStyle);
+// }
 
+// FIXME
 document.getElementById("applyStyle").onclick = function() {
     chrome.tabs.query({
         currentWindow: true,
