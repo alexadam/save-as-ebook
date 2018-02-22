@@ -119,31 +119,19 @@ display: none;
 
 ];
 
-chrome.commands.onCommand.addListener(function(command) {
-    // alert(isBusy)
+chrome.commands.onCommand.addListener((command) => {
     if (isBusy) {
-        // alert('BUSY')
+        chrome.tabs.query({
+            currentWindow: true,
+            active: true
+        }, (tab) => {
+            chrome.tabs.sendMessage(tab[0].id, {'alert': 'Work in progress! Please wait until the current eBook is generated!'}, (r) => {
+              console.log(r);
+            });
+        })
         return;
     }
     if (command === 'save-page') {
-        // alert('gigi')
-        console.log('test str');
-        // FIXME
-        // chrome.runtime.sendMessage({'shortcut': 'save-page'});
-        // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        //     console.log('test str 2', tabs[0]);
-        //   chrome.tabs.sendMessage(tabs[0].id, {'shortcut': 'save-page'}, function(response) {
-        //     console.log(response);
-        //   });
-        // });
-        // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        //     console.log('test str 2', tabs[0]);
-        //     chrome.tabs.executeScript(tabs[0].id, {file: '/menu.js'});
-        //     console.log('test str 3');
-        //       chrome.tabs.sendMessage(tabs[0].id, {'shortcut': 'save-page'}, function(response) {
-        //         console.log(response);
-        //       });
-        // });
         dispatch('extract-page', false, []);
         isBusy = true;
     } else if (command === 'save-selection') {
@@ -200,9 +188,7 @@ function dispatch(action, justAddToBuffer, appliedStyles) {
                         }
 
                         if (allMatchingStyles.length >= 1) {
-                            allMatchingStyles.sort(function (a, b) {
-                                return b.length - a.length;
-                            });
+                            allMatchingStyles.sort((a, b) => b.length - a.length);
                             let selStyle = allMatchingStyles[0];
                             currentStyle = styles[selStyle.index];
                             // setCurrentStyle(currentStyle);
@@ -214,46 +200,29 @@ function dispatch(action, justAddToBuffer, appliedStyles) {
                         }
                     }
 
-                    console.log('OoOoooooooolasdlasldkaldklakdlsk');
-                    // chrome.tabs.executeScript(tab[0].id, {
-                    //     file: 'extractHtml.js'
-                    // }, function() {
-                    //     sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
-                    // });
-
                     chrome.tabs.sendMessage(tab[0].id, {
                         type: action,
                         appliedStyles: appliedStyles
-                    }, function(response) {
-
+                    }, (response) => {
                         if (response.length === 0) {
                             if (justAddToBuffer) {
-                                alert('Cannot add an empty selection as chapter!');
+                                // FIXME does not work on chrome ?
+                                chrome.tabs.sendMessage(tab[0].id, {'alert': 'Cannot add an empty selection as chapter!'}, (r) => {
+                                  console.log(r);
+                                });
                             } else {
-                                alert('Cannot generate the eBook from an empty selection!');
+                                chrome.tabs.sendMessage(tab[0].id, {'alert': 'Cannot generate the eBook from an empty selection!'}, (r) => {
+                                  console.log(r);
+                                });
                             }
                             isBusy = false;
                             chrome.browserAction.setBadgeText({text: ""});
                             return;
                         }
                         if (!justAddToBuffer) {
-                            console.log("build ebook done", response);
-
-                            // FIXME - does not work
-                            // buildEbook([response]);
-
-                                        // chrome.tabs.executeScript(tab[0].id, {
-                                        //     file: 'extractHtml.js'
-                                        // }, function() {
-                                        //     console.log('aoidadoaidoiaodiao');
-                                        //     chrome.tabs.sendMessage(tab[0].id, {'shortcut': 'build-ebook', response: [response]}, (r) => {
-                                        //       console.log(r);
-                                        //     });
-                                        // });
-                                        // FIXME
-                                        chrome.tabs.sendMessage(tab[0].id, {'shortcut': 'build-ebook', response: [response]}, (r) => {
-                                          console.log(r);
-                                        });
+                            chrome.tabs.sendMessage(tab[0].id, {'shortcut': 'build-ebook', response: [response]}, (r) => {
+                              console.log(r);
+                            });
                             isBusy = false;
                             chrome.browserAction.setBadgeText({text: ""});
                         } else {
@@ -265,195 +234,16 @@ function dispatch(action, justAddToBuffer, appliedStyles) {
                                 chrome.storage.local.set({'allPages': data.allPages});
                                 isBusy = false;
                                 chrome.browserAction.setBadgeText({text: ""});
-                                alert('Page or selection added as chapter!')
+                                chrome.tabs.sendMessage(tab[0].id, {'alert': 'Page or selection added as chapter!'}, (r) => {
+                                  console.log(r);
+                                });
                             })
                         }
                     });
                     // sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
                 });
-
-
-
-
-    //     chrome.tabs.sendMessage(tab[0].id, {
-    //         type: 'echo'
-    //     }, (response) => {
-    //         if (!response) {
-    //             console.log(' NOT RESPONSE');
-    //             // chrome.tabs.executeScript(tab[0].id, {file: '/jquery.js'});
-    //             chrome.tabs.executeScript(tab[0].id, {file: '/pure-parser.js'});
-    //             chrome.tabs.executeScript(tab[0].id, {file: '/cssjson.js'});
-    //             chrome.tabs.executeScript(tab[0].id, {file: '/utils.js'});
-    //             chrome.tabs.executeScript(tab[0].id, {file: '/filesaver.js'});
-    //             chrome.tabs.executeScript(tab[0].id, {file: '/jszip.js'});
-    //             chrome.tabs.executeScript(tab[0].id, {file: '/jszip-utils.js'});
-    //
-    //             // chrome.storage.local.get('styles', (data) => {
-    //             //     let styles = defaultStyles;
-    //             //     if (data && data.styles) {
-    //             //         styles = data.styles;
-    //             //     }
-    //             //     let currentUrl = tab[0].url;
-    //             //     let currentStyle = null;
-    //             //
-    //             //     if (styles && styles.length > 0) {
-    //             //         let allMatchingStyles = [];
-    //             //
-    //             //         for (let i = 0; i < styles.length; i++) {
-    //             //             currentUrl = currentUrl.replace(/(http[s]?:\/\/|www\.)/i, '').toLowerCase();
-    //             //             let styleUrl = styles[i].url;
-    //             //             let styleUrlRegex = null;
-    //             //
-    //             //             try {
-    //             //                 styleUrlRegex =  new RegExp(styleUrl, 'i');
-    //             //             } catch (e) {
-    //             //             }
-    //             //
-    //             //             if (styleUrlRegex && styleUrlRegex.test(currentUrl)) {
-    //             //                 allMatchingStyles.push({
-    //             //                     index: i,
-    //             //                     length: styleUrl.length
-    //             //                 });
-    //             //             }
-    //             //         }
-    //             //
-    //             //         if (allMatchingStyles.length >= 1) {
-    //             //             allMatchingStyles.sort(function (a, b) {
-    //             //                 return b.length - a.length;
-    //             //             });
-    //             //             let selStyle = allMatchingStyles[0];
-    //             //             currentStyle = styles[selStyle.index];
-    //             //             // setCurrentStyle(currentStyle);
-    //             //
-    //             //             if (currentStyle && currentStyle.style) {
-    //             //                 chrome.tabs.insertCSS(tab[0].id, {code: currentStyle.style});
-    //             //                 appliedStyles.push(currentStyle);
-    //             //             }
-    //             //         }
-    //             //     }
-    //             //
-    //             //     sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
-    //             // });
-    //
-    //             // chrome.tabs.executeScript(tab[0].id, {
-    //             //     file: 'extractHtml.js'
-    //             // }, function() {
-    //             //     console.log('aoidadoaidoiaodiao');
-    //             //     // sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
-    //             // });
-    //         }
-    //         // else if (response.echo) {
-    //         //
-    //         //
-    //         //
-    //         //     // sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
-    //         // }
-    //
-    //         console.log('baba lulu iii 33');
-    //
-    //         chrome.tabs.executeScript(tab[0].id, {file: '/pure-parser.js'});
-    //         chrome.tabs.executeScript(tab[0].id, {file: '/cssjson.js'});
-    //         chrome.tabs.executeScript(tab[0].id, {file: '/utils.js'});
-    //         chrome.tabs.executeScript(tab[0].id, {file: '/filesaver.js'});
-    //         chrome.tabs.executeScript(tab[0].id, {file: '/jszip.js'});
-    //         chrome.tabs.executeScript(tab[0].id, {file: '/jszip-utils.js'});
-    //
-    //         chrome.storage.local.get('styles', (data) => {
-    //             let styles = defaultStyles;
-    //             if (data && data.styles) {
-    //                 styles = data.styles;
-    //             }
-    //             let currentUrl = tab[0].url;
-    //             let currentStyle = null;
-    //
-    //             if (styles && styles.length > 0) {
-    //                 let allMatchingStyles = [];
-    //
-    //                 for (let i = 0; i < styles.length; i++) {
-    //                     currentUrl = currentUrl.replace(/(http[s]?:\/\/|www\.)/i, '').toLowerCase();
-    //                     let styleUrl = styles[i].url;
-    //                     let styleUrlRegex = null;
-    //
-    //                     try {
-    //                         styleUrlRegex =  new RegExp(styleUrl, 'i');
-    //                     } catch (e) {
-    //                     }
-    //
-    //                     if (styleUrlRegex && styleUrlRegex.test(currentUrl)) {
-    //                         allMatchingStyles.push({
-    //                             index: i,
-    //                             length: styleUrl.length
-    //                         });
-    //                     }
-    //                 }
-    //
-    //                 if (allMatchingStyles.length >= 1) {
-    //                     allMatchingStyles.sort(function (a, b) {
-    //                         return b.length - a.length;
-    //                     });
-    //                     let selStyle = allMatchingStyles[0];
-    //                     currentStyle = styles[selStyle.index];
-    //                     // setCurrentStyle(currentStyle);
-    //
-    //                     if (currentStyle && currentStyle.style) {
-    //                         chrome.tabs.insertCSS(tab[0].id, {code: currentStyle.style});
-    //                         appliedStyles.push(currentStyle);
-    //                     }
-    //                 }
-    //             }
-    //
-    //             console.log('OoOoooooooolasdlasldkaldklakdlsk');
-    //             chrome.tabs.executeScript(tab[0].id, {
-    //                 file: 'extractHtml.js'
-    //             }, function() {
-    //                 sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
-    //             });
-    //             // sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
-    //         });
-    //     });
     });
 }
-
-// function sendMessage(tabId, action, justAddToBuffer, appliedStyles) {
-//
-//     chrome.tabs.sendMessage(tabId, {
-//         type: action,
-//         appliedStyles: appliedStyles
-//     }, function(response) {
-//
-//         if (response.length === 0) {
-//             if (justAddToBuffer) {
-//                 alert('Cannot add an empty selection as chapter!');
-//             } else {
-//                 alert('Cannot generate the eBook from an empty selection!');
-//             }
-//             isBusy = false;
-//             chrome.browserAction.setBadgeText({text: ""});
-//             return;
-//         }
-//         if (!justAddToBuffer) {
-//             buildEbook([response]);
-//             isBusy = false;
-//             chrome.browserAction.setBadgeText({text: ""});
-//         } else {
-//             chrome.storage.local.get('allPages', function (data) {
-//                 if (!data || !data.allPages) {
-//                     data.allPages = [];
-//                 }
-//                 data.allPages.push(response);
-//                 chrome.storage.local.set({'allPages': data.allPages});
-//                 isBusy = false;
-//                 chrome.browserAction.setBadgeText({text: ""});
-//                 alert('Page or selection added as chapter!')
-//             })
-//         }
-//     });
-// }
-
-
-
-
-
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.type === 'get') {

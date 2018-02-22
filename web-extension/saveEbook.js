@@ -1,6 +1,15 @@
 var cssFileName = 'ebook.css';
 var ebookTitle = null;
 
+chrome.runtime.onMessage.addListener((obj) => {
+    if (obj.shortcut && obj.shortcut === 'build-ebook') {
+        buildEbook(obj.response);
+    } else if (obj.alert) {
+        console.log(obj.alert);
+        alert(obj.alert);
+    }
+})
+
 function getImagesIndex(allImages) {
     return allImages.reduce(function(prev, elem, index) {
         return prev + '\n' + '<item href="images/' + elem.filename + '" id="img' + elem.filename + '" media-type="image/' + getImageType(elem.filename) + '"/>';
