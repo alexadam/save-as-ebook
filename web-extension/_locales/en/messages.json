@@ -4,13 +4,10 @@
         "description": "Extension name"
     },
     "includeStyle": {
-        "message": "Include Original Style"
-    },
-    "applyStyle": {
-        "message": "Apply Custom Style"
+        "message": "Include (Custom) Style"
     },
     "editStyles": {
-        "message": "Edit Styles ..."
+        "message": "Edit Custom Styles ..."
     },
     "savePage": {
         "message": "Save Page"

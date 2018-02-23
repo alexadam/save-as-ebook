@@ -5,8 +5,6 @@ var appliedStyles = [];
 // create menu labels
 document.getElementById('menuTitle').innerHTML = chrome.i18n.getMessage('extName');
 document.getElementById('includeStyle').innerHTML = chrome.i18n.getMessage('includeStyle');
-// document.getElementById('styleLabel').innerHTML = chrome.i18n.getMessage('styleLabel');
-document.getElementById('applyStyle').innerHTML = chrome.i18n.getMessage('applyStyle');
 document.getElementById('editStyles').innerHTML = chrome.i18n.getMessage('editStyles');
 document.getElementById('savePageLabel').innerHTML = chrome.i18n.getMessage('savePage');
 document.getElementById('saveSelectionLabel').innerHTML = chrome.i18n.getMessage('saveSelection');
@@ -26,12 +24,7 @@ function createStyleList(styles) {
             return;
         }
 
-        var existingStyles = {} //document.getElementById('allStylesList');
         var foundMatchingUrl = false;
-
-        while (existingStyles.hasChildNodes() && existingStyles.childElementCount > 1) {
-            existingStyles.removeChild(existingStyles.lastChild);
-        }
 
         // if multiple URL regexes match, select the longest one
         var allMatchingStyles = [];
@@ -58,8 +51,6 @@ function createStyleList(styles) {
                     length: styleUrl.length
                 });
             }
-
-            existingStyles.appendChild(listItem);
         }
 
         if (allMatchingStyles.length >= 1) {
@@ -67,8 +58,6 @@ function createStyleList(styles) {
                 return b.length - a.length;
             });
             var selStyle = allMatchingStyles[0];
-            var tmpListItemElem = document.getElementById('option_' + selStyle.index);
-            tmpListItemElem.selected = 'selected';
             currentStyle = styles[selStyle.index];
             setCurrentStyle(currentStyle);
         }
@@ -78,7 +67,6 @@ function createStyleList(styles) {
 function createIncludeStyle(data) {
     var includeStyleCheck = document.getElementById('includeStyleCheck');
     includeStyleCheck.checked = data;
-    // document.getElementById('customStyles').style.display = !includeStyleCheck.checked ? 'none' : 'block';
 }
 
 getIncludeStyle(createIncludeStyle);
@@ -86,29 +74,6 @@ getIncludeStyle(createIncludeStyle);
 document.getElementById('includeStyleCheck').onclick = function () {
     var includeStyleCheck = document.getElementById('includeStyleCheck');
     setIncludeStyle(includeStyleCheck.checked);
-    // document.getElementById('customStyles').style.display = !includeStyleCheck.checked ? 'none' : 'block';
-}
-
-// document.getElementById('allStylesList').onchange = function () {
-//     var newValue = this.value;
-//     newValue = newValue.replace('option_', '');
-//     newValue = parseInt(newValue);
-//     currentStyle = allStyles[newValue];
-//     setCurrentStyle(currentStyle);
-// }
-
-// FIXME
-document.getElementById("applyStyle").onclick = function() {
-    chrome.tabs.query({
-        currentWindow: true,
-        active: true
-    }, function(tab) {
-        if (!currentStyle || !currentStyle.style) {
-            return;
-        }
-        chrome.tabs.insertCSS(tab[0].id, {code: currentStyle.style});
-        appliedStyles.push(currentStyle);
-    });
 }
 
 document.getElementById("editStyles").onclick = function() {
@@ -178,6 +143,12 @@ function dispatch(action, justAddToBuffer) {
         chrome.tabs.sendMessage(tab[0].id, {
             type: 'echo'
         }, function(response) {
+
+            if (currentStyle && currentStyle.style) {
+                chrome.tabs.insertCSS(tab[0].id, {code: currentStyle.style});
+                appliedStyles.push(currentStyle);
+            }
+
             if (!response) {
                 chrome.tabs.executeScript(tab[0].id, {file: '/jquery.js'});
                 chrome.tabs.executeScript(tab[0].id, {file: '/utils.js'});
@@ -186,8 +157,6 @@ function dispatch(action, justAddToBuffer) {
                 chrome.tabs.executeScript(tab[0].id, {file: '/jszip-utils.js'});
                 chrome.tabs.executeScript(tab[0].id, {file: '/pure-parser.js'});
                 chrome.tabs.executeScript(tab[0].id, {file: '/cssjson.js'});
-
-                // chrome.tabs.insertCSS(tab[0].id, {code: currentStyle.style}); // TODO remove from here --- see if it still works
 
                 chrome.tabs.executeScript(tab[0].id, {
                     file: 'extractHtml.js'
