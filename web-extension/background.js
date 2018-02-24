@@ -433,5 +433,8 @@ footer, canvas {
     if (request.type === 'set include style') {
         chrome.storage.local.set({'includeStyle': request.includeStyle});
     }
+    if (request.type === 'is busy?') {
+        sendResponse({isBusy: isBusy})
+    }
     return true;
 });

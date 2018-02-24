@@ -13,6 +13,14 @@ document.getElementById('selectionChapterLabel').innerHTML = chrome.i18n.getMess
 document.getElementById('editChapters').innerHTML = chrome.i18n.getMessage('editChapters');
 document.getElementById('waitMessage').innerHTML = chrome.i18n.getMessage('waitMessage');
 
+checkIfBusy((result) => {
+    if (result.isBusy) {
+        document.getElementById('busy').style.display = 'block';
+    } else {
+        document.getElementById('busy').style.display = 'none';
+    }
+})
+
 getStyles(createStyleList);
 
 function createStyleList(styles) {

@@ -83,6 +83,14 @@ function removeEbook() {
     }, function(response) {});
 }
 
+function checkIfBusy(callback) {
+    chrome.runtime.sendMessage({
+        type: "is busy?"
+    }, function(response) {
+        callback(response);
+    });
+}
+
 /////
 function getCurrentUrl() {
     var url = window.location.href;
