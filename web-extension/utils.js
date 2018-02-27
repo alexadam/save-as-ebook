@@ -166,6 +166,9 @@ function getAbsoluteUrl(urlStr) {
         var originUrl = getOriginUrl();
         var absoluteUrl = urlStr;
 
+        originUrl = removeEndingSlash(originUrl)
+        currentUrl = removeEndingSlash(currentUrl)
+
         if (urlStr.indexOf('//') === 0) {
             absoluteUrl = window.location.protocol + urlStr;
         } else if (urlStr.indexOf('/') === 0) {
@@ -181,6 +184,13 @@ function getAbsoluteUrl(urlStr) {
         console.log('Error:', e);
         return urlStr;
     }
+}
+
+function removeEndingSlash(inputStr) {
+    if (inputStr.endsWith('/')) {
+        return inputStr.substring(0, inputStr.length - 2);
+    }
+    return inputStr;
 }
 
 // https://gist.github.com/jonleighton/958841
