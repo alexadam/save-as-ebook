@@ -324,6 +324,8 @@ function extractCss(appliedStyles, callback) {
                 if (!$pre.is(':visible')) {
                     $pre.replaceWith('');
                 } else {
+                    if (pre.tagName.roLowerCase() === 'svg') return;
+                    
                     var classNames = pre.getAttribute('class');
                     if (!classNames) {
                         classNames = pre.getAttribute('id');
