@@ -188,7 +188,7 @@ function getAbsoluteUrl(urlStr) {
 
 function removeEndingSlash(inputStr) {
     if (inputStr.endsWith('/')) {
-        return inputStr.substring(0, inputStr.length - 2);
+        return inputStr.substring(0, inputStr.length - 1);
     }
     return inputStr;
 }

@@ -328,7 +328,7 @@ function extractCss(appliedStyles, callback) {
                     if (!classNames) {
                         classNames = pre.getAttribute('id');
                         if (!classNames) {
-                            classNames = pre.tagName;
+                            classNames = pre.tagName + '-' + Math.floor(Math.random()*100000);
                         }
                     }
                     var tmpName = cssClassesToTmpIds[classNames];
