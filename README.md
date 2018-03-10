@@ -45,6 +45,32 @@ sudo apt-get install calibre
 ebook-convert "book.epub" "book.mobi"
 ```
 
+## Default Keyboard Shortcuts
+
+**NOTE** These shortcuts are not fixed and the browser will assign a different shortcut if the default one is taken
+
+| Shortcut | Description |
+| --- | --- |
+| Alt + Shift + 1 | Save current page as eBook |
+| Alt + Shift + 2 | Save current selection as eBook |
+| Alt + Shift + 3 | Add current page as chapter |
+| Alt + Shift + 4 | Add current selection as chapter |
+
+## How to change the default Shortcuts
+
+in Chrome:
+
+```
+1. Navigate to chrome://extensions/
+2. Scroll down
+3. Click on Keyboard shortcuts
+```
+
+## Added in v1.3
+ - Keyboard shortcuts
+ - Simplified tool bar menu
+ - Misc bug fixes
+
 ## Added in v1.2.2
  - fixed &  &amp; issue in title; Issue # 10
 
