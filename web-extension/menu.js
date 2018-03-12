@@ -158,19 +158,42 @@ function dispatch(action, justAddToBuffer) {
             }
 
             if (!response) {
-                chrome.tabs.executeScript(tab[0].id, {file: '/jquery.js'});
-                chrome.tabs.executeScript(tab[0].id, {file: '/utils.js'});
-                chrome.tabs.executeScript(tab[0].id, {file: '/filesaver.js'});
-                chrome.tabs.executeScript(tab[0].id, {file: '/jszip.js'});
-                chrome.tabs.executeScript(tab[0].id, {file: '/jszip-utils.js'});
-                chrome.tabs.executeScript(tab[0].id, {file: '/pure-parser.js'});
-                chrome.tabs.executeScript(tab[0].id, {file: '/cssjson.js'});
+                // when first invoked, response will be undefined because extractHtml.js
+                // was not executed yet
+                chrome.tabs.executeScript(tab[0].id, {file: '/jquery.js'},
+                function (result) {
+                    if (!result) {
+                        alert('Save as eBook does not work on this web site!');
+                        setIsBusy(false)
+                        document.getElementById('busy').style.display = 'none';
+                    } else {
+                        chrome.tabs.executeScript(tab[0].id, {file: '/utils.js'});
+                        chrome.tabs.executeScript(tab[0].id, {file: '/filesaver.js'});
+                        chrome.tabs.executeScript(tab[0].id, {file: '/jszip.js'});
+                        chrome.tabs.executeScript(tab[0].id, {file: '/jszip-utils.js'});
+                        chrome.tabs.executeScript(tab[0].id, {file: '/pure-parser.js'});
+                        chrome.tabs.executeScript(tab[0].id, {file: '/cssjson.js'});
 
-                chrome.tabs.executeScript(tab[0].id, {
-                    file: 'extractHtml.js'
-                }, function() {
-                    sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
+                        chrome.tabs.executeScript(tab[0].id, {
+                            file: 'extractHtml.js'
+                        }, function() {
+                            sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
+                        });
+                    }
                 });
+                // FIXME
+                // chrome.tabs.executeScript(tab[0].id, {file: '/utils.js'});
+                // chrome.tabs.executeScript(tab[0].id, {file: '/filesaver.js'});
+                // chrome.tabs.executeScript(tab[0].id, {file: '/jszip.js'});
+                // chrome.tabs.executeScript(tab[0].id, {file: '/jszip-utils.js'});
+                // chrome.tabs.executeScript(tab[0].id, {file: '/pure-parser.js'});
+                // chrome.tabs.executeScript(tab[0].id, {file: '/cssjson.js'});
+                //
+                // chrome.tabs.executeScript(tab[0].id, {
+                //     file: 'extractHtml.js'
+                // }, function() {
+                //     sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
+                // });
             } else if (response.echo) {
                 sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
             }
@@ -183,6 +206,12 @@ function sendMessage(tabId, action, justAddToBuffer, appliedStyles) {
         type: action,
         appliedStyles: appliedStyles
     }, function(response) {
+        if (!response) {
+            alert('Save as eBook does not work on this web site!');
+            setIsBusy(false)
+            document.getElementById('busy').style.display = 'none';
+            return
+        }
         if (response.length === 0) {
             if (justAddToBuffer) {
                 alert('Cannot add an empty selection as chapter!');

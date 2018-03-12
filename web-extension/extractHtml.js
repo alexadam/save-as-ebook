@@ -81,9 +81,13 @@ function extractCanvasToImg($htmlObject) {
 function extractSvgToImg($htmlObject) {
     var serializer = new XMLSerializer();
     $htmlObject.find('svg').each(function (index, elem) {
-        var svgXml = serializer.serializeToString(elem);
-        var imgSrc = 'data:image/svg+xml;base64,' + window.btoa(svgXml);
-        $(elem).replaceWith('<img src="' + imgSrc + '">' + '</img>');
+        try {
+            var svgXml = serializer.serializeToString(elem);
+            var imgSrc = 'data:image/svg+xml;base64,' + window.btoa(svgXml);
+            $(elem).replaceWith('<img src="' + imgSrc + '">' + '</img>');
+        } catch (e) {
+            console.log(e)
+        } finally {}
     });
 }
 
@@ -324,8 +328,8 @@ function extractCss(appliedStyles, callback) {
                 if (!$pre.is(':visible')) {
                     $pre.replaceWith('');
                 } else {
-                    if (pre.tagName.roLowerCase() === 'svg') return;
-                    
+                    if (pre.tagName.toLowerCase() === 'svg') return;
+
                     var classNames = pre.getAttribute('class');
                     if (!classNames) {
                         classNames = pre.getAttribute('id');

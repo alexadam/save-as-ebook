@@ -181,19 +181,25 @@ function _buildEbook(allPages) {
 
 
     // FIXME
-    var saveData = (function () {
-            var a = document.createElement("a");
-            document.body.appendChild(a);
-            a.style = "display: none";
-            return function (data, fileName) {
-                var blob = new Blob([data], {type: "octet/stream"}),
-                    url = window.URL.createObjectURL(blob);
-                a.href = url;
-                a.download = fileName;
-                a.click();
-                window.URL.revokeObjectURL(url);
-            };
-        }());
+    // var saveData = (function () {
+    //     // alert('in save data')
+    //         var a = document.createElement("a");
+    //         document.body.appendChild(a);
+    //         a.style = "display: none";
+    //         return function (data, fileName) {
+    //             var blob = new Blob([data], {type: "octet/stream"}),
+    //                 url = window.URL.createObjectURL(blob);
+    //                 // alert(url)
+    //                 // console.log(url);
+    //
+    //                 // blob:chrome-extension://odnciljldfihdbbpbpdeehpejonicnmh/12789e3f-4ee2-4287-8203-69bc719c2ce8
+    //                 // blob:https://uk.godaddy.com/d9cbd1a4-427d-4e55-a30a-80b9bea6547a
+    //             a.href = url;
+    //             a.download = fileName;
+    //             a.click();
+    //             window.URL.revokeObjectURL(url);
+    //         };
+    //     }());
 
     zip.generateAsync({
             type: "blob"
@@ -201,9 +207,9 @@ function _buildEbook(allPages) {
         .then(function(content) {
             done = true;
             console.log("done !");
-            // saveAs(content, ebookFileName);
+            saveAs(content, ebookFileName);
             // FIXME
-            saveData(content, ebookFileName);
+            // saveData(content, ebookFileName);
         });
 
     setTimeout(function() {

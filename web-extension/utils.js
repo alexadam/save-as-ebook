@@ -91,6 +91,13 @@ function checkIfBusy(callback) {
     });
 }
 
+function setIsBusy(isBusy) {
+    chrome.runtime.sendMessage({
+        type: "set is busy",
+        isBusy: isBusy
+    }, function(response) {});
+}
+
 /////
 function getCurrentUrl() {
     var url = window.location.href;
@@ -261,6 +268,8 @@ function getBase64ImgData(srcTxt) {
 }
 
 function getXPath(elm) {
+    if (!elm) return ''
+    
     var allNodes = document.getElementsByTagName('*');
     for (var segs = []; elm && elm.nodeType === 1; elm = elm.parentNode) {
         if (elm.hasAttribute('id')) {

@@ -200,10 +200,27 @@ function dispatch(action, justAddToBuffer, appliedStyles) {
                         }
                     }
 
+                    chrome.tabs.executeScript(tab[0].id, {file: '/jquery.js'});
+                    chrome.tabs.executeScript(tab[0].id, {file: '/utils.js'});
+                    chrome.tabs.executeScript(tab[0].id, {file: '/filesaver.js'});
+                    chrome.tabs.executeScript(tab[0].id, {file: '/jszip.js'});
+                    chrome.tabs.executeScript(tab[0].id, {file: '/jszip-utils.js'});
+                    chrome.tabs.executeScript(tab[0].id, {file: '/saveEbook.js'});
+
                     chrome.tabs.sendMessage(tab[0].id, {
                         type: action,
                         appliedStyles: appliedStyles
                     }, (response) => {
+
+                        if (!response) {
+                            isBusy = false;
+                            chrome.browserAction.setBadgeText({text: ""});
+                            chrome.tabs.sendMessage(tab[0].id, {'alert': 'Save as eBook does not work on this web site!'}, (r) => {
+                              console.log(r);
+                            });
+                            return;
+                        }
+
                         if (response.length === 0) {
                             if (justAddToBuffer) {
                                 // FIXME does not work on chrome ?
@@ -240,6 +257,9 @@ function dispatch(action, justAddToBuffer, appliedStyles) {
                             })
                         }
                     });
+                    // FIXME set timeout
+                    // isBusy = false;
+                    // chrome.browserAction.setBadgeText({text: ""});
                     // sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
                 });
     });
@@ -435,6 +455,9 @@ footer, canvas {
     }
     if (request.type === 'is busy?') {
         sendResponse({isBusy: isBusy})
+    }
+    if (request.type === 'set is busy') {
+        isBusy = request.isBusy
     }
     return true;
 });
