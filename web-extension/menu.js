@@ -221,7 +221,7 @@ function sendMessage(tabId, action, justAddToBuffer, appliedStyles) {
             window.close();
         }
         if (!justAddToBuffer) {
-            buildEbook([response]);
+            buildEbook([response], true);
         } else {
             getEbookPages(function (allPages) {
                 allPages.push(response);

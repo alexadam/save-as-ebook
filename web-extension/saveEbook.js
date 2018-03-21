@@ -32,12 +32,12 @@ function buildEbookFromChapters() {
     })
 }
 
-function buildEbook(allPages) {
-    _buildEbook(allPages);
+function buildEbook(allPages, fromMenu=false) {
+    _buildEbook(allPages, fromMenu);
 }
 
 // http://ebooks.stackexchange.com/questions/1183/what-is-the-minimum-required-content-for-a-valid-epub
-function _buildEbook(allPages) {
+function _buildEbook(allPages, fromMenu=false) {
     allPages = allPages.filter(function(page) {
         return page !== null;
     });
@@ -179,27 +179,22 @@ function _buildEbook(allPages) {
 
     var done = false;
 
-
     // FIXME
-    // var saveData = (function () {
-    //     // alert('in save data')
-    //         var a = document.createElement("a");
-    //         document.body.appendChild(a);
-    //         a.style = "display: none";
-    //         return function (data, fileName) {
-    //             var blob = new Blob([data], {type: "octet/stream"}),
-    //                 url = window.URL.createObjectURL(blob);
-    //                 // alert(url)
-    //                 // console.log(url);
-    //
-    //                 // blob:chrome-extension://odnciljldfihdbbpbpdeehpejonicnmh/12789e3f-4ee2-4287-8203-69bc719c2ce8
-    //                 // blob:https://uk.godaddy.com/d9cbd1a4-427d-4e55-a30a-80b9bea6547a
-    //             a.href = url;
-    //             a.download = fileName;
-    //             a.click();
-    //             window.URL.revokeObjectURL(url);
-    //         };
-    //     }());
+    var saveData = (function () {
+            var a = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none";
+            return function (data, fileName) {
+                var wURL = window.URL || window.mozURL;
+                var blob = new Blob([data], {type: "application/epub+zip"}),
+                    url = wURL.createObjectURL(blob);
+
+                chrome.downloads.download({
+                  url: url,
+                  filename: fileName
+                });
+            };
+        }());
 
     zip.generateAsync({
             type: "blob"
@@ -207,11 +202,14 @@ function _buildEbook(allPages) {
         .then(function(content) {
             done = true;
             console.log("done !");
-            saveAs(content, ebookFileName);
-            // FIXME
-            // saveData(content, ebookFileName);
+            if (!fromMenu) {
+                saveAs(content, ebookFileName);
+            } else {
+                saveData(content, ebookFileName);
+            }
         });
 
+    // FIXME - remove or fix?
     setTimeout(function() {
         if (done) {
             return;
