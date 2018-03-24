@@ -269,7 +269,7 @@ function getBase64ImgData(srcTxt) {
 
 function getXPath(elm) {
     if (!elm) return ''
-    
+
     var allNodes = document.getElementsByTagName('*');
     for (var segs = []; elm && elm.nodeType === 1; elm = elm.parentNode) {
         if (elm.hasAttribute('id')) {
@@ -316,6 +316,11 @@ function generateRandomTag(tagLen) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
+}
+
+function removeSpecialChars(text) {
+    // FIXME remove white spaces ?
+    return text.replace(/\//g, '-')
 }
 
 function escapeXMLChars(text) {

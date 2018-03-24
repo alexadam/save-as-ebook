@@ -32,6 +32,7 @@ function buildEbookFromChapters() {
     })
 }
 
+// FIXME remove  - keep one  function
 function buildEbook(allPages, fromMenu=false) {
     _buildEbook(allPages, fromMenu);
 }
@@ -49,10 +50,10 @@ function _buildEbook(allPages, fromMenu=false) {
     if (ebookTitle) {
         // ~TODO a pre-processing function to apply escapeXMLChars to all page.titles
         ebookName = escapeXMLChars(ebookTitle);
-        ebookFileName = getEbookFileName(ebookTitle) + '.epub';
+        ebookFileName = getEbookFileName(removeSpecialChars(ebookTitle)) + '.epub';
     } else {
         ebookName = escapeXMLChars(allPages[0].title);
-        ebookFileName = getEbookFileName(allPages[0].title) + '.epub';
+        ebookFileName = getEbookFileName(removeSpecialChars(allPages[0].title)) + '.epub';
     }
 
     var zip = new JSZip();
@@ -180,21 +181,22 @@ function _buildEbook(allPages, fromMenu=false) {
     var done = false;
 
     // FIXME
-    var saveData = (function () {
-            var a = document.createElement("a");
-            document.body.appendChild(a);
-            a.style = "display: none";
-            return function (data, fileName) {
-                var wURL = window.URL || window.mozURL;
-                var blob = new Blob([data], {type: "application/epub+zip"}),
-                    url = wURL.createObjectURL(blob);
-
-                chrome.downloads.download({
-                  url: url,
-                  filename: fileName
-                });
-            };
-        }());
+    // var saveData = (function () {
+    //         var a = document.createElement("a");
+    //         document.body.appendChild(a);
+    //         a.style = "display: none";
+    //         return function (data, fileName) {
+    //             var wURL = window.URL || window.mozURL;
+    //             var blob = new Blob([data], {type: "application/epub+zip"}),
+    //                 url = wURL.createObjectURL(blob);
+    //
+    //             chrome.downloads.download({
+    //               url: url,
+    //               filename: fileName,
+    //               saveAs: true
+    //             });
+    //         };
+    //     }());
 
     zip.generateAsync({
             type: "blob"
@@ -202,11 +204,7 @@ function _buildEbook(allPages, fromMenu=false) {
         .then(function(content) {
             done = true;
             console.log("done !");
-            if (!fromMenu) {
-                saveAs(content, ebookFileName);
-            } else {
-                saveData(content, ebookFileName);
-            }
+            saveAs(content, ebookFileName);
         });
 
     // FIXME - remove or fix?

@@ -11,10 +11,10 @@
     },
     "content_scripts": [{
         "matches": ["<all_urls>"],
-        "js": ["jquery.js", "jszip.js", "jszip-utils.js", "utils.js", "pure-parser.js", "cssjson.js", "extractHtml.js"]
+        "js": ["jquery.js", "jszip.js", "jszip-utils.js", "pure-parser.js", "cssjson.js", "filesaver.js", "saveEbook.js", "extractHtml.js", "utils.js"]
     }],
     "background": {
-        "scripts": ["background.js", "utils.js"]
+        "scripts": ["background.js"]
     },
     "browser_action": {
         "default_icon": "icons/book32.png",

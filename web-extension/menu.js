@@ -13,15 +13,27 @@ document.getElementById('selectionChapterLabel').innerHTML = chrome.i18n.getMess
 document.getElementById('editChapters').innerHTML = chrome.i18n.getMessage('editChapters');
 document.getElementById('waitMessage').innerHTML = chrome.i18n.getMessage('waitMessage');
 
-checkIfBusy((result) => {
-    if (result.isBusy) {
+function removeEbook() {
+    chrome.runtime.sendMessage({
+        type: "remove"
+    }, function(response) {});
+}
+
+chrome.runtime.sendMessage({
+    type: "is busy?"
+}, function(response) {
+    if (response.isBusy) {
         document.getElementById('busy').style.display = 'block';
     } else {
         document.getElementById('busy').style.display = 'none';
     }
-})
+});
 
-getStyles(createStyleList);
+chrome.runtime.sendMessage({
+    type: "get styles"
+}, function(response) {
+    createStyleList(response.styles);
+});
 
 function createStyleList(styles) {
     allStyles = styles;
@@ -67,7 +79,12 @@ function createStyleList(styles) {
             });
             var selStyle = allMatchingStyles[0];
             currentStyle = styles[selStyle.index];
-            setCurrentStyle(currentStyle);
+
+            chrome.runtime.sendMessage({
+                type: "set current style",
+                currentStyle: currentStyle
+            }, function(response) {
+            });
         }
     });
 }
@@ -77,7 +94,11 @@ function createIncludeStyle(data) {
     includeStyleCheck.checked = data;
 }
 
-getIncludeStyle(createIncludeStyle);
+chrome.runtime.sendMessage({
+    type: "get include style"
+}, function(response) {
+    createIncludeStyle(response.includeStyle);
+});
 
 document.getElementById('includeStyleCheck').onclick = function () {
     var includeStyleCheck = document.getElementById('includeStyleCheck');
@@ -95,12 +116,6 @@ document.getElementById("editStyles").onclick = function() {
         active: true
     }, function(tab) {
 
-        chrome.tabs.executeScript(tab[0].id, {file: '/jquery.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/utils.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/filesaver.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/jszip.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/jszip-utils.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/saveEbook.js'});
         chrome.tabs.insertCSS(tab[0].id, {file: '/cssEditor.css'});
 
         chrome.tabs.executeScript(tab[0].id, {
@@ -122,12 +137,6 @@ document.getElementById("editChapters").onclick = function() {
         active: true
     }, function(tab) {
 
-        chrome.tabs.executeScript(tab[0].id, {file: '/jquery.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/utils.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/filesaver.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/jszip.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/jszip-utils.js'});
-        chrome.tabs.executeScript(tab[0].id, {file: '/saveEbook.js'});
         chrome.tabs.executeScript(tab[0].id, {file: '/jquery-sortable.js'});
         chrome.tabs.insertCSS(tab[0].id, {file: '/chapterEditor.css'});
 
@@ -139,116 +148,33 @@ document.getElementById("editChapters").onclick = function() {
     });
 };
 
-function dispatch(action, justAddToBuffer) {
+function dispatch(commandType, justAddToBuffer) {
     document.getElementById('busy').style.display = 'block';
     if (!justAddToBuffer) {
         removeEbook();
     }
-    chrome.tabs.query({
-        currentWindow: true,
-        active: true
-    }, function(tab) {
-        chrome.tabs.sendMessage(tab[0].id, {
-            type: 'echo'
-        }, function(response) {
-
-            if (currentStyle && currentStyle.style) {
-                chrome.tabs.insertCSS(tab[0].id, {code: currentStyle.style});
-                appliedStyles.push(currentStyle);
-            }
-
-            if (!response) {
-                // when first invoked, response will be undefined because extractHtml.js
-                // was not executed yet
-                chrome.tabs.executeScript(tab[0].id, {file: '/jquery.js'},
-                function (result) {
-                    if (!result) {
-                        alert('Save as eBook does not work on this web site!');
-                        setIsBusy(false)
-                        document.getElementById('busy').style.display = 'none';
-                    } else {
-                        chrome.tabs.executeScript(tab[0].id, {file: '/utils.js'});
-                        chrome.tabs.executeScript(tab[0].id, {file: '/filesaver.js'});
-                        chrome.tabs.executeScript(tab[0].id, {file: '/jszip.js'});
-                        chrome.tabs.executeScript(tab[0].id, {file: '/jszip-utils.js'});
-                        chrome.tabs.executeScript(tab[0].id, {file: '/pure-parser.js'});
-                        chrome.tabs.executeScript(tab[0].id, {file: '/cssjson.js'});
-
-                        chrome.tabs.executeScript(tab[0].id, {
-                            file: 'extractHtml.js'
-                        }, function() {
-                            sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
-                        });
-                    }
-                });
-                // FIXME
-                // chrome.tabs.executeScript(tab[0].id, {file: '/utils.js'});
-                // chrome.tabs.executeScript(tab[0].id, {file: '/filesaver.js'});
-                // chrome.tabs.executeScript(tab[0].id, {file: '/jszip.js'});
-                // chrome.tabs.executeScript(tab[0].id, {file: '/jszip-utils.js'});
-                // chrome.tabs.executeScript(tab[0].id, {file: '/pure-parser.js'});
-                // chrome.tabs.executeScript(tab[0].id, {file: '/cssjson.js'});
-                //
-                // chrome.tabs.executeScript(tab[0].id, {
-                //     file: 'extractHtml.js'
-                // }, function() {
-                //     sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
-                // });
-            } else if (response.echo) {
-                sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
-            }
-        });
-    });
-}
-
-function sendMessage(tabId, action, justAddToBuffer, appliedStyles) {
-    chrome.tabs.sendMessage(tabId, {
-        type: action,
-        appliedStyles: appliedStyles
+    chrome.runtime.sendMessage({
+        type: commandType
     }, function(response) {
-        if (!response) {
-            alert('Save as eBook does not work on this web site!');
-            setIsBusy(false)
-            document.getElementById('busy').style.display = 'none';
-            return
-        }
-        if (response.length === 0) {
-            if (justAddToBuffer) {
-                alert('Cannot add an empty selection as chapter!');
-            } else {
-                alert('Cannot generate the eBook from an empty selection!');
-            }
-            window.close();
-        }
-        if (!justAddToBuffer) {
-            buildEbook([response], true);
-        } else {
-            getEbookPages(function (allPages) {
-                allPages.push(response);
-                saveEbookPages(allPages);
-                window.close();
-            });
-        }
-        setTimeout(function () {
-            document.getElementById('busy').style.display = 'none';
-        }, 500);
+        //FIXME - hidden before done
+        document.getElementById('busy').style.display = 'none';
     });
 }
 
 document.getElementById('savePage').onclick = function() {
-    dispatch('extract-page', false);
+    dispatch('save-page', false);
 };
 
 document.getElementById('saveSelection').onclick = function() {
-    dispatch('extract-selection', false);
+    dispatch('save-selection', false);
 };
 
 document.getElementById('pageChapter').onclick = function() {
-    dispatch('extract-page', true);
+    dispatch('add-page', true);
 };
 
 document.getElementById('selectionChapter').onclick = function() {
-    dispatch('extract-selection', true);
+    dispatch('add-selection', true);
 };
 
 // get all shortcuts and display them in the menuTitle

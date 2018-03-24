@@ -321,54 +321,57 @@ function jsonToCss(jsonObj) {
 }
 
 function extractCss(appliedStyles, callback) {
-    getIncludeStyle(function (result) {
-        if (result) {
-            $('body').find('*').each(function (i, pre) {
-                var $pre = $(pre);
-                if (!$pre.is(':visible')) {
-                    $pre.replaceWith('');
-                } else {
-                    if (pre.tagName.toLowerCase() === 'svg') return;
 
-                    var classNames = pre.getAttribute('class');
-                    if (!classNames) {
-                        classNames = pre.getAttribute('id');
+    chrome.runtime.sendMessage({
+            type: "get include style"
+        }, function(response) {
+            if (response.includeStyle) {
+                $('body').find('*').each(function (i, pre) {
+                    var $pre = $(pre);
+                    if (!$pre.is(':visible')) {
+                        $pre.replaceWith('');
+                    } else {
+                        if (pre.tagName.toLowerCase() === 'svg') return;
+
+                        var classNames = pre.getAttribute('class');
                         if (!classNames) {
-                            classNames = pre.tagName + '-' + Math.floor(Math.random()*100000);
-                        }
-                    }
-                    var tmpName = cssClassesToTmpIds[classNames];
-                    var tmpNewCss = tmpIdsToNewCss[tmpName];
-                    if (!tmpName) {
-                        tmpName = 'class-' + Math.floor(Math.random()*100000);
-                        cssClassesToTmpIds[classNames] = tmpName;
-                    }
-                    if (!tmpNewCss) {
-                        // var style = window.getComputedStyle(pre);
-                        tmpNewCss = {};
-                        for (var cssTagName of supportedCss) {
-                            var cssValue = $pre.css(cssTagName);
-                            if (cssValue && cssValue.length > 0) {
-                                tmpNewCss[cssTagName] = cssValue;
+                            classNames = pre.getAttribute('id');
+                            if (!classNames) {
+                                classNames = pre.tagName + '-' + Math.floor(Math.random()*100000);
                             }
                         }
-                        tmpIdsToNewCss[tmpName] = tmpNewCss;
+                        var tmpName = cssClassesToTmpIds[classNames];
+                        var tmpNewCss = tmpIdsToNewCss[tmpName];
+                        if (!tmpName) {
+                            tmpName = 'class-' + Math.floor(Math.random()*100000);
+                            cssClassesToTmpIds[classNames] = tmpName;
+                        }
+                        if (!tmpNewCss) {
+                            // var style = window.getComputedStyle(pre);
+                            tmpNewCss = {};
+                            for (var cssTagName of supportedCss) {
+                                var cssValue = $pre.css(cssTagName);
+                                if (cssValue && cssValue.length > 0) {
+                                    tmpNewCss[cssTagName] = cssValue;
+                                }
+                            }
+                            tmpIdsToNewCss[tmpName] = tmpNewCss;
+                        }
+                        pre.setAttribute('data-class', tmpName);
                     }
-                    pre.setAttribute('data-class', tmpName);
+                });
+                callback(jsonToCss(tmpIdsToNewCss));
+            } else {
+                var mergedCss = '';
+                if (appliedStyles && appliedStyles.length > 0) {
+                    for (var i = 0; i < appliedStyles.length; i++) {
+                        mergedCss += appliedStyles[i].style;
+                    }
+                    callback(mergedCss);
+                    return;
                 }
-            });
-            callback(jsonToCss(tmpIdsToNewCss));
-        } else {
-            var mergedCss = '';
-            if (appliedStyles && appliedStyles.length > 0) {
-                for (var i = 0; i < appliedStyles.length; i++) {
-                    mergedCss += appliedStyles[i].style;
-                }
-                callback(mergedCss);
-                return;
+                callback();
             }
-            callback();
-        }
     });
 }
 
