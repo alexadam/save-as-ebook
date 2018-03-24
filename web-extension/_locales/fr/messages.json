@@ -1,46 +1,46 @@
 {
     "extName": {
-        "message": "Save as eBook",
-        "description": "Extension name"
+        "message": "Enregistrer comme eBook",
+        "description": "Nom de l'extension"
     },
     "includeStyle": {
-        "message": "Inclure le Style"
+        "message": "Inclure le style"
     },
     "styleLabel": {
-        "message": "Custom Style:"
+        "message": "Style personnalisé :"
     },
     "applyStyle": {
-        "message": "Apply"
+        "message": "Appliquer"
     },
     "editStyles": {
-        "message": "Edit Styles ..."
+        "message": "Éditer les styles..."
     },
     "savePage": {
-        "message": "Save Page"
+        "message": "Enregistrer la page"
     },
     "saveSelection": {
-        "message": "Save Selection"
+        "message": "Enregistrer la sélection"
     },
     "pageChapter": {
-        "message": "Ajouter une page en tant que chapitre"
+        "message": "Ajouter la page en tant que chapitre"
     },
     "selectionChapter": {
-        "message": "Ajouter une sélection en tant que chapitre"
+        "message": "Ajouter la sélection en tant que chapitre"
     },
     "editChapters": {
-        "message": "Modifier les chapitres ..."
+        "message": "Modifier les chapitres..."
     },
     "waitMessage": {
-        "message": "S'il vous plaît, attendez ..."
+        "message": "Merci de patienter..."
     },
     "chapterEditorTitle": {
         "message": "Éditeur de chapitre"
     },
     "ebookTitleLabel": {
-        "message": "eBook Titre:"
+        "message": "Titre de l'eBook :"
     },
     "rawPreview": {
-        "message": "Raw Preview"
+        "message": "Aperçu brut"
     },
     "remove": {
         "message": "Retirer"
@@ -49,52 +49,51 @@
         "message": "Supprimer les chapitres"
     },
     "removeChaptersConfirm": {
-        "message": "Voulez-vous supprimer tous les chapitres?"
+        "message": "Voulez-vous supprimer tous les chapitres ?"
     },
     "cancel": {
         "message": "Annuler"
     },
     "generateEbook": {
-        "message": "Générer eBook ..."
+        "message": "Générer l'eBook..."
     },
     "saveChanges": {
         "message": "Enregistrer les modifications"
     },
     "emptyBookWarning": {
-        "message": "Can't generate an empty eBook!"
+        "message": "Impossible de générer un eBook vide !"
     },
     "confirmDeleteStyle": {
-        "message": "Êtes-vous sûr de vouloir supprimer ce style?"
+        "message": "Êtes-vous sûr de vouloir supprimer ce style ?"
     },
     "invalidRegex": {
-        "message": "Invalid regular expression"
+        "message": "Expression régulière invalide"
     },
     "styleSaved": {
-        "message": "Style saved!"
+        "message": "Style enregistré !"
     },
     "styleEditor": {
-        "message": "Style Editor"
+        "message": "Éditeur de style"
     },
     "selectExistingCSS": {
-        "message": "Select Existing CSS"
+        "message": "Sélectionner un style existant"
     },
     "orLabel": {
-        "message": "or"
+        "message": "ou"
     },
     "createNewStyle": {
-        "message": "Create New Style"
+        "message": "Créer un nouveau style"
     },
     "styleNameLabel": {
-        "message": "Name"
+        "message": "Nom"
     },
     "howToWriteRegexLabel": {
-        "message": "How to write a regular expression pattern"
+        "message": "Comment écrire une expression régulière"
     },
     "removeStyle": {
-        "message": "Remove Style"
+        "message": "Supprimer le style"
     },
     "saveStyle": {
-        "message": "Save Style"
+        "message": "Enregistrer le style"
     }
-
 }
