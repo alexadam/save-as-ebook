@@ -14,7 +14,8 @@
         "js": ["jquery.js", "jszip.js", "jszip-utils.js", "pure-parser.js", "cssjson.js", "filesaver.js", "saveEbook.js", "extractHtml.js", "utils.js"]
     }],
     "background": {
-        "scripts": ["background.js"]
+        "scripts": ["background.js"],
+        "persistent": false
     },
     "browser_action": {
         "default_icon": "icons/book32.png",
