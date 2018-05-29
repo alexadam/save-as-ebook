@@ -1,0 +1,93 @@
+{
+    "extName": {
+        "message": "Save as eBook",
+        "description": "Extension name"
+    },
+    "includeStyle": {
+        "message": "Подключить CSS"
+    },
+    "editStyles": {
+        "message": "Редактировать CSS ..."
+    },
+    "savePage": {
+        "message": "Сохранить страницу"
+    },
+    "saveSelection": {
+        "message": "Сохранить выделение"
+    },
+    "pageChapter": {
+        "message": "Добавить страницу как главу"
+    },
+    "selectionChapter": {
+        "message": "Добавить выделение как главу"
+    },
+    "editChapters": {
+        "message": "Редактировать главы ..."
+    },
+    "waitMessage": {
+        "message": "Пожалуйста ожидайте ..."
+    },
+    "chapterEditorTitle": {
+        "message": "Редактор глав"
+    },
+    "ebookTitleLabel": {
+        "message": "Заголовок книги:"
+    },
+    "rawPreview": {
+        "message": "Предпросмотр"
+    },
+    "remove": {
+        "message": "Удалить"
+    },
+    "removeChapters": {
+        "message": "Удалить главы"
+    },
+    "removeChaptersConfirm": {
+        "message": "Вы точно хотите удалить все главы?"
+    },
+    "cancel": {
+        "message": "Отмена"
+    },
+    "generateEbook": {
+        "message": "Создать книгу ..."
+    },
+    "saveChanges": {
+        "message": "Сохранить изменения"
+    },
+    "emptyBookWarning": {
+        "message": "Невозможно создать пустую книгу"
+    },
+    "confirmDeleteStyle": {
+        "message": "Вы точно хотите удалить этот стиль?"
+    },
+    "invalidRegex": {
+        "message": "Ошибка в регулярном выражении"
+    },
+    "styleSaved": {
+        "message": "Стиль сохранен!"
+    },
+    "styleEditor": {
+        "message": "Редактор стилей"
+    },
+    "selectExistingCSS": {
+        "message": "Выбрать существующий стиль"
+    },
+    "orLabel": {
+        "message": "или"
+    },
+    "createNewStyle": {
+        "message": "Создать новый стиль"
+    },
+    "styleNameLabel": {
+        "message": "Название"
+    },
+    "howToWriteRegexLabel": {
+        "message": "Введите регулярное выражение для адреса"
+    },
+    "removeStyle": {
+        "message": "Удалить стиль"
+    },
+    "saveStyle": {
+        "message": "Сохранить стиль"
+    }
+}
