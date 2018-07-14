@@ -102,7 +102,11 @@ chrome.runtime.sendMessage({
 
 document.getElementById('includeStyleCheck').onclick = function () {
     var includeStyleCheck = document.getElementById('includeStyleCheck');
-    setIncludeStyle(includeStyleCheck.checked);
+    chrome.runtime.sendMessage({
+        type: "set include style",
+        includeStyle: includeStyleCheck.checked
+    }, function(response) {
+    });
 }
 
 document.getElementById("editStyles").onclick = function() {

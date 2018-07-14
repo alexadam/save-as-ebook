@@ -10,8 +10,13 @@ var allowedTags = [
     'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr',
     'math', 'maction', 'menclose', 'merror', 'mfenced', 'mfrac', 'mglyph', 'mi', 'mlabeledtr', 'mmultiscripts', 'mn', 'mo', 'mover', 'mpadded', 'mphantom', 'mroot',
     'mrow', 'ms', 'mspace', 'msqrt', 'mstyle', 'msub', 'msup', 'msubsup', 'mtable', 'mtd', 'mtext', 'mtr', 'munder', 'munderover', 'msgroup', 'mlongdiv', 'mscarries',
-    'mscarry', 'mstack'
+    'mscarry', 'mstack', 'semantics'
 ];
+var mathMLTags = [
+    'math', 'maction', 'menclose', 'merror', 'mfenced', 'mfrac', 'mglyph', 'mi', 'mlabeledtr', 'mmultiscripts', 'mn', 'mo', 'mover', 'mpadded', 'mphantom', 'mroot',
+    'mrow', 'ms', 'mspace', 'msqrt', 'mstyle', 'msub', 'msup', 'msubsup', 'mtable', 'mtd', 'mtext', 'mtr', 'munder', 'munderover', 'msgroup', 'mlongdiv', 'mscarries',
+    'mscarry', 'mstack', 'semantics'
+]
 var cssClassesToTmpIds = {};
 var tmpIdsToNewCss = {};
 // src: https://idpf.github.io/a11y-guidelines/content/style/reference.html
@@ -34,10 +39,14 @@ function getImageSrc(srcTxt) {
     if (srcTxt === '') {
         return '';
     }
-    var isB64Img = isBase64Img(srcTxt);
+
     var fileExtension = getFileExtension(srcTxt);
+    if (fileExtension === '') {
+        return '';
+    }
     var newImgFileName = 'img-' + (Math.floor(Math.random()*1000000*Math.random()*100000)) + '.' + fileExtension;
 
+    var isB64Img = isBase64Img(srcTxt);
     if (isB64Img) {
         extractedImages.push({
             filename: newImgFileName, // TODO name
@@ -197,14 +206,21 @@ function sanitize(rawContentString) {
 
                 if (tag === 'img') {
                     var tmpAttrsTxt = '';
+                    let tmpSrc = ''
                     for (var i = 0; i < attrs.length; i++) {
                         if (attrs[i].name === 'src') {
-                            tmpAttrsTxt += ' src="' + getImageSrc(attrs[i].value) + '"';
+                            tmpSrc = getImageSrc(attrs[i].value)
+                            tmpAttrsTxt += ' src="' + tmpSrc + '"';
                         } else if (attrs[i].name === 'data-class') {
                             tmpAttrsTxt += ' class="' + attrs[i].value + '"';
                         }
                     }
-                    lastFragment = tmpAttrsTxt.length === 0 ? '<img></img>' : '<img ' + tmpAttrsTxt + ' alt=""></img>';
+                    if (tmpSrc === '') {
+                        // ignore imgs without source
+                        lastFragment = ''
+                    } else {
+                        lastFragment = tmpAttrsTxt.length === 0 ? '<img></img>' : '<img ' + tmpAttrsTxt + ' alt=""></img>';
+                    }
                 } else if (tag === 'a') {
                     var tmpAttrsTxt = '';
                     for (var i = 0; i < attrs.length; i++) {
@@ -223,6 +239,15 @@ function sanitize(rawContentString) {
                         }
                     }
                     lastFragment = '<' + tag + ' ' + tmpAttrsTxt + '></' + tag + '>';
+                } else if (tag === 'math') {
+                    var tmpAttrsTxt = '';
+                    tmpAttrsTxt += ' xmlns="http://www.w3.org/1998/Math/MathML"';
+                    for (var i = 0; i < attrs.length; i++) {
+                        if (attrs[i].name === 'alttext') {
+                            tmpAttrsTxt += ' alttext="' + attrs[i].value + '"';
+                        }
+                    }
+                    lastFragment = '<' + tag + ' ' + tmpAttrsTxt + '>';
                 } else {
                     var tmpAttrsTxt = '';
                     for (var i = 0; i < attrs.length; i++) {
@@ -328,6 +353,10 @@ function extractCss(appliedStyles, callback) {
             if (response.includeStyle) {
                 $('body').find('*').each(function (i, pre) {
                     var $pre = $(pre);
+
+                    if (allowedTags.indexOf(pre.tagName.toLowerCase()) < 0) return;
+                    if (mathMLTags.indexOf(pre.tagName.toLowerCase()) > -1) return;
+
                     if (!$pre.is(':visible')) {
                         $pre.replaceWith('');
                     } else {

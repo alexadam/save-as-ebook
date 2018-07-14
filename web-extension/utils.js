@@ -134,8 +134,10 @@ function getFileExtension(fileName) {
             tmpFileName = 'jpeg';
         } else if (tmpFileName === 'svg+xml') {
             tmpFileName = 'svg';
-        } else if (tmpFileName.trim() === '') {
-            tmpFileName = '';
+        } 
+
+        if (['png', 'gif', 'jpeg', 'svg'].indexOf(tmpFileName.trim()) < 0) {
+            return ''
         }
         return tmpFileName;
     } catch (e) {
