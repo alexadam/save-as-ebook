@@ -66,6 +66,10 @@ in Chrome:
 3. Click on Keyboard shortcuts
 ```
 
+## Added in v1.3.4
+ - Fix for MathML - the rendered expression is too large (Issue #26)
+ - Add translation in Russian (thanks to @ Emil Khalikov) & Brazilian Portuguese (thanks to @welksonramos)
+
 ## Added in v1.3
  - Keyboard shortcuts
  - Simplified tool bar menu
