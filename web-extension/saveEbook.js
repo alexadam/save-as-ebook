@@ -1,13 +1,14 @@
 var cssFileName = 'ebook.css';
 var ebookTitle = null;
 
-chrome.runtime.onMessage.addListener((obj) => {
+chrome.runtime.onMessage.addListener((obj, sender, sendResponse) => {
     if (obj.shortcut && obj.shortcut === 'build-ebook') {
         buildEbook(obj.response);
     } else if (obj.alert) {
         console.log(obj.alert);
         alert(obj.alert);
     }
+    return true;
 })
 
 function getImagesIndex(allImages) {
@@ -178,46 +179,16 @@ function _buildEbook(allPages, fromMenu=false) {
         }
     });
 
-    var done = false;
-
-    // FIXME
-    // var saveData = (function () {
-    //         var a = document.createElement("a");
-    //         document.body.appendChild(a);
-    //         a.style = "display: none";
-    //         return function (data, fileName) {
-    //             var wURL = window.URL || window.mozURL;
-    //             var blob = new Blob([data], {type: "application/epub+zip"}),
-    //                 url = wURL.createObjectURL(blob);
-    //
-    //             chrome.downloads.download({
-    //               url: url,
-    //               filename: fileName,
-    //               saveAs: true
-    //             });
-    //         };
-    //     }());
-
     zip.generateAsync({
             type: "blob"
         })
         .then(function(content) {
-            done = true;
             console.log("done !");
             saveAs(content, ebookFileName);
-        });
 
-    // FIXME - remove or fix?
-    setTimeout(function() {
-        if (done) {
-            return;
-        }
-        zip.generateAsync({
-                type: "blob"
-            })
-            .then(function(content) {
-                saveAs(content, ebookFileName);
-            });
-    }, 60000);
+            chrome.runtime.sendMessage({
+                type: "done"
+            }, (response) => {});
+        });
 
 }

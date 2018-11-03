@@ -345,63 +345,57 @@ function jsonToCss(jsonObj) {
     return result;
 }
 
-function extractCss(appliedStyles, callback) {
+function extractCss(includeStyle, appliedStyles) {
+    if (includeStyle) {
+        $('body').find('*').each((i, pre) => {
+            let $pre = $(pre);
 
-    chrome.runtime.sendMessage({
-            type: "get include style"
-        }, function(response) {
-            if (response.includeStyle) {
-                $('body').find('*').each(function (i, pre) {
-                    var $pre = $(pre);
+            if (allowedTags.indexOf(pre.tagName.toLowerCase()) < 0) return;
+            if (mathMLTags.indexOf(pre.tagName.toLowerCase()) > -1) return;
 
-                    if (allowedTags.indexOf(pre.tagName.toLowerCase()) < 0) return;
-                    if (mathMLTags.indexOf(pre.tagName.toLowerCase()) > -1) return;
-
-                    if (!$pre.is(':visible')) {
-                        $pre.replaceWith('');
-                    } else {
-                        if (pre.tagName.toLowerCase() === 'svg') return;
-
-                        var classNames = pre.getAttribute('class');
-                        if (!classNames) {
-                            classNames = pre.getAttribute('id');
-                            if (!classNames) {
-                                classNames = pre.tagName + '-' + Math.floor(Math.random()*100000);
-                            }
-                        }
-                        var tmpName = cssClassesToTmpIds[classNames];
-                        var tmpNewCss = tmpIdsToNewCss[tmpName];
-                        if (!tmpName) {
-                            tmpName = 'class-' + Math.floor(Math.random()*100000);
-                            cssClassesToTmpIds[classNames] = tmpName;
-                        }
-                        if (!tmpNewCss) {
-                            // var style = window.getComputedStyle(pre);
-                            tmpNewCss = {};
-                            for (var cssTagName of supportedCss) {
-                                var cssValue = $pre.css(cssTagName);
-                                if (cssValue && cssValue.length > 0) {
-                                    tmpNewCss[cssTagName] = cssValue;
-                                }
-                            }
-                            tmpIdsToNewCss[tmpName] = tmpNewCss;
-                        }
-                        pre.setAttribute('data-class', tmpName);
-                    }
-                });
-                callback(jsonToCss(tmpIdsToNewCss));
+            if (!$pre.is(':visible')) {
+                $pre.replaceWith('');
             } else {
-                var mergedCss = '';
-                if (appliedStyles && appliedStyles.length > 0) {
-                    for (var i = 0; i < appliedStyles.length; i++) {
-                        mergedCss += appliedStyles[i].style;
+                if (pre.tagName.toLowerCase() === 'svg') return;
+
+                let classNames = pre.getAttribute('class');
+                if (!classNames) {
+                    classNames = pre.getAttribute('id');
+                    if (!classNames) {
+                        classNames = pre.tagName + '-' + Math.floor(Math.random()*100000);
                     }
-                    callback(mergedCss);
-                    return;
                 }
-                callback();
+                let tmpName = cssClassesToTmpIds[classNames];
+                let tmpNewCss = tmpIdsToNewCss[tmpName];
+                if (!tmpName) {
+                    tmpName = 'class-' + Math.floor(Math.random()*100000);
+                    cssClassesToTmpIds[classNames] = tmpName;
+                }
+                if (!tmpNewCss) {
+                    // var style = window.getComputedStyle(pre);
+                    tmpNewCss = {};
+                    for (let cssTagName of supportedCss) {
+                        let cssValue = $pre.css(cssTagName);
+                        if (cssValue && cssValue.length > 0) {
+                            tmpNewCss[cssTagName] = cssValue;
+                        }
+                    }
+                    tmpIdsToNewCss[tmpName] = tmpNewCss;
+                }
+                pre.setAttribute('data-class', tmpName);
             }
-    });
+        });
+        return jsonToCss(tmpIdsToNewCss);
+    } else {
+        let mergedCss = '';
+        if (appliedStyles && appliedStyles.length > 0) {
+            for (let i = 0; i < appliedStyles.length; i++) {
+                mergedCss += appliedStyles[i].style;
+            }
+            return mergedCss;
+        }
+    }
+    return null
 }
 
 /////
@@ -424,52 +418,44 @@ function deferredAddZip(url, filename) {
     return deferred;
 }
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    var imgsPromises = [];
-    var result = {};
-    var pageSrc = '';
-    var tmpContent = '';
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    let imgsPromises = [];
+    let result = {};
+    let pageSrc = '';
+    let tmpContent = '';
+    let styleFile = null;
 
-    extractCss(request.appliedStyles, function (styleFile) {
-        if (request.type === 'extract-page') {
-            pageSrc = document.getElementsByTagName('body')[0];
-            tmpContent = getContent(pageSrc);
-        } else if (request.type === 'extract-selection') {
-            pageSrc = getSelectedNodes();
-            pageSrc.forEach(function (page) {
-                tmpContent += getContent(page);
-            });
-        } else if (request.type === 'echo') {
-            sendResponse({
-                echo: true
-            });
-            return;
-        }
-
-        if (tmpContent.trim() === '') {
-            sendResponse('');
-            return;
-        }
-
-        allImages.forEach(function (tmpImg) {
-            imgsPromises.push(deferredAddZip(tmpImg.originalUrl, tmpImg.filename));
+    if (request.type === 'extract-page') {
+        styleFile = extractCss(request.includeStyle, request.appliedStyles)
+        pageSrc = document.getElementsByTagName('body')[0];
+        tmpContent = getContent(pageSrc);
+    } else if (request.type === 'extract-selection') {
+        styleFile = extractCss(request.includeStyle, request.appliedStyles)
+        pageSrc = getSelectedNodes();
+        pageSrc.forEach((page) => {
+            tmpContent += getContent(page);
         });
+    }
 
-        $.when.apply($, imgsPromises).done(function() {
-            var tmpTitle = getPageTitle(document.title);
-            result = {
-                url: getPageUrl(tmpTitle),
-                title: tmpTitle,
-                baseUrl: getCurrentUrl(),
-                styleFileContent: styleFile,
-                styleFileName: 'style'+Math.floor(Math.random()*100000)+'.css',
-                images: extractedImages,
-                content: tmpContent
-            };
-            sendResponse(result);
-        }).fail(function(e) {
-            console.log('Error:', e);
-        });
+    allImages.forEach((tmpImg) => {
+        imgsPromises.push(deferredAddZip(tmpImg.originalUrl, tmpImg.filename));
+    });
+
+    $.when.apply($, imgsPromises).done(() => {
+        let tmpTitle = getPageTitle(document.title);
+        result = {
+            url: getPageUrl(tmpTitle),
+            title: tmpTitle,
+            baseUrl: getCurrentUrl(),
+            styleFileContent: styleFile,
+            styleFileName: 'style' + Math.floor(Math.random() * 100000) + '.css',
+            images: extractedImages,
+            content: tmpContent
+        };
+        sendResponse(result);
+    }).fail((e) => {
+        console.log('Error:', e);
+        sendResponse(null)
     });
 
     return true;

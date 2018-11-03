@@ -162,104 +162,130 @@ function dispatch(action, justAddToBuffer, appliedStyles) {
         active: true
     }, (tab) => {
 
-                chrome.storage.local.get('styles', (data) => {
-                    let styles = defaultStyles;
-                    if (data && data.styles) {
-                        styles = data.styles;
-                    }
-                    let currentUrl = tab[0].url;
-                    let currentStyle = null;
-
-                    if (styles && styles.length > 0) {
-                        let allMatchingStyles = [];
-
-                        for (let i = 0; i < styles.length; i++) {
-                            currentUrl = currentUrl.replace(/(http[s]?:\/\/|www\.)/i, '').toLowerCase();
-                            let styleUrl = styles[i].url;
-                            let styleUrlRegex = null;
-
-                            try {
-                                styleUrlRegex =  new RegExp(styleUrl, 'i');
-                            } catch (e) {
-                            }
-
-                            if (styleUrlRegex && styleUrlRegex.test(currentUrl)) {
-                                allMatchingStyles.push({
-                                    index: i,
-                                    length: styleUrl.length
-                                });
-                            }
-                        }
-
-                        if (allMatchingStyles.length >= 1) {
-                            allMatchingStyles.sort((a, b) => b.length - a.length);
-                            let selStyle = allMatchingStyles[0];
-                            currentStyle = styles[selStyle.index];
-                            // setCurrentStyle(currentStyle);
-
-                            if (currentStyle && currentStyle.style) {
-                                chrome.tabs.insertCSS(tab[0].id, {code: currentStyle.style});
-                                appliedStyles.push(currentStyle);
-                            }
-                        }
-                    }
-
-                    chrome.tabs.sendMessage(tab[0].id, {
-                        type: action,
-                        appliedStyles: appliedStyles
-                    }, (response) => {
-
-                        if (!response) {
-                            isBusy = false;
-                            chrome.browserAction.setBadgeText({text: ""});
-                            chrome.tabs.sendMessage(tab[0].id, {'alert': 'Save as eBook does not work on this web site!'}, (r) => {
-                              console.log(r);
-                            });
-                            return;
-                        }
-
-                        if (response.length === 0) {
-                            if (justAddToBuffer) {
-                                // FIXME does not work on chrome ?
-                                chrome.tabs.sendMessage(tab[0].id, {'alert': 'Cannot add an empty selection as chapter!'}, (r) => {
-                                  console.log(r);
-                                });
-                            } else {
-                                chrome.tabs.sendMessage(tab[0].id, {'alert': 'Cannot generate the eBook from an empty selection!'}, (r) => {
-                                  console.log(r);
-                                });
-                            }
-                            isBusy = false;
-                            chrome.browserAction.setBadgeText({text: ""});
-                            return;
-                        }
-                        if (!justAddToBuffer) {
-                            chrome.tabs.sendMessage(tab[0].id, {'shortcut': 'build-ebook', response: [response]}, (r) => {
-                              console.log(r);
-                            });
-                            isBusy = false;
-                            chrome.browserAction.setBadgeText({text: ""});
-                        } else {
-                            chrome.storage.local.get('allPages', function (data) {
-                                if (!data || !data.allPages) {
-                                    data.allPages = [];
-                                }
-                                data.allPages.push(response);
-                                chrome.storage.local.set({'allPages': data.allPages});
-                                isBusy = false;
-                                chrome.browserAction.setBadgeText({text: ""});
-                                chrome.tabs.sendMessage(tab[0].id, {'alert': 'Page or selection added as chapter!'}, (r) => {
-                                  console.log(r);
-                                });
-                            })
-                        }
-                    });
-                    // FIXME set timeout
-                    // isBusy = false;
-                    // chrome.browserAction.setBadgeText({text: ""});
-                    // sendMessage(tab[0].id, action, justAddToBuffer, appliedStyles);
-                });
+        isIncludeStyles((result) =>{
+            let isIncludeStyle = result.includeStyle
+            prepareStyles(tab, isIncludeStyle, appliedStyles, (tmpAppliedStyles) => {
+                applyAction(tab, action, justAddToBuffer, isIncludeStyle, tmpAppliedStyles, () => {
+                    alert('done')
+                })
+            })
+        })
     });
+}
+
+function isIncludeStyles(callback) {
+    chrome.storage.local.get('includeStyle', (data) => {
+        if (!data) {
+            callback({includeStyle: false});
+        } else {
+            callback({includeStyle: data.includeStyle});
+        }
+    });
+}
+
+function prepareStyles(tab, includeStyle, appliedStyles, callback) {
+    if (!includeStyle) {
+        callback(appliedStyles)
+        return
+    }
+
+    chrome.storage.local.get('styles', (data) => {
+        let styles = defaultStyles;
+        if (data && data.styles) {
+            styles = data.styles;
+        }
+        let currentUrl = tab[0].url;
+        let currentStyle = null;
+
+        if (styles && styles.length > 0) {
+            let allMatchingStyles = [];
+
+            for (let i = 0; i < styles.length; i++) {
+                currentUrl = currentUrl.replace(/(http[s]?:\/\/|www\.)/i, '').toLowerCase();
+                let styleUrl = styles[i].url;
+                let styleUrlRegex = null;
+
+                try {
+                    styleUrlRegex =  new RegExp(styleUrl, 'i');
+                } catch (e) {
+                }
+
+                if (styleUrlRegex && styleUrlRegex.test(currentUrl)) {
+                    allMatchingStyles.push({
+                        index: i,
+                        length: styleUrl.length
+                    });
+                }
+            }
+
+            if (allMatchingStyles.length >= 1) {
+                allMatchingStyles.sort((a, b) => b.length - a.length);
+                let selStyle = allMatchingStyles[0];
+                currentStyle = styles[selStyle.index];
+
+                if (currentStyle && currentStyle.style) {
+                    chrome.tabs.insertCSS(tab[0].id, {code: currentStyle.style});
+                    appliedStyles.push(currentStyle);
+                }
+            }
+        }
+
+        callback(appliedStyles)
+    });
+}
+
+function applyAction(tab, action, justAddToBuffer, includeStyle, appliedStyles, callback) {
+    chrome.tabs.sendMessage(tab[0].id, {
+        type: action,
+        includeStyle: includeStyle,
+        appliedStyles: appliedStyles
+    }, (response) => {
+
+        if (!response) {
+            resetBusy()
+            chrome.tabs.sendMessage(tab[0].id, {'alert': 'Save as eBook does not work on this web site!'}, (r) => {
+              console.log(r);
+            });
+            return;
+        }
+
+        if (response.content.trim() === '') {
+            if (justAddToBuffer) {
+                chrome.tabs.sendMessage(tab[0].id, {'alert': 'Cannot add an empty selection as chapter!'}, (r) => {
+                  console.log(r);
+                });
+            } else {
+                chrome.tabs.sendMessage(tab[0].id, {'alert': 'Cannot generate the eBook from an empty selection!'}, (r) => {
+                  console.log(r);
+                });
+            }
+            resetBusy()
+            return;
+        }
+        if (!justAddToBuffer) {
+            chrome.tabs.sendMessage(tab[0].id, {'shortcut': 'build-ebook', response: [response]}, (r) => {});
+        } else {
+            chrome.storage.local.get('allPages', (data) => {
+                if (!data || !data.allPages) {
+                    data.allPages = [];
+                }
+                data.allPages.push(response);
+                chrome.storage.local.set({'allPages': data.allPages});
+                resetBusy()
+                chrome.tabs.sendMessage(tab[0].id, {'alert': 'Page or selection added as chapter!'}, (r) => {});
+            })
+        }
+    });
+}
+
+function resetBusy() {
+    isBusy = false;
+    chrome.browserAction.setBadgeText({text: ""});
+
+    let popups = chrome.extension.getViews({type: "popup"});
+    if (popups && popups.length > 0) {
+        popups[0].close()
+    }
 }
 
 chrome.runtime.onMessage.addListener(_execRequest);
@@ -337,6 +363,9 @@ function _execRequest(request, sender, sendResponse) {
     if (request.type === 'save-page' || request.type === 'save-selection' ||
         request.type === 'add-page' || request.type === 'add-selection') {
         executeCommand({type: request.type})
+    }
+    if (request.type === 'done') {
+        resetBusy()
     }
     return true;
 }
