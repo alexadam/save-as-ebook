@@ -23,7 +23,7 @@ var tmpIdsToNewCss = {};
 var supportedCss = [
     'background-color',
     'border', 'border-top', 'border-right', 'border-bottom', 'border-left',
-    'color', 'font', 'font-size', 'font-weight', 'font-family',
+    'color', 'float', 'font', 'font-size', 'font-weight', 'font-family',
     'letter-spacing', 'line-height',
     'list-style', 'outline',
     'padding', 'quotes',
@@ -364,7 +364,9 @@ function extractCss(includeStyle, appliedStyles) {
                     if (!classNames) {
                         classNames = pre.tagName + '-' + Math.floor(Math.random()*100000);
                     }
-                }
+                } else {
+					classNames = pre.tagName + '.' + classNames; // MM: materialize class per tag. had issues with span inside paragraph
+				}
                 let tmpName = cssClassesToTmpIds[classNames];
                 let tmpNewCss = tmpIdsToNewCss[tmpName];
                 if (!tmpName) {
