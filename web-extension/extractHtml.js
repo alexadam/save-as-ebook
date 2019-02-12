@@ -23,8 +23,8 @@ var tmpIdsToNewCss = {};
 var supportedCss = [
     'background-color',
     'border', 'border-top', 'border-right', 'border-bottom', 'border-left',
-    'color', 'float', 'font', 'font-size', 'font-weight', 'font-family',
-    'letter-spacing', 'line-height',
+    'color', 'font', 'font-size', 'font-weight', 'font-family',
+    'letter-spacing', 'line-height', 'float',
     'list-style', 'outline',
     'padding', 'quotes',
     'text-decoration', 'text-transform', 'word-spacing',
@@ -63,9 +63,11 @@ function getImageSrc(srcTxt) {
 }
 
 function formatPreCodeElements($jQueryElement) {
+/* MM:
     $jQueryElement.find('pre').each(function (i, pre) {
         $(pre).replaceWith('<pre>' + pre.innerText + '</pre>');
     });
+*/	
     $jQueryElement.find('code').each(function (i, pre) {
         $(pre).replaceWith('<code>' + pre.innerText + '</code>');
     });
@@ -266,7 +268,9 @@ function sanitize(rawContentString) {
                     return;
                 }
 
-                results += "</" + tag + ">\n";
+                // MM: results += "</" + tag + ">\n";
+		// MM: helps with markup inside <pre> tags (\n destroys formatting )
+		results += "</" + tag + ">";
             },
             chars: function(text) {
                 if (lastTag !== '' && allowedTags.indexOf(lastTag) < 0) {
@@ -345,6 +349,10 @@ function jsonToCss(jsonObj) {
     return result;
 }
 
+// TODO: Klasse für builtin style attribute:  lookup:
+//  let classNames = pre.getAttribute('style');
+//   https://en.wikipedia.org/wiki/Data_warehouse
+
 function extractCss(includeStyle, appliedStyles) {
     if (includeStyle) {
         $('body').find('*').each((i, pre) => {
@@ -374,7 +382,7 @@ function extractCss(includeStyle, appliedStyles) {
                     tmpName = classNames; // MM:  tmpName = 'class-' + Math.floor(Math.random()*100000);
                     cssClassesToTmpIds[classNames] = tmpName;
                 }
-                if (!tmpNewCss) { // MM: hack: take last or inner elements...... if (true) {
+                if (!tmpNewCss) {// MM: hack: take last or inner elements...... if (true) { 
                     // var style = window.getComputedStyle(pre);
                     tmpNewCss = {};
                     for (let cssTagName of supportedCss) {
