@@ -362,18 +362,19 @@ function extractCss(includeStyle, appliedStyles) {
                 if (!classNames) {
                     classNames = pre.getAttribute('id');
                     if (!classNames) {
-                        classNames = pre.tagName + '-' + Math.floor(Math.random()*100000);
+                        classNames =  pre.tagName.toLowerCase() + '-tag'; // MM:  pre.tagName + '-' + Math.floor(Math.random()*100000);
+						// MM test: return; // MM: if we do not want to store defaults per tag... maybe from more general css rules ...
                     }
                 } else {
-					classNames = pre.tagName + '.' + classNames; // MM: materialize class per tag. had issues with span inside paragraph
+					classNames = pre.tagName.toLowerCase() + '-' + classNames; // MM: materialize class per tag. had issues with span inside paragraph  //  do NOT concatenate with '.' here ;-)
 				}
                 let tmpName = cssClassesToTmpIds[classNames];
                 let tmpNewCss = tmpIdsToNewCss[tmpName];
                 if (!tmpName) {
-                    tmpName = 'class-' + Math.floor(Math.random()*100000);
+                    tmpName = classNames; // MM:  tmpName = 'class-' + Math.floor(Math.random()*100000);
                     cssClassesToTmpIds[classNames] = tmpName;
                 }
-                if (!tmpNewCss) {
+                if (!tmpNewCss) { // MM: hack: take last or inner elements...... if (true) {
                     // var style = window.getComputedStyle(pre);
                     tmpNewCss = {};
                     for (let cssTagName of supportedCss) {
