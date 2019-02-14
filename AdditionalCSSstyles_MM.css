@@ -137,7 +137,7 @@ body>header, footer, aside,
 
 /* -----------------------------
 Name: Wikipedia Article
-URL Regex: wikipedia\.org\/wiki\/
+URL Regex: wikipedia\.org\/(wiki|w)\/
 
 Additional trick: Login and personalize "Appearance" to
  show thubnails with 400px instead of 200px 
