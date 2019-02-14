@@ -14,7 +14,7 @@ URL Regex: heise\.de\/(newsticker|hintergrund|developer)
 body {
   font: initial !important;
   font-family: initial !important;
-  color: #010101;  /* default text almost black for better readability */
+  color: #010101 !important;  /* default text almost black for better readability */
 }
 
 /* TODO: Text color article-content>p  */ 
@@ -63,7 +63,7 @@ URL Regex: heise\.de\/tp
 body {
   font: initial !important;
   font-family: initial !important;
-  color: #010101;  /* default text almost black for better readability */
+  color: #010101 !important;  /* default text almost black for better readability */
 }
 
 main {
@@ -94,7 +94,7 @@ Additional Hint: .jpeg images are provided as WebP instead which corrupts
 body {
   font: initial !important;
   font-family: initial !important;
-  color: #010101;  /* default text almost black for better readability */
+  color: #010101 !important;  /* default text almost black for better readability */
 }
 
 main {
@@ -132,7 +132,7 @@ body>header, footer, aside,
 
 .content-wrapper, .entry-content, body {
 	padding: 1px 0 0 0 !important;
-	color: #010101; 
+	color: #010101;  /* default text almost black for better readability */
 }
 
 
