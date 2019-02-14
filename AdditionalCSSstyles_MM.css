@@ -1,0 +1,61 @@
+TODO: in the future, make part of:  
+save-as-ebook/web-extension/background.js
+
+---------------------------------
+*** SQLBI ***
+sqlbi\.com\/articles
+
+body>header, footer, aside,
+.download,
+.connect, .breadcrumb  {
+ display:none !important;
+}
+
+.content-wrapper, .entry-content, body {
+	padding: 1px 0 0 0 !important;
+}
+
+------------------------
+** Wikipedia Article
+
+wikipedia\.org\/wiki\/
+
+#mw-navigation {
+display: none;
+}
+
+#footer {
+display: none;
+}
+
+#mw-panel {
+display: none;
+}
+
+#mw-head {
+display: none;
+}
+
+.toc , .toc-mobile,
+.mw-jump-link, 
+.mw-editsection,
+.navigation-drawer,
+.header-container,
+#page-actions {
+display: none !important;
+}
+.mw-body {
+    margin-left: 0px !important;
+	border-style: none !important;
+}
+.noprint, .cnotice {
+display: none !important;
+}
+ul {
+  padding: 20px !important;
+  list-style-type: square !important;
+  list-style-image: none  !important;
+}
+
+-----------------------------------
+
