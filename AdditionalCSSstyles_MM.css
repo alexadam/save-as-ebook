@@ -6,9 +6,10 @@ save-as-ebook/web-extension/background.js
 */ 
 
 
+
 /* -----------------------------
 Name: Heise News
-URL Regex: heise\.de\/newsticker|heise\.de\/hintergrund
+URL Regex: heise\.de\/(newsticker|hintergrund|developer)
 -------------------------------- */
 body {
   font: initial !important;
@@ -38,18 +39,22 @@ span.initial {  /* Drop caps */
 
 /* remove everything except plain article */
 a-analytics,
-body>footer,
-#cboxOverlay, #colorbox, 
+body>footer, article>footer,
+#cboxOverlay, #colorbox, #sitemap,
 .header-main__content,
-.header-main,
+.header-main, .main-header, .breadcrumb,
+.pre-akwa-toc, 
 .topnavigation, .ad-container,
 .article-layout__footer,
+.navbar-nav,
 .article-sidebar, .article-actions,
 .ho-stage-container, .bottom_up,
 .main-footer, .printversion--hide
 {
    display: none !important;
 }
+
+
 
 /* -----------------------------
 Name: Telepolis
