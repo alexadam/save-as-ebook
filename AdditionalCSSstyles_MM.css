@@ -46,7 +46,7 @@ body>footer,
 .article-layout__footer,
 .article-sidebar, .article-actions,
 .ho-stage-container, .bottom_up,
-.main-footer
+.main-footer, .printversion--hide
 {
    display: none !important;
 }
