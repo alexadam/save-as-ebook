@@ -63,14 +63,14 @@ function getImageSrc(srcTxt) {
 }
 
 function formatPreCodeElements($jQueryElement) {
-/* MM:
+/* MM:  <pre> and <code> might be have fancy formatting (code snippets...)
     $jQueryElement.find('pre').each(function (i, pre) {
         $(pre).replaceWith('<pre>' + pre.innerText + '</pre>');
     });
-*/	
     $jQueryElement.find('code').each(function (i, pre) {
         $(pre).replaceWith('<code>' + pre.innerText + '</code>');
     });
+*/		
 }
 
 function extractMathMl($htmlObject) {
@@ -269,8 +269,8 @@ function sanitize(rawContentString) {
                 }
 
                 // MM: results += "</" + tag + ">\n";
-		// MM: helps with markup inside <pre> tags (\n destroys formatting )
-		results += "</" + tag + ">";
+				// MM: helps with markup inside <pre> tags (\n destroys formatting )
+				results += "</" + tag + ">";
             },
             chars: function(text) {
                 if (lastTag !== '' && allowedTags.indexOf(lastTag) < 0) {
@@ -366,14 +366,16 @@ function extractCss(includeStyle, appliedStyles) {
             } else {
                 if (pre.tagName.toLowerCase() === 'svg') return;
 
-                let classNames = pre.getAttribute('class');
+				let classNames = pre.getAttribute('class');                 
                 if (!classNames) {
                     classNames = pre.getAttribute('id');
                     if (!classNames) {
-                        classNames =  pre.tagName.toLowerCase() + '-tag'; // MM:  pre.tagName + '-' + Math.floor(Math.random()*100000);
+                        //MMv1: classNames =  pre.tagName.toLowerCase() + '-tag'; // MM:  pre.tagName + '-' + Math.floor(Math.random()*100000);
 						// MM test: return; // MM: if we do not want to store defaults per tag... maybe from more general css rules ...
+						classNames =  pre.parentNode.tagName.toLowerCase() + '_' + pre.tagName.toLowerCase();  // MM: use the path. as  ul.li and ol.li need different list-style-type for example.					
                     }
                 } else {
+					classNames = classNames.replace(/\s/g,'_'); // MM:  ...merge multiple names,  we basically have combined css anyways.
 					classNames = pre.tagName.toLowerCase() + '-' + classNames; // MM: materialize class per tag. had issues with span inside paragraph  //  do NOT concatenate with '.' here ;-)
 				}
                 let tmpName = cssClassesToTmpIds[classNames];
