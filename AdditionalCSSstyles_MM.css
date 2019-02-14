@@ -1,9 +1,46 @@
+/*
 TODO: in the future, make part of:  
 save-as-ebook/web-extension/background.js
 
 ---------------------------------
-*** SQLBI ***
-sqlbi\.com\/articles
+*/ 
+
+/* -----------------------------
+Name: Heise Select
+URL Regex: heise\.de\/select
+-------------------------------- */
+body {
+  font: initial !important;
+  font-family: initial !important;
+  color: #101010;  /* default text almost black for better readability */
+}
+
+main {
+	padding: 0 0 0 0 !important; 
+}
+
+span.initial {  /* Drop caps */
+   float: left;
+      font-weight:normal; 
+      font-size:320%  !important;
+      float:left  !important;; 
+      margin-top:-0.3225em  !important;; 
+      margin-bottom:-0.3245em  !important;; 
+  font-stretch: normal;
+}
+
+/* remove everything except plain article */
+a-analytics,
+body>footer,
+.topbar, .toolbar, .comment, .bottom-links, .shariff 
+{
+   display: none !important;
+}
+
+/* -----------------------------
+Name: SQLBI 
+URL Regex: sqlbi\.com\/articles
+-------------------------------- */
 
 body>header, footer, aside,
 .download,
@@ -16,10 +53,10 @@ body>header, footer, aside,
 	color: #111111; 
 }
 
-------------------------
-** Wikipedia Article
-
-wikipedia\.org\/wiki\/
+/* -----------------------------
+Name: Wikipedia Article
+URL Regex: wikipedia\.org\/wiki\/
+-------------------------------- */
 
 #mw-navigation {
 display: none;
