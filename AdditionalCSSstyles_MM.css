@@ -8,7 +8,7 @@ save-as-ebook/web-extension/background.js
 
 /* -----------------------------
 Name: Heise News
-URL Regex: heise\.de\/newsticker
+URL Regex: heise\.de\/newsticker|heise\.de\/hintergrund
 -------------------------------- */
 body {
   font: initial !important;
@@ -51,6 +51,31 @@ body>footer,
    display: none !important;
 }
 
+/* -----------------------------
+Name: Telepolis
+URL Regex: heise\.de\/tp
+-------------------------------- */
+body {
+  font: initial !important;
+  font-family: initial !important;
+  color: #101010;  /* default text almost black for better readability */
+}
+
+main {
+	padding: 0 0 0 0 !important; 
+}
+
+/* remove everything except plain article */
+a-analytics,
+body>footer,
+.ho-roof, .tp_mainheader, 
+.navbar, .nav, .navbar-nav,
+.tp_breadcrumb, .subnavi, 
+aside, article>footer,
+.printversion--hide
+{
+   display: none !important;
+}
 
 
 /* -----------------------------
