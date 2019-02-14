@@ -5,9 +5,61 @@ save-as-ebook/web-extension/background.js
 ---------------------------------
 */ 
 
+
+/* -----------------------------
+Name: Heise News
+URL Regex: heise\.de\/newsticker
+-------------------------------- */
+body {
+  font: initial !important;
+  font-family: initial !important;
+  color: #101010;  /* default text almost black for better readability */
+}
+
+/* TODO: Text color article-content>p  */ 
+
+main {
+	padding: 0 0 0 0 !important; 
+}
+
+div#container{
+	 margin: 1px 1px 1px 1px;
+}
+
+span.initial {  /* Drop caps */
+   float: left;
+      font-weight:normal; 
+      font-size:320%  !important;
+      float:left  !important;; 
+      margin-top:-0.3225em  !important;; 
+      margin-bottom:-0.3245em  !important;; 
+  font-stretch: normal;
+}
+
+/* remove everything except plain article */
+a-analytics,
+body>footer,
+#cboxOverlay, #colorbox, 
+.header-main__content,
+.header-main,
+.topnavigation, .ad-container,
+.article-layout__footer,
+.article-sidebar, .article-actions,
+.ho-stage-container, .bottom_up,
+.main-footer
+{
+   display: none !important;
+}
+
+
+
 /* -----------------------------
 Name: Heise Select
 URL Regex: heise\.de\/select
+
+Additional Hint: .jpeg images are provided as WebP instead which corrupts
+ the resulting books.
+ use another Chrome extension to change Request headers for *.jpg to ask for image/jpeg
 -------------------------------- */
 body {
   font: initial !important;
@@ -56,6 +108,9 @@ body>header, footer, aside,
 /* -----------------------------
 Name: Wikipedia Article
 URL Regex: wikipedia\.org\/wiki\/
+
+Additional trick: Login and personalize "Appearance" to
+ show thubnails with 400px instead of 200px 
 -------------------------------- */
 
 #mw-navigation {
