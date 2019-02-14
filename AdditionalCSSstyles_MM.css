@@ -120,12 +120,12 @@ body>footer,
 }
 
 /* -----------------------------
-Name: SQLBI 
-URL Regex: sqlbi\.com\/articles
+Name: sqlbi.com
+URL Regex: sqlbi\.com\/(articles|blog)
 -------------------------------- */
 
 body>header, footer, aside,
-.download,
+.download, .sharing,
 .connect, .breadcrumb  {
  display:none !important;
 }
@@ -134,6 +134,7 @@ body>header, footer, aside,
 	padding: 1px 0 0 0 !important;
 	color: #111111; 
 }
+
 
 /* -----------------------------
 Name: Wikipedia Article
