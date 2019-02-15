@@ -55,7 +55,6 @@ body>footer, article>footer,
 }
 
 
-
 /* -----------------------------
 Name: Telepolis
 URL Regex: heise\.de\/tp
@@ -66,14 +65,21 @@ body {
   color: #010101 !important;  /* default text almost black for better readability */
 }
 
-main {
+main,
+.container,
+.row_tp_content  {
 	padding: 0 0 0 0 !important; 
 }
 
+.img-responsive, .aufmacherbild {
+	width: 100% !important;
+}
+
 /* remove everything except plain article */
-a-analytics,
+a-analytics, nav
 body>footer,
 .ho-roof, .tp_mainheader, 
+.pre-akwa-toc,
 .navbar, .nav, .navbar-nav,
 .tp_breadcrumb, .subnavi, 
 aside, article>footer,
