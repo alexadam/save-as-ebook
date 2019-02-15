@@ -140,7 +140,6 @@ Name: Golem.de News
 URL Regex: golem\.de\/news
 -------------------------------- */
 body {
-  font: initial !important;
   font-family: initial !important;
   color: #010101 !important;  /* default text almost black for better readability */
 }
@@ -149,10 +148,17 @@ article {
 	padding: 0 0 0 0 !important; 
 }
 
+p:not([class]), p[class=""]
+/* All paragraphs without specific formatting should 
+   use font of ebook readers choice */
+{
+  font-family: initial !important;
+}
+
+
 #screen > div {  /* main article, screen > div.g.g6 */
   float: none;	
 }
-
 
 /* remove everything except plain article */
 .toc, .tags,
@@ -164,7 +170,6 @@ article {
 {
  display:none !important;	
 }
-
 
 
 /* -----------------------------
