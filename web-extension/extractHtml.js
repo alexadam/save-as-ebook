@@ -23,12 +23,14 @@ var tmpIdsToNewCss = {};
 var supportedCss = [
     'background-color',
     'border', 'border-top', 'border-right', 'border-bottom', 'border-left',
-    'color', 'font', 'font-size', 'font-weight', 'font-family',
+    'color', 'font-size', 'font-weight', 'font-family',
     'letter-spacing', 'line-height', 'float',
     'list-style', 'outline',
     'padding', 'quotes',
     'text-decoration', 'text-transform', 'word-spacing',
 ];
+// MM: removed "'font', " as font is shorthand of font-size, font-weight, font-family and computed style is redundant otherwise...
+
 //////
 
 function getImageSrc(srcTxt) {
