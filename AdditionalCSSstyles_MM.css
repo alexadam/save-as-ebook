@@ -135,6 +135,37 @@ body>header, footer, aside,
 	color: #010101;  /* default text almost black for better readability */
 }
 
+/* -----------------------------
+Name: Golem.de News
+URL Regex: golem\.de\/news
+-------------------------------- */
+body {
+  font: initial !important;
+  font-family: initial !important;
+  color: #010101 !important;  /* default text almost black for better readability */
+}
+
+article {
+	padding: 0 0 0 0 !important; 
+}
+
+#screen > div {  /* main article, screen > div.g.g6 */
+  float: none;	
+}
+
+
+/* remove everything except plain article */
+.toc, .tags,
+.social-tools, .social-tools--inverted,
+.supplementary, .narando,
+#narando-placeholder, #gservices,
+#screen > div ~ div, /* all Divs following main article... */
+.iq-site-header, footer
+{
+ display:none !important;	
+}
+
+
 
 /* -----------------------------
 Name: Wikipedia Article
