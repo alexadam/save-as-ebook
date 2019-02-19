@@ -23,14 +23,12 @@ var tmpIdsToNewCss = {};
 var supportedCss = [
     'background-color',
     'border', 'border-top', 'border-right', 'border-bottom', 'border-left',
-    'color', 'font-size', 'font-weight', 'font-family',
+    'color', 'font', 'font-size', 'font-weight', 'font-family',
     'letter-spacing', 'line-height', 'float',
     'list-style', 'outline',
     'padding', 'quotes',
-    'text-decoration', 'text-transform', 'word-spacing',
+    'text-decoration', 'text-transform', 'word-spacing'
 ];
-// MM: removed "'font', " as font is shorthand of font-size, font-weight, font-family and computed style is redundant otherwise...
-
 //////
 
 function getImageSrc(srcTxt) {
@@ -259,6 +257,15 @@ function sanitize(rawContentString) {
                             tmpAttrsTxt += ' class="' + attrs[i].value + '"';
                         }
                     }
+					// +++ MM: some more extras like colspan ...
+					var extraAttrs = [ 'colspan', 'title', 'lang', 'span', 'name' ]; 
+					for (var i = 0; i < attrs.length; i++) {						
+                        if (extraAttrs.indexOf( attrs[i].name ) != -1 ) {
+                          tmpAttrsTxt += ' '+attrs[i].name+'="' + attrs[i].value + '"'  ; 
+                        }
+                    }					
+					// +++ MM: end extras...
+					////
                     lastFragment = '<' + tag + ' ' + tmpAttrsTxt + '>';
                 }
 
