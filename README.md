@@ -1,12 +1,24 @@
 # save-as-ebook
 
-Save a web page/selection as an eBook (.epub format) - a Chrome/Firefox/Opera Web Extension
-
 <img src="https://github.com/alexadam/save-as-ebook/blob/master/ex11.png?raw=true" width="350">
 
 ![alt ex2.png](https://github.com/alexadam/save-as-ebook/blob/master/ex2.png?raw=true)
 
 ![alt ex3.png](https://github.com/alexadam/save-as-ebook/blob/master/ex3.png?raw=true)
+
+## About this fork of the project:
+This is a fork with (currently) the following improvements:
+- leverage ModHeader extension: ensure, images in the ePub are in accepted formats, not WebP images.
+- additional CSS per sites
+- corrections in extractHTML.js:
+- additional tags, attributes, css values to generate better results.
+- generated css class names are now more descriptive to ease debugging (and calibre post-processing)
+- foster reuse in CSS styles to generate smaller files (not perfect)
+- some bug fixes around syntax highlighted <pre> and <code> environments
+- some fixes for HTML tables
+- and some more, see commit history for now ;-) 
+
+Save a web page/selection as an eBook (.epub format) - a Chrome/Firefox/Opera Web Extension
 
 ## How to install it
 
