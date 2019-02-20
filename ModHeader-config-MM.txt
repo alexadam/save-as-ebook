@@ -12,7 +12,7 @@ Source:
    https://chrome.google.com/webstore/detail/modheader/idgpnmonknjnojddfkpgkljpfnnfcklj
    https://mod-header.appspot.com
 
-Exported Config for ModHeader:
+Exported Config for ModHeader (copy/paste this line in the import profile box):
 
 {"title":"Real png/jpg/gif, NOT WebP","hideComment":true,"headers":[{"enabled":true,"name":"Accept","value":"image/png, image/jpeg, image/gif","comment":""}],"respHeaders":[],"filters":[{"enabled":true,"type":"urls","urlPattern":"*.jpg"},{"enabled":true,"type":"urls","urlPattern":"*.jpeg"},{"enabled":true,"type":"urls","urlPattern":"*.png"},{"enabled":true,"type":"urls","urlPattern":"*.gif"},{"enabled":true,"type":"urls","urlPattern":"*.JPEG"},{"enabled":true,"type":"urls","urlPattern":"*.JPG"},{"enabled":true,"type":"urls","urlPattern":"*.GIF"},{"enabled":true,"type":"urls","urlPattern":"*.PNG"}],"appendMode":""}
 
