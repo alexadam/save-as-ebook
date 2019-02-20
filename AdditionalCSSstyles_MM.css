@@ -171,7 +171,7 @@ p:not([class]), p[class=""]
 .social-tools, .social-tools--inverted,
 .supplementary, .narando,
 #narando-placeholder, #gservices,
-#screen > div ~ div, /* all Divs following main article... */
+#screen > div.g6 ~ div, /* all Divs following main article... */
 .iq-site-header, footer
 {
  display:none !important;	
