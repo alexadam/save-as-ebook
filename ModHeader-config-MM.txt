@@ -1,0 +1,18 @@
+TODO: could be a second readme ;-)
+
+Background: eBooks/ePub currently do not display images in WebP format. 
+Websites may send optimized images to the browser, as Chrome sends HTTP requests accepting image/webp, this will 
+even return WebP if a .jpg URL is requested.
+
+ModHeader is an extension which compensates this. Activate this and produce correct/better ebooks with "save-as-ebook".
+Unfortunately, there is not direct option to change Chrome's behavior.
+
+Source:
+   ModHeader, Chrome extension.
+   https://chrome.google.com/webstore/detail/modheader/idgpnmonknjnojddfkpgkljpfnnfcklj
+   https://mod-header.appspot.com
+
+Exported Config for ModHeader:
+
+{"title":"Real png/jpg/gif, NOT WebP","hideComment":true,"headers":[{"enabled":true,"name":"Accept","value":"image/png, image/jpeg, image/gif","comment":""}],"respHeaders":[],"filters":[{"enabled":true,"type":"urls","urlPattern":"*.jpg"},{"enabled":true,"type":"urls","urlPattern":"*.jpeg"},{"enabled":true,"type":"urls","urlPattern":"*.png"},{"enabled":true,"type":"urls","urlPattern":"*.gif"},{"enabled":true,"type":"urls","urlPattern":"*.JPEG"},{"enabled":true,"type":"urls","urlPattern":"*.JPG"},{"enabled":true,"type":"urls","urlPattern":"*.GIF"},{"enabled":true,"type":"urls","urlPattern":"*.PNG"}],"appendMode":""}
+
