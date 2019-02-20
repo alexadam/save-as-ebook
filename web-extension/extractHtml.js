@@ -22,7 +22,7 @@ var tmpIdsToNewCss = {};
 // src: https://idpf.github.io/a11y-guidelines/content/style/reference.html
 var supportedCss = [
     'background-color',
-    'border', 'border-top', 'border-right', 'border-bottom', 'border-left',
+    'border', 'border-top', 'border-right', 'border-bottom', 'border-left', 'border-collapse',
     'color', 'font', 'font-size', 'font-weight', 'font-family',
     'letter-spacing', 'line-height', 'float',
     'list-style', 'outline',
