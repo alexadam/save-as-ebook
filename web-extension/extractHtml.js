@@ -26,7 +26,7 @@ var supportedCss = [
     'color', 'font', 'font-size', 'font-weight', 'font-family',
     'letter-spacing', 'line-height', 'float',
     'list-style', 'outline',
-    'padding', 'quotes',
+    'padding', 'quotes', 'text-align', 'text-justify', 'hyphens',
     'text-decoration', 'text-transform', 'word-spacing'
 ];
 //////
