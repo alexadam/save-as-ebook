@@ -393,14 +393,19 @@ function extractCss(includeStyle, appliedStyles) {
                     tmpName = classNames; // MM:  tmpName = 'class-' + Math.floor(Math.random()*100000);
                     cssClassesToTmpIds[classNames] = tmpName;
                 }
-                if (!tmpNewCss) {// MM: hack: take last or inner elements...... if (true) { 
+                if (!tmpNewCss) {
                     // var style = window.getComputedStyle(pre);
                     tmpNewCss = {};
-                    for (let cssTagName of supportedCss) {
+                    for (let cssTagName of supportedCss) {						
                         let cssValue = $pre.css(cssTagName);
-                        if (cssValue && cssValue.length > 0) {
-                            tmpNewCss[cssTagName] = cssValue;
-                        }
+						// MM: little hack: might not be perfect, but just takes rules different from (current) parent.
+						// might produce better results in most cases
+					    if (pre.parentNode) { 
+							cssValueParent = $(pre.parentNode).css(cssTagName);
+						}												
+						if (cssValue && cssValue.length > 0 && cssValue != cssValueParent) {
+							tmpNewCss[cssTagName] = cssValue;
+						}						
                     }
                     tmpIdsToNewCss[tmpName] = tmpNewCss;
                 }
