@@ -28,12 +28,23 @@ div.message-out {
  background-color: rgb(220,242,250) !important;
 }
 
-.message-in {
- /*  background-color: rgb(197, 247, 255) !important; */
+
+._12xX7, ._2nFG1, ._1sGGp  {
+  background-color: rgb(210,232,240) !important;
+}
+
+
+div.message-in {
   background-color: rgb(191, 233, 249) !important;
 }
 
+
+/* Preview box of links */
+._2nFG1, ._2lwig {
+  background-color: rgb(181, 223, 239) !important;
+}
+
+
 `;
 document.getElementsByTagName("HEAD")[0].appendChild(myCSS);
-
 
