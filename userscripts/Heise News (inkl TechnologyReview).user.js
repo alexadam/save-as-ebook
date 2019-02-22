@@ -25,12 +25,12 @@ myCSS.innerHTML = `
 Name: Heise News
 URL Regex: heise\.de\/(newsticker|hintergrund|developer)
 -------------------------------- */
-body {
+body, .article-page {
   /* TODO: Removing default font so Kindle user can select needs to be done in js and/or save-as-ebook or calibre
   font-family: initial !important;
   */
   color: #010101 !important;  /* default text almost black for better readability */
-  margin: 25px;
+  padding: 25px !important;
   background-color: white;
 }
 
@@ -58,8 +58,17 @@ main {
   width: 100% !important;
   min-width: 0px;
   min-height: 0px;
-  margin: 1px;
-  padding: 10px;
+  margin: 0px;
+  padding: 0px;
+}
+
+.article-layout__content, .article-header {
+    min-width: 100% !important;
+}
+
+.article-image__img, .article-image, .article-layout {
+  width: 100%;
+  margin: 0px;
 }
 
 #mitte_links {
@@ -68,6 +77,7 @@ main {
 
 div#container{
 	 margin: 1px 1px 1px 1px;
+     max-width: 100% !important;
      padding-bottom: 0px;
 }
 
@@ -107,6 +117,3 @@ aside
 }
 `;
 document.getElementsByTagName("HEAD")[0].appendChild(myCSS);
-
-
-
