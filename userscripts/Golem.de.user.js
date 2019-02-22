@@ -19,19 +19,21 @@ myCSS.innerHTML = `
 Name: Golem.de News
 URL Regex: golem\.de\/news
 -------------------------------- */
-body {
-  /* TODO: Removing default font so Kindle user can select needs to be done in js and/or save-as-ebook or calibre
-  font-family: initial !important;
-  */
+body.article {
   color: #010101 !important;  /* default text almost black for better readability */
-  padding: 10px !important;
+  padding: 20px !important;
 }
 
-article {
-	padding: 0 0 0 0 !important;
+article,
+div#grandwrapper, #screen, #header,
+#footer, div.g6 {
+  padding: 0px !important;
+  margin: 0px !important;
+  border-width: none !important;
+  width: 100% !important;
 }
 
-body, p:not([class]), p[class=""]
+p:not([class]), p[class=""]
 /* All paragraphs without specific formatting should
    use font of ebook readers choice */
 {
@@ -43,8 +45,6 @@ body, p:not([class]), p[class=""]
   -ms-hyphens: auto;
    hyphens: auto;
 }
-
-
 
 #screen > div {  /* main article, screen > div.g.g6 */
   float: none;
