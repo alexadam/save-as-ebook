@@ -51,14 +51,13 @@ main,
 	width: 100% !important;
 }
 
-/* remove everything except plain article */
-a-analytics, nav
+/* remove everything except plain article  article>footer, .pre-akwa-toc,  */
+a-analytics,
 body>footer,
-.ho-roof, .tp_mainheader,
-.pre-akwa-toc,
+.ho-roof, .tp_mainheader, .shariff,
 .navbar, .nav, .navbar-nav,
 .tp_breadcrumb, .subnavi,
-aside, article>footer,
+aside, .seitenweise_navigation, .paginiert,
 .printversion--hide
 {
    display: none !important;
