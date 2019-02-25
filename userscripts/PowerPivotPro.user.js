@@ -73,10 +73,6 @@ header#site-header, aside#sidebar,
     text-align: left  !important;
 }
 
-img {
-  align: center;
-}
-
 /* All paragraphs without specific formatting should
    use font of ebook readers choice */
 p:not([class]), p[class=""]
