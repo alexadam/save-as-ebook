@@ -1,9 +1,11 @@
 // ==UserScript==
-// @name         Chris Webb's BI Blog
+// @name         BI Blogs: Chris Webb & Kasper On BI
 // @version      0.2
 // @description  Power BI, Power Query and DAX related posts
 // @author       M.M.
 // @include      https://blog.crossjoin.co.uk/*/*/*
+// @include      https://www.kasperonbi.com/*/*
+// @exclude      https://www.kasperonbi.com/page/*
 // @grant        none
 // ==/UserScript==
 
@@ -18,14 +20,17 @@
 var myCSS = window.document.createElement('style');
 myCSS.innerHTML = `
 /* -----------------------------
-Name: Chris Webb's BI Blog
-URL Regex: https://blog.crossjoin.co.uk/*
+Name: BI Blogs: Chris Webb & Kasper On BI
+URL: https://blog.crossjoin.co.uk/...
+URL2: https://www.kasperonbi.com/...
 -------------------------------- */
 
 header#branding, footer#colophon,
+aside#mobile-header,
 div#secondary, div#actionbar,
+div.main-navbar, div.header-top,
 div.sd-social, div.sharedaddy,
-.post-format-icon,
+.post-format-icon, .screen-reader-text,
 article ~ * {
  display:none !important;
 }
@@ -41,6 +46,12 @@ article ~ * {
 
 #page:before, #page:after { /* remove box-shadow of page... */
    display:none !important;
+}
+
+div.content-area {
+  float: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
 }
 
 #content, .entry-title, .post-content, #content .post {

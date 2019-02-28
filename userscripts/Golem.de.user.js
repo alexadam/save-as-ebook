@@ -29,7 +29,7 @@ div#grandwrapper, #screen, #header,
 #footer, div.g6 {
   padding: 0px !important;
   margin: 0px !important;
-  border-width: none !important;
+  border-width: 0px !important;
   width: 100% !important;
 }
 

@@ -18,8 +18,8 @@
 var myCSS = window.document.createElement('style');
 myCSS.innerHTML = `
 /* -----------------------------
-Name: Chris Webb's BI Blog
-URL Regex: https://blog.crossjoin.co.uk/*
+Name: PowerPivotPro
+URL https://powerpivotpro.com
 -------------------------------- */
 
 header#branding, footer#colophon,

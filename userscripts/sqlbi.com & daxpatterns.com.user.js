@@ -4,6 +4,7 @@
 // @description  sqlbi - articles and blog entries about DAX and PowerBI.
 // @author       M.M.
 // @include      https://*.sqlbi.com/articles/*
+// @include      https://www.sqlbi.com/daxpuzzle/*
 // @include      https://www.daxpatterns.com/*
 // @include      https://*.sqlbi.com/blog/*
 // @grant        none
