@@ -15,7 +15,7 @@
 var myCSS = window.document.createElement('style');
 myCSS.innerHTML = `
 /* -----------------------------
-Name: Gartner reprints
+Name: Microsoft Docs
 URL: https://docs.microsoft.com/en-us/
 -------------------------------- */
 
@@ -28,6 +28,9 @@ button[aria-label="View Columns"],
 nav, .c-uhfh-actions,
 .footerContainer, .action-bar,
 div#openFeedbackContainer,
+#sidebarContent, nav.sidebar,
+div.moniker-picker,
+#left-container,
 a.m-skip-to-main,
 main ~ *, section ~ *
 {
@@ -81,6 +84,3 @@ body {
 
 `;
 document.getElementsByTagName("HEAD")[0].appendChild(myCSS);
-
-
-
