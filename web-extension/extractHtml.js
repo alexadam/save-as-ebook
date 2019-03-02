@@ -25,10 +25,11 @@ var supportedCss = [
     'border', 'border-top', 'border-right', 'border-bottom', 'border-left', 'border-collapse',
     'color', 'font', 'font-size', 'font-weight', 'font-family',
     'letter-spacing', 'line-height', 'float',
-    'list-style', 'outline',
+    'list-style', 'outline', 'display',
     'padding', 'quotes', 'text-align', 'text-justify', 'hyphens',
     'text-decoration', 'text-transform', 'word-spacing'
 ];
+// allow: display: list-item 
 //////
 
 function getImageSrc(srcTxt) {
@@ -402,10 +403,11 @@ function extractCss(includeStyle, appliedStyles) {
 						// might produce better results in most cases
 					    if (pre.parentNode) { 
 							cssValueParent = $(pre.parentNode).css(cssTagName);
-						}												
+						} else cssValueParent = "";										
 						if (cssValue && cssValue.length > 0 && cssValue != cssValueParent) {
 							tmpNewCss[cssTagName] = cssValue;
 						}						
+						// if (classNames == "p-x") debugger;
                     }
                     tmpIdsToNewCss[tmpName] = tmpNewCss;
                 }
