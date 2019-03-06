@@ -25,11 +25,10 @@ var supportedCss = [
     'border', 'border-top', 'border-right', 'border-bottom', 'border-left', 'border-collapse',
     'color', 'font', 'font-size', 'font-weight', 'font-family',
     'letter-spacing', 'line-height', 'float',
-    'list-style', 'outline', 'display',
+    'list-style', 'outline',
     'padding', 'quotes', 'text-align', 'text-justify', 'hyphens',
     'text-decoration', 'text-transform', 'word-spacing'
 ];
-// allow: display: list-item 
 //////
 
 function getImageSrc(srcTxt) {
@@ -43,7 +42,12 @@ function getImageSrc(srcTxt) {
 
     var fileExtension = getFileExtension(srcTxt);
     if (fileExtension === '') {
-        return '';
+		console.log(srcTxt);		
+       // MM: return ''; 
+	   // some image URLs have no extension
+	   // TODO: Mime Type and Referrer would be good
+	   // TODO2: better: reuse images already downloaded by Chrome/Firefox
+	   fileExtension = "jpg";
     }
     var newImgFileName = 'img-' + (Math.floor(Math.random()*1000000*Math.random()*100000)) + '.' + fileExtension;
 
@@ -194,7 +198,9 @@ function sanitize(rawContentString) {
             return force($wdirty, false);
         }
 
-        dirty = '<div>' + $wdirty.html() + '</div>';
+        // MM: not sure about purpose: leads to extra top-element DIV-element in eBook?
+		// dirty = '<div>' + $wdirty.html() + '</div>';
+		dirty = $wdirty.html();
 
         var results = '';
         var lastFragment = '';
@@ -308,7 +314,7 @@ function getContent(htmlContent) {
     try {
         var tmp = document.createElement('div');
         tmp.appendChild(htmlContent.cloneNode(true));
-        var dirty = '<div>' + tmp.innerHTML + '</div>';
+        var dirty = '<div>' + tmp.innerHTML + '</div>';		
         return sanitize(dirty);
     } catch (e) {
         console.log('Error:', e);
@@ -403,11 +409,10 @@ function extractCss(includeStyle, appliedStyles) {
 						// might produce better results in most cases
 					    if (pre.parentNode) { 
 							cssValueParent = $(pre.parentNode).css(cssTagName);
-						} else cssValueParent = "";										
+						}												
 						if (cssValue && cssValue.length > 0 && cssValue != cssValueParent) {
 							tmpNewCss[cssTagName] = cssValue;
 						}						
-						// if (classNames == "p-x") debugger;
                     }
                     tmpIdsToNewCss[tmpName] = tmpNewCss;
                 }
