@@ -26,6 +26,7 @@ button[aria-label="View Columns"],
 */
 
 nav, .c-uhfh-actions,
+button.action, .contributors-holder,
 .footerContainer, .action-bar,
 div#openFeedbackContainer,
 #sidebarContent, nav.sidebar,
@@ -65,10 +66,15 @@ p:not([class]), p[class=""]
    hyphens: auto;
 }
 
-/* fix/emulate <li>:before */
-ul.bullets-yes>li {
-    list-style-type: square !important;
+div.codeHeader {
+  background-color: rgb(190,190,190);
 }
+
+.codeHeader+pre, code {
+  background-color: rgb(240,240,240);
+}
+
+
 
 /* fix: little svg buttons, not needed in epub/print */
 svg, .enlarge-table{
@@ -84,3 +90,27 @@ body {
 
 `;
 document.getElementsByTagName("HEAD")[0].appendChild(myCSS);
+
+
+//------------------------------------------------------------
+// experimental to preprocess/further simplify document prior to
+// producing an eBook format.
+function isolateElement(o) {
+    if (o && o.parentNode != null) {
+        var clone = o.cloneNode (true);
+        for (var i = document.body.childNodes.length -1; i >= 0 ; i--) {
+            document.body.removeChild ( document.body.childNodes.item(i) );
+        }
+        document.body.appendChild (clone);
+    } else {
+      console.log("Warning: isolate did not find element...");
+    }
+}
+//--------------------------------------------------------------
+
+
+// actually, after all that work so far, we just keep the DOM-tree below "Article" ;-)
+isolateElement( document.getElementsByTagName("main")[0] ) ;
+
+
+

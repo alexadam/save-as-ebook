@@ -75,5 +75,42 @@ body {
 `;
 document.getElementsByTagName("HEAD")[0].appendChild(myCSS);
 
+//------------------------------------------------------------
+// experimental to preprocess/further simplify document prior to
+// producing an eBook format.
+function isolateElement(o) {
+    if (o && o.parentNode != null) {
+        var clone = o.cloneNode (true);
+        for (var i = document.body.childNodes.length -1; i >= 0 ; i--) {
+            document.body.removeChild ( document.body.childNodes.item(i) );
+        }
+        document.body.appendChild (clone);
+    } else {
+      console.log("Warning: isolate did not find element...");
+    }
+}
+//--------------------------------------------------------------
+
+// https://stackoverflow.com/questions/16791479/how-to-wait-for-div-to-load-before-calling-another-function
+function waitForElement(elementId, callBack){
+  window.setTimeout(function(){
+    var element = document.getElementById(elementId);
+    if(element){
+      callBack(elementId, element);
+    }else{
+      waitForElement(elementId, callBack);
+    }
+  },1000)
+}
+
+//--------------------------------------------------------------
+
+//debugger;
+// actually, after all that work so far, we just keep the DOM-tree below "Article" ;-)
+waitForElement("newReader",function() {
+     isolateElement( document.querySelector('section#newReader') ) ;
+});
+
+
 
 

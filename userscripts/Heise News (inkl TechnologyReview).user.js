@@ -10,6 +10,7 @@
 // @include      *.heise.de/security/*
 // @include      *.heise.de/autos/*
 // @include      *.heise.de/make/*
+// @include      *.heise.de/mac-and-i/*
 // @include      *.heise.de/tr/artikel/*
 // @grant        none
 // ==/UserScript==
@@ -18,6 +19,24 @@
 
 //// uncomment to debug:
 // debugger;
+
+
+//------------------------------------------------------------
+// experimental to preprocess/further simplify document prior to
+// producing an eBook format.
+function isolateElement(o) {
+    if (o && o.parentNode != null) {
+        var clone = o.cloneNode (true);
+        for (var i = document.body.childNodes.length -1; i >= 0 ; i--) {
+            document.body.removeChild ( document.body.childNodes.item(i) );
+        }
+        document.body.appendChild (clone);
+    } else {
+      console.log("Warning: isolate did not find element...");
+    }
+}
+//--------------------------------------------------------------
+
 
 var myCSS = window.document.createElement('style');
 myCSS.innerHTML = `
@@ -92,7 +111,7 @@ span.initial {  /* Drop caps */
 }
 
 /* remove everything except plain article */
-a-analytics,
+a-analytics, a-collapse,
 body>footer, header>nav,
 #cboxOverlay, #colorbox, #sitemap,
 #navi_bottom, #breadcrumb_subnav, #mitte-rechts,
@@ -110,6 +129,8 @@ body>footer, header>nav,
 .main-footer, .printversion--hide,
 .mheise--preisvergleich-banner,
 .btn-toolbar, .themenseiten,
+a-paternoster, .a-paternoster-ad,
+div.akwa-ad-container,
 aside
 {
    display: none !important;
@@ -118,5 +139,7 @@ aside
 `;
 document.getElementsByTagName("HEAD")[0].appendChild(myCSS);
 
+// actually, after all that work so far, we just keep the DOM-tree below "Article" ;-)
 
+isolateElement(document.getElementsByTagName("ARTICLE")[0]) ;
 

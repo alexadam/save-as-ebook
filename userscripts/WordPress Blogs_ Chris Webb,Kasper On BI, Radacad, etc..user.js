@@ -1,35 +1,60 @@
 // ==UserScript==
-// @name         BI Blogs: Chris Webb & Kasper On BI
-// @version      0.2
+// @name         WordPress Blogs: Chris Webb,Kasper On BI, Radacad, etc.
+// @version      0.3
 // @description  Power BI, Power Query and DAX related posts
 // @author       M.M.
 // @include      https://blog.crossjoin.co.uk/*/*/*
 // @include      https://www.kasperonbi.com/*/*
 // @exclude      https://www.kasperonbi.com/page/*
+// @include      http://radacad.com/*
+// @include      https://radacad.com/*
+// @include      https://prathy.com/*
 // @grant        none
 // ==/UserScript==
 
 'use strict';
 
+/* probably similar for most WordPress blogs? */
+// Tested with, e.g.:
+// https://prathy.com/2019/02/sync-slicers-sync-slicers-advanced-options/
+// http://radacad.com/remove-duplicate-doesnt-work-in-power-query-for-power-bi-here-is-the-solution
+// https://www.kasperonbi.com/use-more-variables-in-dax-to-simplify-your-life/
+// https://blog.crossjoin.co.uk/2019/02/12/splitting-text-by-character-transition-power-bi-power-query-excel/
+
 //// uncomment to debug:
 // debugger;
 
-/* probably valid for most wordpress blogs? */
-// Test with:    https://prathy.com/2019/02/sync-slicers-sync-slicers-advanced-options/
+//------------------------------------------------------------
+// experimental to preprocess/further simplify document prior to
+// producing an eBook format.
+function isolateElement(o) {
+    if (o && o.parentNode != null) {
+        var clone = o.cloneNode (true);
+        for (var i = document.body.childNodes.length -1; i >= 0 ; i--) {
+            document.body.removeChild ( document.body.childNodes.item(i) );
+        }
+        document.body.appendChild (clone);
+    } else {
+      console.log("Warning: isolate did not find element...");
+    }
+}
+//--------------------------------------------------------------
 
 var myCSS = window.document.createElement('style');
 myCSS.innerHTML = `
 /* -----------------------------
-Name: BI Blogs: Chris Webb & Kasper On BI
+Name: Wordpress Blogs: Chris Webb , Kasper On BI, Radacad
 URL: https://blog.crossjoin.co.uk/...
 URL2: https://www.kasperonbi.com/...
+etc. see above
 -------------------------------- */
 
 header#branding, footer#colophon,
 aside#mobile-header,
 div#secondary, div#actionbar,
 div.main-navbar, div.header-top,
-div.sd-social, div.sharedaddy,
+div.sd-social, div.sharedaddy, .synved-social-button,
+.yarpp-related, div.post-related, div#disqus_thread,
 .post-format-icon, .screen-reader-text,
 article ~ * {
  display:none !important;
@@ -89,7 +114,7 @@ p:not([class]), p[class=""]
 
 body {
     padding: 15px !important;
-    background: none;
+    background: none !important;
     background-color: white;
     color: #010101;  /* default text almost black for better readability */
 }
@@ -97,5 +122,9 @@ body {
 `;
 document.getElementsByTagName("HEAD")[0].appendChild(myCSS);
 
+// actually, after all that work so far, we just keep the DOM-tree below "Article" ;-)
+isolateElement( document.getElementsByTagName("article")[0] ) ;
+// div#page
+// isolateElement( document.getElementById("page") ) ;
 
 
