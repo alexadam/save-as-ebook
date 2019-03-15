@@ -25,7 +25,7 @@ var tmpIdsToNewCss = {};
 var supportedCss = [
     'background-color', 
 	'background-image', 'position', 'z-index', 'background-position', 'background-repeat', 'background-clip', 'background-origin', 'background-size', 
-    'border', 'border-top', 'border-right', 'border-bottom', 'border-left', 'border-collapse',
+    'border', 'border-top', 'border-right', 'border-bottom', 'border-left', 'border-collapse', 'border-radius',
     'color', 'font', 'font-size', 'font-weight', 'font-family',
     'letter-spacing', 'line-height', 'float',
     'list-style', 'outline',
