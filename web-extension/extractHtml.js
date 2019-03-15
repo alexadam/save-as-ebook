@@ -21,7 +21,7 @@ var cssClassesToTmpIds = {};
 var tmpIdsToNewCss = {};
 // src: https://idpf.github.io/a11y-guidelines/content/style/reference.html
 var supportedCss = [
-    'background-color',
+    'background-color', 'background-image', 
     'border', 'border-top', 'border-right', 'border-bottom', 'border-left', 'border-collapse',
     'color', 'font', 'font-size', 'font-weight', 'font-family',
     'letter-spacing', 'line-height', 'float',
@@ -42,11 +42,12 @@ function getImageSrc(srcTxt) {
 
     var fileExtension = getFileExtension(srcTxt);
     if (fileExtension === '') {
-		console.log(srcTxt);		
+	   console.log("TODO: image source without handled extension: " + srcTxt);		
        // MM: return ''; 
 	   // some image URLs have no extension
 	   // TODO: Mime Type and Referrer would be good
 	   // TODO2: better: reuse images already downloaded by Chrome/Firefox
+	   // TODO3: svg or jpg... this hack currently depends on source web site ;-)
 	   fileExtension = "jpg";
     }
     var newImgFileName = 'img-' + (Math.floor(Math.random()*1000000*Math.random()*100000)) + '.' + fileExtension;
@@ -58,6 +59,7 @@ function getImageSrc(srcTxt) {
             data: getBase64ImgData(srcTxt)
         });
     } else {
+		// MM: console.log("MM: debug: allImages.push: "+ srcTxt + " " + newImgFileName );
         allImages.push({
             originalUrl: getImgDownloadUrl(srcTxt),
             filename: newImgFileName,  // TODO name
@@ -117,6 +119,7 @@ function preProcess($htmlObject) {
 }
 
 function force($content, withError) {
+	console.log("MM: debug: force() called...");
     try {
         var tagOpen = '@@@' + generateRandomTag();
         var tagClose = '###' + generateRandomTag();
@@ -184,7 +187,8 @@ function force($content, withError) {
 }
 
 function sanitize(rawContentString) {
-    allImages = [];
+	// MM: console.log("MM: debug: sanitize - allImages , extractedImages reset");    
+	// MM: allImages = [];	- need to move this as background-image via CSS might already have used this...
     extractedImages = [];
     var srcTxt = '';
     var dirty = null;
@@ -387,7 +391,6 @@ function extractCss(includeStyle, appliedStyles) {
                     classNames = pre.getAttribute('id');
                     if (!classNames) {
                         //MMv1: classNames =  pre.tagName.toLowerCase() + '-tag'; // MM:  pre.tagName + '-' + Math.floor(Math.random()*100000);
-						// MM test: return; // MM: if we do not want to store defaults per tag... maybe from more general css rules ...
 						classNames =  pre.parentNode.tagName.toLowerCase() + '_' + pre.tagName.toLowerCase();  // MM: use the path. as  ul.li and ol.li need different list-style-type for example.					
                     }
                 } else {
@@ -410,7 +413,23 @@ function extractCss(includeStyle, appliedStyles) {
 					    if (pre.parentNode) { 
 							cssValueParent = $(pre.parentNode).css(cssTagName);
 						}												
-						if (cssValue && cssValue.length > 0 && cssValue != cssValueParent) {
+						if (cssValue && cssValue.length > 0 && cssValue != cssValueParent) {							
+							if (cssTagName == "background-image" && cssValue != "none") {
+							   // only containing url .. but not url("data:image/...  need to be rewritten...
+							   var imgSrc = "";
+								var tmp = cssValue.replace(/\s+/g, '');   // kill all whitespaces
+								var tmp2 = tmp.match(/url\((['"])(.*)\1\)/);  // is it   url(...) with matching pair of quotes ?
+								if (tmp2 !== null) { 
+								    var src = tmp2[2];
+									if ( src.search(/^data:/) == -1 ) { // just keep embedded "data:"
+									     imgSrc = getImageSrc(src);
+										 console.log(cssTagName + " " + cssValue + " src: "+ imgSrc);
+										 if (imgSrc !== '') {
+										     cssValue = "url('"+imgSrc+"')";
+										 }
+									}
+								}							   								
+							}
 							tmpNewCss[cssTagName] = cssValue;
 						}						
                     }
@@ -459,22 +478,32 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     let tmpContent = '';
     let styleFile = null;
 
-    if (request.type === 'extract-page') {
-        styleFile = extractCss(request.includeStyle, request.appliedStyles)
+	console.log("chrome.runtime.onMessage.addListener() " + request.type);
+	if (request.type === undefined ) { 
+	   return;  // MM: no need to run this on undefined... (only extract-*)
+	} else {
+	   let allImages = []; //MM: instead of inside sanitize()
+	} 
+	
+    if (request.type === 'extract-page') {        
+		styleFile = extractCss(request.includeStyle, request.appliedStyles);
         pageSrc = document.getElementsByTagName('body')[0];
         tmpContent = getContent(pageSrc);
-    } else if (request.type === 'extract-selection') {
-        styleFile = extractCss(request.includeStyle, request.appliedStyles)
+		styleFile = extractCss(request.includeStyle, request.appliedStyles);
+    } else if (request.type === 'extract-selection') {        
+		styleFile = extractCss(request.includeStyle, request.appliedStyles);
         pageSrc = getSelectedNodes();
         pageSrc.forEach((page) => {
             tmpContent += getContent(page);
         });
+		
     }
-
-    allImages.forEach((tmpImg) => {
-        imgsPromises.push(deferredAddZip(tmpImg.originalUrl, tmpImg.filename));
-    });
-
+	
+	allImages.forEach((tmpImg) => {
+		// MM: console.log("MM: debug: deferredAddZip: " + tmpImg.originalUrl + " " + tmpImg.filename );
+		imgsPromises.push(deferredAddZip(tmpImg.originalUrl, tmpImg.filename));
+	});	
+	
     $.when.apply($, imgsPromises).done(() => {
         let tmpTitle = getPageTitle(document.title);
         result = {
@@ -491,6 +520,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         console.log('Error:', e);
         sendResponse(null)
     });
-
+	
     return true;
 });
