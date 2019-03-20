@@ -7,16 +7,17 @@
 ![alt ex3.png](https://github.com/alexadam/save-as-ebook/blob/master/ex3.png?raw=true)
 
 ## About this fork of the project:
-This is a fork with (currently) the following improvements:
+This is a fork with (currently) the following improvements (mainly improvements in extractHTML.js logic):
+- support for additional CSS attributes (display, colspan, border-collapse,...)
+- support for fancy article headers {background-image, position, z-index, background-*} 
+- retain original image filenames where applicable (make editing of epub easier)
+- better naming for resulting CSS rules (make editing of epub easier)
+- "Dedup" of CSS rules - only store relevant changes compared to parent elements (smaller CSS files)
+- additional tags and attributes
+- some bug fixes (e.g. syntax highlighting in pre and code environments...)
+Related:
 - leverage ModHeader extension: ensure, images in the ePub are in accepted formats, not WebP images.
-- additional CSS per sites
-- corrections in extractHTML.js:
-- additional tags, attributes, css values to generate better results.
-- generated css class names are now more descriptive to ease debugging (and calibre post-processing)
-- foster reuse in CSS styles to generate smaller files (not perfect)
-- some bug fixes around syntax highlighted <pre> and <code> environments
-- some fixes for HTML tables
-- and some more, see commit history for now ;-) 
+- Pushed "page cleanups" via CSS and JavaScript to userscripts for TamperMonkey
 
 Save a web page/selection as an eBook (.epub format) - a Chrome/Firefox/Opera Web Extension
 
