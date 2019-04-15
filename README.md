@@ -103,6 +103,17 @@ in Chrome:
  - DONE support custom style
  - add 'remove from ebook' right click menu action
 
+## Run Tests (Work in progress...)
+ ```
+ cd tests
+ yarn install  # install puppeteer
+ node test/index.js  # should start a chrome instance with Save as eBook loaded
+
+ # it will generate and save the ebook in ./tmp-downloads
+
+ .... 
+ ```
+
 ## Credits
  - http://ebooks.stackexchange.com/questions/1183/what-is-the-minimum-required-content-for-a-valid-epub
  - https://github.com/blowsie/Pure-JavaScript-HTML5-Parser

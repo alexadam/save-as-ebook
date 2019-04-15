@@ -1,3 +1,34 @@
+
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+/// Only for testing
+
+chrome.runtime.onInstalled.addListener(details => {
+  if (navigator.userAgent === 'PuppeteerTestingAgent') {
+      let TEST_TIMER = null
+      chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+          if (TEST_TIMER) {
+              clearTimeout(TEST_TIMER)
+          }
+
+          TEST_TIMER = setTimeout(()=> {
+                executeCommand({type: 'save-page'})
+          }, 2000)
+      });
+  }
+});
+
+
+
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+
+
+
 var isBusy = false;
 
 var defaultStyles = [
