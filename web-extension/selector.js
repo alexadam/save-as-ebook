@@ -26,6 +26,7 @@ container.appendChild(page)
 bodyElem.appendChild(container)
 
 document.getElementById('super-selector').addEventListener('mousemove', (e) => {
+// document.getElementsByTagName('body')[0].addEventListener('mousemove', (e) => {
     e.preventDefault()
 
         if (lastTargetElem) {
