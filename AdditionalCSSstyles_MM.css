@@ -1,0 +1,227 @@
+/*
+TODO: in the future, make part of:  
+save-as-ebook/web-extension/background.js
+
+---------------------------------
+*/ 
+
+
+
+/* -----------------------------
+Name: Heise News
+URL Regex: heise\.de\/(newsticker|hintergrund|developer)
+-------------------------------- */
+body {
+  font: initial !important;
+  font-family: initial !important;
+  color: #010101 !important;  /* default text almost black for better readability */
+}
+
+/* TODO: Text color article-content>p  */ 
+
+main {
+	padding: 0 0 0 0 !important; 
+}
+
+div#container{
+	 margin: 1px 1px 1px 1px;
+}
+
+span.initial {  /* Drop caps */
+   float: left;
+      font-weight:normal; 
+      font-size:320%  !important;
+      float:left  !important;; 
+      margin-top:-0.3225em  !important;; 
+      margin-bottom:-0.3245em  !important;; 
+  font-stretch: normal;
+}
+
+/* remove everything except plain article */
+a-analytics,
+body>footer, article>footer,
+#cboxOverlay, #colorbox, #sitemap,
+.header-main__content,
+.header-main, .main-header, .breadcrumb,
+.pre-akwa-toc, 
+.topnavigation, .ad-container,
+.article-layout__footer,
+.navbar-nav,
+.article-sidebar, .article-actions,
+.ho-stage-container, .bottom_up,
+.main-footer, .printversion--hide
+{
+   display: none !important;
+}
+
+
+/* -----------------------------
+Name: Telepolis
+URL Regex: heise\.de\/tp
+-------------------------------- */
+body {
+  font: initial !important;
+  font-family: initial !important;
+  color: #010101 !important;  /* default text almost black for better readability */
+}
+
+main,
+.container,
+.row_tp_content  {
+	padding: 0 0 0 0 !important; 
+}
+
+.img-responsive, .aufmacherbild {
+	width: 100% !important;
+}
+
+/* remove everything except plain article */
+a-analytics, nav
+body>footer,
+.ho-roof, .tp_mainheader, 
+.pre-akwa-toc,
+.navbar, .nav, .navbar-nav,
+.tp_breadcrumb, .subnavi, 
+aside, article>footer,
+.printversion--hide
+{
+   display: none !important;
+}
+
+
+/* -----------------------------
+Name: Heise Select
+URL Regex: heise\.de\/select
+
+Additional Hint: .jpeg images are provided as WebP instead which corrupts
+ the resulting books.
+ use another Chrome extension to change Request headers for *.jpg to ask for image/jpeg
+-------------------------------- */
+body {
+  font: initial !important;
+  font-family: initial !important;
+  color: #010101 !important;  /* default text almost black for better readability */
+}
+
+main {
+	padding: 0 0 0 0 !important; 
+}
+
+span.initial {  /* Drop caps */
+   float: left;
+      font-weight:normal; 
+      font-size:320%  !important;
+      float:left  !important;; 
+      margin-top:-0.3225em  !important;; 
+      margin-bottom:-0.3245em  !important;; 
+  font-stretch: normal;
+}
+
+/* remove everything except plain article */
+a-analytics,
+body>footer,
+.topbar, .toolbar, .comment, .bottom-links, .shariff 
+{
+   display: none !important;
+}
+
+/* -----------------------------
+Name: sqlbi.com
+URL Regex: sqlbi\.com\/(articles|blog)
+-------------------------------- */
+
+body>header, footer, aside,
+.download, .sharing,
+.connect, .breadcrumb  {
+ display:none !important;
+}
+
+.content-wrapper, .entry-content, body {
+	padding: 1px 0 0 0 !important;
+	color: #010101;  /* default text almost black for better readability */
+}
+
+/* -----------------------------
+Name: Golem.de News
+URL Regex: golem\.de\/news
+-------------------------------- */
+body {
+  font-family: initial !important;
+  color: #010101 !important;  /* default text almost black for better readability */
+}
+
+article {
+	padding: 0 0 0 0 !important; 
+}
+
+p:not([class]), p[class=""]
+/* All paragraphs without specific formatting should 
+   use font of ebook readers choice */
+{
+  font-family: initial !important;
+}
+
+
+#screen > div {  /* main article, screen > div.g.g6 */
+  float: none;	
+}
+
+/* remove everything except plain article */
+.toc, .tags,
+.social-tools, .social-tools--inverted,
+.supplementary, .narando,
+#narando-placeholder, #gservices,
+#screen > div.g6 ~ div, /* all Divs following main article... */
+.iq-site-header, footer
+{
+ display:none !important;	
+}
+
+
+/* -----------------------------
+Name: Wikipedia Article
+URL Regex: wikipedia\.org\/(wiki|w)\/
+
+Additional trick: Login and personalize "Appearance" to
+ show thubnails with 400px instead of 200px 
+-------------------------------- */
+
+#mw-navigation {
+display: none;
+}
+
+#footer {
+display: none;
+}
+
+#mw-panel {
+display: none;
+}
+
+#mw-head {
+display: none;
+}
+
+.toc , .toc-mobile,
+.mw-jump-link, 
+.mw-editsection,
+.navigation-drawer,
+.header-container,
+#page-actions {
+display: none !important;
+}
+.mw-body {
+    margin-left: 0px !important;
+	border-style: none !important;
+}
+.noprint, .cnotice {
+display: none !important;
+}
+ul {
+  padding: 20px !important;
+  list-style-type: square !important;
+  list-style-image: none  !important;
+}
+
+/* ----------------------------------- */
+

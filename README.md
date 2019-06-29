@@ -1,12 +1,25 @@
 # save-as-ebook
 
-Save a web page/selection as an eBook (.epub format) - a Chrome/Firefox/Opera Web Extension
-
 <img src="https://github.com/alexadam/save-as-ebook/blob/master/ex11.png?raw=true" width="350">
 
 ![alt ex2.png](https://github.com/alexadam/save-as-ebook/blob/master/ex2.png?raw=true)
 
 ![alt ex3.png](https://github.com/alexadam/save-as-ebook/blob/master/ex3.png?raw=true)
+
+## About this fork of the project:
+This is a fork with (currently) the following improvements (mainly improvements in extractHTML.js logic):
+- support for additional CSS attributes (display, colspan, border-collapse,...)
+- support for fancy article headers {background-image, position, z-index, background-*} 
+- retain original image filenames where applicable (make editing of epub easier)
+- better naming for resulting CSS rules (make editing of epub easier)
+- "Dedup" of CSS rules - only store relevant changes compared to parent elements (smaller CSS files)
+- additional tags and attributes
+- some bug fixes (e.g. syntax highlighting in pre and code environments...)
+Related:
+- leverage ModHeader extension: ensure, images in the ePub are in accepted formats, not WebP images.
+- Pushed "page cleanups" via CSS and JavaScript to userscripts for TamperMonkey
+
+Save a web page/selection as an eBook (.epub format) - a Chrome/Firefox/Opera Web Extension
 
 ## How to install it
 
