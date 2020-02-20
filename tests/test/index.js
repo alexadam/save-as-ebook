@@ -26,7 +26,7 @@ puppeteer.launch({
 
 async function runLocalFullPageTests(browser) {
 
-    const testedFileName = 'p2' //'p1'
+    const testedFileName = 'special-chars' // 'p2' //'p1'
 
     const testUrl = 'file://'+__dirname+'/pages/'+testedFileName+'/page/index.html'
     const resultDownloadPath = './pages/'+testedFileName+'/' + TEST_RESULT_EBOOK_PATH
