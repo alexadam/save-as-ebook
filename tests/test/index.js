@@ -1,6 +1,14 @@
 const puppeteer = require('puppeteer');
+const fs = require('fs')
 
-const CRX_PATH = '../web-extension';
+const CRX_PATH = '../../web-extension';
+const REFERENCE_EBOOK_PATH = 'reference-ebook'
+const TEST_RESULT_EBOOK_PATH = 'test-result-ebook'
+const TEST_EBOOK_FILE_NAME = 'test.epub'
+
+const testPaths = [
+
+]
 
 puppeteer.launch({
   headless: false,
@@ -11,13 +19,30 @@ puppeteer.launch({
   ]
 }).then(async browser => {
 
+    prepareTests()
+
+    await runLocalFullPageTests(browser)
+});
+
+async function runLocalFullPageTests(browser) {
+    const testUrl = 'file://'+__dirname+'/pages/p1/page/index.html'
+    const resultDownloadPath = './pages/p1/' + TEST_RESULT_EBOOK_PATH
+
     const page = await browser.newPage();
-    await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: './tmp-downloads'});
+    await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: resultDownloadPath});
     await page.setViewport({ width: 1280, height: 800 })
     // await page.goto('https://en.wikipedia.org/wiki/E-book', { waitUntil: 'networkidle0' });
     // await page.goto('file://'+__dirname+'/../pages/p1/E-book - Wikipedia.html', { waitUntil: 'networkidle0' });
-    await page.goto('file://'+__dirname+'/../pages/p1/page/index.html', { waitUntil: 'networkidle0' });
+    await page.goto(testUrl, { waitUntil: 'networkidle0' });
+}
 
-
-  // await browser.close();
-});
+function prepareTests() {
+  const pathToDelete = './pages/p1/' + TEST_RESULT_EBOOK_PATH + '/' + TEST_EBOOK_FILE_NAME
+  try {
+    if (fs.existsSync(pathToDelete)) {
+      fs.unlinkSync(pathToDelete)
+    }
+  } catch(err) {
+    console.log('Error while deleting file ', err);
+  }
+}
