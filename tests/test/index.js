@@ -25,8 +25,11 @@ puppeteer.launch({
 });
 
 async function runLocalFullPageTests(browser) {
-    const testUrl = 'file://'+__dirname+'/pages/p1/page/index.html'
-    const resultDownloadPath = './pages/p1/' + TEST_RESULT_EBOOK_PATH
+
+    const testedFileName = 'p2' //'p1'
+
+    const testUrl = 'file://'+__dirname+'/pages/'+testedFileName+'/page/index.html'
+    const resultDownloadPath = './pages/'+testedFileName+'/' + TEST_RESULT_EBOOK_PATH
 
     const page = await browser.newPage();
     await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: resultDownloadPath});
@@ -37,7 +40,8 @@ async function runLocalFullPageTests(browser) {
 }
 
 function prepareTests() {
-  const pathToDelete = './pages/p1/' + TEST_RESULT_EBOOK_PATH + '/' + TEST_EBOOK_FILE_NAME
+  const testedFileName = 'p1'
+  const pathToDelete = './pages/'+testedFileName+'/'+TEST_RESULT_EBOOK_PATH+'/'+TEST_EBOOK_FILE_NAME
   try {
     if (fs.existsSync(pathToDelete)) {
       fs.unlinkSync(pathToDelete)
