@@ -71,6 +71,7 @@ function formatPreCodeElements($jQueryElement) {
     });
 }
 
+// tested
 function extractMathMl($htmlObject) {
     $htmlObject.find('span[id^="MathJax-Element-"]').each(function (i, el) {
         $(el).replaceWith('<span>' + el.getAttribute('data-mathml') + '</span>');
@@ -78,6 +79,7 @@ function extractMathMl($htmlObject) {
 }
 
 // tested
+// TODO 
 function extractCanvasToImg($htmlObject) {
     $htmlObject.find('canvas').each(function (index, elem) {
         var tmpXP = getXPath(elem);
