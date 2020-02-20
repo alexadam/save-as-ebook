@@ -77,6 +77,7 @@ function extractMathMl($htmlObject) {
     });
 }
 
+// tested
 function extractCanvasToImg($htmlObject) {
     $htmlObject.find('canvas').each(function (index, elem) {
         var tmpXP = getXPath(elem);
@@ -87,6 +88,7 @@ function extractCanvasToImg($htmlObject) {
     });
 }
 
+// tested
 function extractSvgToImg($htmlObject) {
     var serializer = new XMLSerializer();
     $htmlObject.find('svg').each(function (index, elem) {

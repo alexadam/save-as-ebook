@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs')
 
-const CRX_PATH = '../../web-extension';
+const CRX_PATH = '../web-extension';
 const REFERENCE_EBOOK_PATH = 'reference-ebook'
 const TEST_RESULT_EBOOK_PATH = 'test-result-ebook'
 const TEST_EBOOK_FILE_NAME = 'test.epub'
@@ -26,7 +26,7 @@ puppeteer.launch({
 
 async function runLocalFullPageTests(browser) {
 
-    const testedFileName = 'svg' //'special-chars' // 'p2' //'p1'
+    const testedFileName = 'canvas' //'svg' //'special-chars' // 'p2' //'p1'
 
     const testUrl = 'file://'+__dirname+'/pages/'+testedFileName+'/page/index.html'
     const resultDownloadPath = './pages/'+testedFileName+'/' + TEST_RESULT_EBOOK_PATH
