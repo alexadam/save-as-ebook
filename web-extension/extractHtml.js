@@ -1,6 +1,5 @@
 var allImages = [];
 var extractedImages = [];
-var maxNrOfElements = 20000;
 var allowedTags = [
     'address', 'article', 'aside', 'footer', 'header', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
     'hgroup', 'nav', 'section', 'dd', 'div', 'dl', 'dt', 'figcaption', 'figure', 'hr', 'li',
@@ -22,12 +21,13 @@ var tmpIdsToNewCss = {};
 // src: https://idpf.github.io/a11y-guidelines/content/style/reference.html
 var supportedCss = [
     'background-color',
-    'border', 'border-top', 'border-right', 'border-bottom', 'border-left',
-    'color', 'font', 'font-size', 'font-weight', 'font-family',
+    'border',
+    'color', 
+    'font',
     'letter-spacing', 'line-height',
-    'list-style', 'outline',
+    'list-style',
     'padding', 'quotes',
-    'text-decoration', 'text-transform', 'word-spacing',
+    'text-decoration', 'text-transform', 'text-align', 'word-spacing',
 ];
 //////
 
@@ -39,6 +39,8 @@ function getImageSrc(srcTxt) {
     if (srcTxt === '') {
         return '';
     }
+
+    // TODO - convert <imgs> with svg sources to jpeg
 
     var fileExtension = getFileExtension(srcTxt);
     if (fileExtension === '') {
@@ -62,15 +64,6 @@ function getImageSrc(srcTxt) {
     return '../images/' + newImgFileName;
 }
 
-function formatPreCodeElements($jQueryElement) {
-    $jQueryElement.find('pre').each(function (i, pre) {
-        $(pre).replaceWith('<pre>' + pre.innerText + '</pre>');
-    });
-    $jQueryElement.find('code').each(function (i, pre) {
-        $(pre).replaceWith('<code>' + pre.innerText + '</code>');
-    });
-}
-
 // tested
 function extractMathMl($htmlObject) {
     $htmlObject.find('span[id^="MathJax-Element-"]').each(function (i, el) {
@@ -82,11 +75,12 @@ function extractMathMl($htmlObject) {
 // TODO 
 function extractCanvasToImg($htmlObject) {
     $htmlObject.find('canvas').each(function (index, elem) {
-        var tmpXP = getXPath(elem);
-        tmpXP = tmpXP.replace(/^\/div\[1\]/m, '/html[1]/body[1]');
-        var docEl = lookupElementByXPath(tmpXP);
-        var jpegUrl = docEl.toDataURL('image/png');
-        $(elem).replaceWith('<img src="' + jpegUrl + '" alt=""></img>');
+        try {
+            var imgUrl = docEl.toDataURL('image/jpeg');
+            $(elem).replaceWith('<img src="' + imgUrl + '" alt=""></img>');
+        } catch (e) {
+            console.log(e)
+        }
     });
 }
 
@@ -105,97 +99,30 @@ function extractSvgToImg($htmlObject) {
 }
 
 function preProcess($htmlObject) {
+    // TODO
+    // $htmlObject.find('script, style, noscript, iframe').remove();
+    // $('body').find('script, style, noscript, iframe').remove()
+    // $('body').find('script, style, noscript, iframe').contents().remove()
+    // $('body').find('iframe').remove()
+    // $('body').find('*:empty').not('img').not('br').not('hr').remove();
+    // formatPreCodeElements($('body'));
+
     extractMathMl($htmlObject);
     extractCanvasToImg($htmlObject);
     extractSvgToImg($htmlObject);
-    $htmlObject.find('script, style, noscript, iframe').remove();
-    $htmlObject.find('*:empty').not('img').not('br').not('hr').remove();
-    formatPreCodeElements($htmlObject);
 }
 
-function force($content, withError) {
-    try {
-        var tagOpen = '@@@' + generateRandomTag();
-        var tagClose = '###' + generateRandomTag();
-        var startEl = '<object>';
-        var endEl = '</object>';
-
-        if (withError) {
-            $content = $($content);
-            preProcess($content);
-        }
-
-        $content.find('img').each(function (index, elem) {
-            var $elem = $(elem);
-            var imgSrc = getImageSrc($elem.attr('src'));
-            if (imgSrc === '') {
-                $elem.replaceWith('');
-            } else {
-                var className = $elem.attr('data-class');
-                $elem.replaceWith(startEl + tagOpen + 'img src="' + imgSrc + '" class="' + className + '"' + tagClose + tagOpen + '/img' + tagClose + endEl);
-            }
-        });
-
-        $content.find('a').each(function (index, elem) {
-            var $elem = $(elem);
-            var aHref = getHref($elem.attr('href'));
-            if (aHref === '') {
-                $elem.replaceWith('');
-            } else {
-                var className = $elem.attr('data-class');
-                $elem.replaceWith(startEl + tagOpen + 'a href="' + aHref + '" class="' + className + '"' + tagClose + $(elem).html() + tagOpen + '/a' + tagClose + endEl);
-            }
-        });
-
-        all($content);
-
-        function all($startElement) {
-            var tagName = $startElement.get(0).tagName.toLowerCase();
-            if (allowedTags.indexOf(tagName) >= 0) {
-                var children = $startElement.children();
-                var childrenLen = children.length;
-                while (childrenLen--) {
-                    all($(children[childrenLen]));
-                }
-                var className = $startElement.attr('data-class');
-                $startElement.replaceWith(startEl + tagOpen + tagName + ' class="' + className + '"' + tagClose + $startElement.html() + tagOpen + '/' + tagName + tagClose + endEl);
-            }
-        }
-
-        var contentString = $content.text();
-
-        var tagOpenRegex = new RegExp(tagOpen, 'gi');
-        var tagCloseRegex = new RegExp(tagClose, 'gi');
-        contentString = contentString.replace(tagOpenRegex, '<');
-        contentString = contentString.replace(tagCloseRegex, '>');
-        contentString = contentString.replace(/&nbsp;/gi, '&#160;');
-
-        // getHref() replace does not work (&amp; is overwritten)
-        contentString = escapeXMLChars(contentString);
-
-        return contentString;
-    } catch (e) {
-        console.log('Error:', e);
-        return '';
-    }
-}
-
-function sanitize(rawContentString) {
+function parseHTML(rawContentString) {
     allImages = [];
     extractedImages = [];
-    var srcTxt = '';
     var dirty = null;
+
     try {
-        var wdirty = $.parseHTML(rawContentString);
-        $wdirty = $(wdirty);
+        $wdirty = $(rawContentString);
 
         preProcess($wdirty);
 
-        if ($('*').length > maxNrOfElements) {
-            return force($wdirty, false);
-        }
-
-        dirty = '<div>' + $wdirty.html() + '</div>';
+        dirty = $wdirty.html();
 
         var results = '';
         var lastFragment = '';
@@ -223,7 +150,7 @@ function sanitize(rawContentString) {
                         // ignore imgs without source
                         lastFragment = ''
                     } else {
-                        lastFragment = tmpAttrsTxt.length === 0 ? '<img></img>' : '<img ' + tmpAttrsTxt + ' alt=""></img>';
+                        lastFragment = tmpAttrsTxt.length === 0 ? '<img></img>' : '<img' + tmpAttrsTxt + ' alt=""></img>';
                     }
                 } else if (tag === 'a') {
                     var tmpAttrsTxt = '';
@@ -234,7 +161,7 @@ function sanitize(rawContentString) {
                             tmpAttrsTxt += ' class="' + attrs[i].value + '"';
                         }
                     }
-                    lastFragment = tmpAttrsTxt.length === 0 ? '<a>' : '<a ' + tmpAttrsTxt + '>';
+                    lastFragment = tmpAttrsTxt.length === 0 ? '<a>' : '<a' + tmpAttrsTxt + '>';
                 } else if (tag === 'br' || tag === 'hr') {
                     var tmpAttrsTxt = '';
                     for (var i = 0; i < attrs.length; i++) {
@@ -242,7 +169,7 @@ function sanitize(rawContentString) {
                             tmpAttrsTxt += ' class="' + attrs[i].value + '"';
                         }
                     }
-                    lastFragment = '<' + tag + ' ' + tmpAttrsTxt + '></' + tag + '>';
+                    lastFragment = '<' + tag + tmpAttrsTxt + '></' + tag + '>';
                 } else if (tag === 'math') {
                     var tmpAttrsTxt = '';
                     tmpAttrsTxt += ' xmlns="http://www.w3.org/1998/Math/MathML"';
@@ -251,7 +178,7 @@ function sanitize(rawContentString) {
                             tmpAttrsTxt += ' alttext="' + attrs[i].value + '"';
                         }
                     }
-                    lastFragment = '<' + tag + ' ' + tmpAttrsTxt + '>';
+                    lastFragment = '<' + tag + tmpAttrsTxt + '>';
                 } else {
                     var tmpAttrsTxt = '';
                     for (var i = 0; i < attrs.length; i++) {
@@ -259,7 +186,7 @@ function sanitize(rawContentString) {
                             tmpAttrsTxt += ' class="' + attrs[i].value + '"';
                         }
                     }
-                    lastFragment = '<' + tag + ' ' + tmpAttrsTxt + '>';
+                    lastFragment = '<' + tag + tmpAttrsTxt + '>';
                 }
 
                 results += lastFragment;
@@ -270,7 +197,7 @@ function sanitize(rawContentString) {
                     return;
                 }
 
-                results += "</" + tag + ">\n";
+                results += "</" + tag + ">";
             },
             chars: function(text) {
                 if (lastTag !== '' && allowedTags.indexOf(lastTag) < 0) {
@@ -298,26 +225,15 @@ function getContent(htmlContent) {
     try {
         var tmp = document.createElement('div');
         tmp.appendChild(htmlContent.cloneNode(true));
-        var dirty = '<div>' + tmp.innerHTML + '</div>';
-        return sanitize(dirty);
+        var tmpHtml = '<div>' + tmp.innerHTML + '</div>';
+        return parseHTML(tmpHtml);
     } catch (e) {
         console.log('Error:', e);
-        return '';
+        return htmlContent;
     }
 }
 
 /////
-
-function getPageUrl(url) {
-    return url.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'') + Math.floor(Math.random() * 10000) + '.xhtml';
-}
-
-function getPageTitle(title) {
-    if (title.trim().length === 0) {
-        return 'ebook';
-    }
-    return title;
-}
 
 function getSelectedNodes() {
     // if (document.selection) {
@@ -372,7 +288,9 @@ function extractCss(includeStyle, appliedStyles) {
                 let tmpName = cssClassesToTmpIds[classNames];
                 let tmpNewCss = tmpIdsToNewCss[tmpName];
                 if (!tmpName) {
-                    tmpName = 'class-' + Math.floor(Math.random()*100000);
+                    // TODO - collision  between class names when multiple pages
+                    // rename 'class-' to 'c'
+                    tmpName = 'c' + Math.floor(Math.random()*100000);
                     cssClassesToTmpIds[classNames] = tmpName;
                 }
                 if (!tmpNewCss) {
@@ -381,7 +299,11 @@ function extractCss(includeStyle, appliedStyles) {
                     for (let cssTagName of supportedCss) {
                         let cssValue = $pre.css(cssTagName);
                         if (cssValue && cssValue.length > 0) {
-                            tmpNewCss[cssTagName] = cssValue;
+                            // TODO - optimisation IF no css value, skip it (smaller css output file)
+                             // create a filter function based on css-tag and skip values
+                            // if (cssValue.indexOf('none') === -1 || cssValue.indexOf('0px') === -1) {
+                                tmpNewCss[cssTagName] = cssValue;
+                            // }
                         }
                     }
                     tmpIdsToNewCss[tmpName] = tmpNewCss;

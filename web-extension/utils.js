@@ -340,3 +340,14 @@ function getEbookFileName(name) {
                    .replace(/&quot;/ig, '')
                    .replace(/&apos;/ig, '');
 }
+
+function getPageUrl(url) {
+    return url.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'') + Math.floor(Math.random() * 10000) + '.xhtml';
+}
+
+function getPageTitle(title) {
+    if (title.trim().length === 0) {
+        return 'ebook';
+    }
+    return title;
+}
