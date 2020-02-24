@@ -320,6 +320,13 @@ function generateRandomTag(tagLen) {
     return text;
 }
 
+function generateRandomNumber(bigNr) {
+    if (bigNr) {
+        return Math.floor(Math.random()*1000000*Math.random()*1000000)        
+    }
+    return Math.floor(Math.random()*1000000)
+}
+
 function removeSpecialChars(text) {
     // FIXME remove white spaces ?
     return text.replace(/\//g, '-')
@@ -350,4 +357,19 @@ function getPageTitle(title) {
         return 'ebook';
     }
     return title;
+}
+
+function jsonToCss(jsonObj) {
+    var keys = Object.keys(jsonObj);
+    var result = '';
+    for (var i = 0; i < keys.length; i++) {
+        var tmpJsonObj = jsonObj[keys[i]];
+        var tmpKeys = Object.keys(tmpJsonObj);
+        result += '.' + keys[i] + ' {';
+        for (var j = 0; j < tmpKeys.length; j++) {
+            result += tmpKeys[j] + ':' + tmpJsonObj[tmpKeys[j]] + ';';
+        }
+        result += '} ';
+    }
+    return result;
 }

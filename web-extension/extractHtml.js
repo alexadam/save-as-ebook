@@ -10,7 +10,14 @@ var allowedTags = [
     'math', 'maction', 'menclose', 'merror', 'mfenced', 'mfrac', 'mglyph', 'mi', 'mlabeledtr', 'mmultiscripts', 'mn', 'mo', 'mover', 'mpadded', 'mphantom', 'mroot',
     'mrow', 'ms', 'mspace', 'msqrt', 'mstyle', 'msub', 'msup', 'msubsup', 'mtable', 'mtd', 'mtext', 'mtr', 'munder', 'munderover', 'msgroup', 'mlongdiv', 'mscarries',
     'mscarry', 'mstack', 'semantics'
+
+    // TODO ? 
+    // ,'form', 'button'
+
+    // TODO svg support ?
+    // , 'svg', 'g', 'path', 'line', 'circle', 'text'
 ];
+// const svgTags = ['svg', 'g', 'path', 'line', 'circle', 'text']
 var mathMLTags = [
     'math', 'maction', 'menclose', 'merror', 'mfenced', 'mfrac', 'mglyph', 'mi', 'mlabeledtr', 'mmultiscripts', 'mn', 'mo', 'mover', 'mpadded', 'mphantom', 'mroot',
     'mrow', 'ms', 'mspace', 'msqrt', 'mstyle', 'msub', 'msup', 'msubsup', 'mtable', 'mtd', 'mtext', 'mtr', 'munder', 'munderover', 'msgroup', 'mlongdiv', 'mscarries',
@@ -48,11 +55,13 @@ function getImageSrc(srcTxt) {
 
     // TODO - convert <imgs> with svg sources to jpeg
 
+    // TODO https://preview.redd.it/oyj35v4jrri41.png?width=960&crop=smart&auto=webp&s=aa6dac5580038f489faa707093710f427ec83b20
+
     var fileExtension = getFileExtension(srcTxt);
     if (fileExtension === '') {
         return '';
     }
-    var newImgFileName = 'img-' + (Math.floor(Math.random()*1000000*Math.random()*100000)) + '.' + fileExtension;
+    var newImgFileName = 'img-' + generateRandomNumber(true) + '.' + fileExtension;
 
     var isB64Img = isBase64Img(srcTxt);
     if (isB64Img) {
@@ -78,7 +87,6 @@ function extractMathMl($htmlObject) {
 }
 
 // tested
-// TODO 
 function extractCanvasToImg($htmlObject) {
     $htmlObject.find('canvas').each(function (index, elem) {
         try {
@@ -92,15 +100,15 @@ function extractCanvasToImg($htmlObject) {
 
 // tested
 function extractSvgToImg($htmlObject) {
-    var serializer = new XMLSerializer();
+    let serializer = new XMLSerializer();
     $htmlObject.find('svg').each(function (index, elem) {
-        try {
-            var svgXml = serializer.serializeToString(elem);
-            var imgSrc = 'data:image/svg+xml;base64,' + window.btoa(svgXml);
-            $(elem).replaceWith('<img src="' + imgSrc + '">' + '</img>');
-        } catch (e) {
-            console.log(e)
-        } finally {}
+        // add width & height because the result image was too big
+        let bbox = elem.getBoundingClientRect()
+        let newWidth = bbox.width
+        let newHeight = bbox.height
+        let svgXml = serializer.serializeToString(elem);
+        var imgSrc = 'data:image/svg+xml;base64,' + window.btoa(svgXml);
+        $(elem).replaceWith('<img src="' + imgSrc + '" width="'+newWidth+'" height="'+newHeight+'">' + '</img>');
     });
 }
 
@@ -121,20 +129,12 @@ function preProcess($htmlObject) {
 function parseHTML(rawContentString) {
     allImages = [];
     extractedImages = [];
-    var dirty = null;
+    let results = '';
+    let lastFragment = '';
+    let lastTag = '';
 
     try {
-        $wdirty = $(rawContentString);
-
-        preProcess($wdirty);
-
-        dirty = $wdirty.html();
-
-        var results = '';
-        var lastFragment = '';
-        var lastTag = '';
-
-        HTMLParser(dirty, {
+        HTMLParser(rawContentString, {
             start: function(tag, attrs, unary) {
                 lastTag = tag;
                 if (allowedTags.indexOf(tag) < 0) {
@@ -150,6 +150,12 @@ function parseHTML(rawContentString) {
                             tmpAttrsTxt += ' src="' + tmpSrc + '"';
                         } else if (attrs[i].name === 'data-class') {
                             tmpAttrsTxt += ' class="' + attrs[i].value + '"';
+                        } else if (attrs[i].name === 'width') {
+                            // used when converting svg to img - the result image was too big
+                            tmpAttrsTxt += ' width="' + attrs[i].value + '"';
+                        } else if (attrs[i].name === 'height') {
+                            // used when converting svg to img - the result image was too big
+                            tmpAttrsTxt += ' height="' + attrs[i].value + '"';
                         }
                     }
                     if (tmpSrc === '') {
@@ -216,19 +222,20 @@ function parseHTML(rawContentString) {
             }
         });
 
+        // TODO - (re)move
         results = results.replace(/&nbsp;/gi, '&#160;');
 
         return results;
 
     } catch (e) {
         console.log('Error:', e);
-        return force(dirty, true);
     }
 
 }
 
 function getContent(htmlContent) {
     try {
+        preProcess($('body'))
         var tmp = document.createElement('div');
         tmp.appendChild(htmlContent.cloneNode(true));
         var tmpHtml = '<div>' + tmp.innerHTML + '</div>';
@@ -256,21 +263,6 @@ function getSelectedNodes() {
 
 /////
 
-function jsonToCss(jsonObj) {
-    var keys = Object.keys(jsonObj);
-    var result = '';
-    for (var i = 0; i < keys.length; i++) {
-        var tmpJsonObj = jsonObj[keys[i]];
-        var tmpKeys = Object.keys(tmpJsonObj);
-        result += '.' + keys[i] + ' {';
-        for (var j = 0; j < tmpKeys.length; j++) {
-            result += tmpKeys[j] + ':' + tmpJsonObj[tmpKeys[j]] + ';';
-        }
-        result += '} ';
-    }
-    return result;
-}
-
 function extractCss(includeStyle, appliedStyles) {
     if (includeStyle) {
         $('body').find('*').each((i, pre) => {
@@ -288,19 +280,17 @@ function extractCss(includeStyle, appliedStyles) {
                 if (!classNames) {
                     classNames = pre.getAttribute('id');
                     if (!classNames) {
-                        classNames = pre.tagName + '-' + Math.floor(Math.random()*100000);
+                        classNames = pre.tagName + '-' + generateRandomNumber();
                     }
                 }
                 let tmpName = cssClassesToTmpIds[classNames];
                 let tmpNewCss = tmpIdsToNewCss[tmpName];
                 if (!tmpName) {
                     // TODO - collision  between class names when multiple pages
-                    // rename 'class-' to 'c'
-                    tmpName = 'c' + i // Math.floor(Math.random()*100000);
+                    tmpName = generateRandomTag(2) + i
                     cssClassesToTmpIds[classNames] = tmpName;
                 }
                 if (!tmpNewCss) {
-                    // var style = window.getComputedStyle(pre);
                     tmpNewCss = {};
 
                     for (let cssTagName of supportedCss) {
@@ -398,7 +388,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             title: tmpTitle,
             baseUrl: getCurrentUrl(),
             styleFileContent: styleFile,
-            styleFileName: 'style' + Math.floor(Math.random() * 100000) + '.css',
+            styleFileName: 'style' + generateRandomNumber() + '.css',
             images: extractedImages,
             content: tmpContent
         };
