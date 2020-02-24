@@ -11,19 +11,32 @@ bodyElem.innerHTML = ''
 let container = document.createElement('div')
 container.style.display = "flex"
 container.style.flexFlow = "row"
-let menu = document.createElement('div')
-menu.style.width = '300px'
-menu.style.minWidth = '300px'
-menu.style.height = '100%'
+let menuContainer = document.createElement('div')
+menuContainer.style.width = '300px'
+menuContainer.style.minWidth = '300px'
+menuContainer.style.height = '600px'
+menuContainer.style.minHeight = '600px'
 let page = document.createElement('div')
 page.id= 'super-selector'
 page.style.width = '100%'
 page.style.height = '100%'
 page.innerHTML = bodyInner
 
-container.appendChild(menu)
+let menu = document.createElement('div')
+menu.id = "slector-main-menu"
+menu.style.width = '300px'
+menu.style.minWidth = '300px'
+menu.style.height = '600px'
+menu.style.minHeight = '600px'
+menu.style.backgroundColor = 'black'
+menu.style.position = 'fixed'
+menu.style.top = '0'
+
+
+container.appendChild(menuContainer)
 container.appendChild(page)
 bodyElem.appendChild(container)
+bodyElem.appendChild(menu)
 
 document.getElementById('super-selector').addEventListener('mousemove', (e) => {
 // document.getElementsByTagName('body')[0].addEventListener('mousemove', (e) => {
@@ -33,7 +46,7 @@ document.getElementById('super-selector').addEventListener('mousemove', (e) => {
             lastTargetElem.style.backgroundColor = lastElementData.backgroundColor
         }
 
-    let targetElem = document.elementFromPoint(e.clientX, e.clientY);
+        let targetElem = document.elementFromPoint(e.clientX, e.clientY);
 
         let targetParent = targetElem.parentNode
         lastElementData.backgroundColor = targetElem.style.backgroundColor
@@ -45,15 +58,40 @@ document.getElementById('super-selector').addEventListener('mousemove', (e) => {
         e.preventDefault() // FIXME except for my menu
         e.stopPropagation();
 
-        console.log(createXPathFromElement(e.target));
+        let originalClickedElem = e.target
+        let clickedElem = e.target
 
-        if (!e.target.style.opacity || e.target.style.opacity  > 0.2) {
-            e.target.style.opacity = 0.1
-            e.target.style.border = 'solid 3px black'
+        if (!clickedElem) {
+            return
+        }
+
+        // console.log(createXPathFromElement(clickedElem));
+
+        let clickedElemParent = clickedElem.parentNode;
+        let foundClickedEleme = false
+        while (clickedElemParent) {            
+            if (!clickedElemParent || !clickedElemParent.style) {
+                break
+            }
+            if (clickedElemParent.id === 'slector-main-menu') {
+                // ignore main menu
+                return
+            }
+            if (clickedElemParent.style.opacity === '0.1') {
+                foundClickedEleme = true
+                clickedElem = clickedElemParent
+                break
+            }
+            clickedElemParent = clickedElemParent.parentNode;
+        }       
+
+        if (!clickedElem.style.opacity || clickedElem.style.opacity  > 0.2) {
+            clickedElem.style.opacity = 0.1
+            clickedElem.style.border = 'solid 3px black'
         }
         else {
-            e.target.style.opacity = 1
-            e.target.style.border = 'none'
+            clickedElem.style.opacity = 1
+            clickedElem.style.border = 'none'
         }
     }
 
