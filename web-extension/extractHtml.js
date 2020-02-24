@@ -18,16 +18,22 @@ var mathMLTags = [
 ]
 var cssClassesToTmpIds = {};
 var tmpIdsToNewCss = {};
+var tmpIdsToNewCssSTRING = {};
+
 // src: https://idpf.github.io/a11y-guidelines/content/style/reference.html
 var supportedCss = [
     'background-color',
     'border',
     'color', 
     'font',
-    'letter-spacing', 'line-height',
+    // 'letter-spacing', 
+    'line-height',
     'list-style',
-    'padding', 'quotes',
-    'text-decoration', 'text-transform', 'text-align', 'word-spacing',
+    'padding',
+    // 'text-decoration', 
+    // 'text-transform', 
+    'text-align', 
+    // 'word-spacing',
 ];
 //////
 
@@ -290,23 +296,41 @@ function extractCss(includeStyle, appliedStyles) {
                 if (!tmpName) {
                     // TODO - collision  between class names when multiple pages
                     // rename 'class-' to 'c'
-                    tmpName = 'c' + Math.floor(Math.random()*100000);
+                    tmpName = 'c' + i // Math.floor(Math.random()*100000);
                     cssClassesToTmpIds[classNames] = tmpName;
                 }
                 if (!tmpNewCss) {
                     // var style = window.getComputedStyle(pre);
                     tmpNewCss = {};
+
                     for (let cssTagName of supportedCss) {
                         let cssValue = $pre.css(cssTagName);
                         if (cssValue && cssValue.length > 0) {
-                            // TODO - optimisation IF no css value, skip it (smaller css output file)
-                             // create a filter function based on css-tag and skip values
-                            // if (cssValue.indexOf('none') === -1 || cssValue.indexOf('0px') === -1) {
-                                tmpNewCss[cssTagName] = cssValue;
-                            // }
+                            tmpNewCss[cssTagName] = cssValue;
                         }
                     }
-                    tmpIdsToNewCss[tmpName] = tmpNewCss;
+
+                    // Reuse CSS - if the same css code was generated for another element, reuse it's class name
+
+                    var tcss = JSON.stringify(tmpNewCss)
+                    var found = false
+
+                    if (Object.keys(tmpIdsToNewCssSTRING).length === 0) {
+                        tmpIdsToNewCssSTRING[tmpName] = tcss;
+                        tmpIdsToNewCss[tmpName] = tmpNewCss;
+                    } else {
+                        for (const key in tmpIdsToNewCssSTRING) {
+                            if (tmpIdsToNewCssSTRING[key] === tcss) {
+                                tmpName = key
+                                found = true
+                                break
+                            }
+                        }
+                        if (!found) {
+                            tmpIdsToNewCssSTRING[tmpName] = tcss;
+                            tmpIdsToNewCss[tmpName] = tmpNewCss;
+                        }
+                    }
                 }
                 pre.setAttribute('data-class', tmpName);
             }
