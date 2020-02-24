@@ -126,6 +126,84 @@ function preProcess($htmlObject) {
     extractSvgToImg($htmlObject);
 }
 
+
+// TODO remove / change
+// function force($content, withError) {
+//     try {
+//         var tagOpen = '@@@' + generateRandomTag();
+//         var tagClose = '###' + generateRandomTag();
+//         // var tagOpen = '<';
+//         // var tagClose = '>';
+//         var startEl = '<object>';
+//         var endEl = '</object>';
+
+//         // if (withError) {
+//         //     $content = $($content);
+//         //     preProcess($content);
+//         // }
+
+//         $content.find('img').each(function (index, elem) {
+//             var $elem = $(elem);
+//             var imgSrc = getImageSrc($elem.attr('src'));
+//             if (imgSrc === '') {
+//                 $elem.replaceWith('');
+//             } else {
+//                 var className = $elem.attr('data-class');
+//                 $elem.replaceWith(startEl + tagOpen + 'img src="' + imgSrc + '" class="' + className + '"' + tagClose + tagOpen + '/img' + tagClose + endEl);
+//             }
+//         });
+
+//         $content.find('a').each(function (index, elem) {
+//             var $elem = $(elem);
+//             var aHref = getHref($elem.attr('href'));
+//             if (aHref === '') {
+//                 $elem.replaceWith('');
+//             } else {
+//                 var className = $elem.attr('data-class');
+//                 $elem.replaceWith(startEl + tagOpen + 'a href="' + aHref + '" class="' + className + '"' + tagClose + $(elem).html() + tagOpen + '/a' + tagClose + endEl);
+//             }
+//         });
+        
+//         // var regex = /(<([^>]+)>)/ig
+//         // var contentString = $content.html().replace(regex, '')
+
+//         function all($startElement) {
+//             var tagName = $startElement.get(0).tagName.toLowerCase();
+//             if (allowedTags.indexOf(tagName) >= 0) {
+//                 var children = $startElement.children();
+//                 var childrenLen = children.length;
+//                 while (childrenLen--) {
+//                     all($(children[childrenLen]));
+//                 }
+//                 var className = $startElement.attr('data-class');
+//                 // $startElement.replaceWith(startEl + tagOpen + tagName + ' class="' + className + '"' + tagClose + $startElement.html() + tagOpen + '/' + tagName + tagClose + endEl);
+                
+//                 $startElement.replaceWith(tagOpen + tagName + ' class="' + className + '"' + tagClose +
+//                          $startElement.html() + tagOpen + '/' + tagName + tagClose);
+//             }
+//         }
+
+//         all($content);
+
+//         var contentString = $content.text();
+
+//         var tagOpenRegex = new RegExp(tagOpen, 'gi');
+//         var tagCloseRegex = new RegExp(tagClose, 'gi');
+//         contentString = contentString.replace(tagOpenRegex, '<');
+//         contentString = contentString.replace(tagCloseRegex, '>');
+//         contentString = contentString.replace(/&/gi, '&amp;');
+//         contentString = contentString.replace(/&amp;nbsp;/gi, '&#160;');
+    
+//         // getHref() replace does not work (&amp; is overwritten)
+//         // contentString = escapeXMLChars(contentString);        
+
+//         return contentString;
+//     } catch (e) {
+//         console.log('Error:', e);
+//         return e;
+//     }
+// }
+
 function parseHTML(rawContentString) {
     allImages = [];
     extractedImages = [];
@@ -229,12 +307,14 @@ function parseHTML(rawContentString) {
 
     } catch (e) {
         console.log('Error:', e);
+        return 'Error: ' + e  //+"  " + force($(rawContentString))
     }
 
 }
 
 function getContent(htmlContent) {
     try {
+        // TODO - move; called multiple times on selection
         preProcess($('body'))
         var tmp = document.createElement('div');
         tmp.appendChild(htmlContent.cloneNode(true));
