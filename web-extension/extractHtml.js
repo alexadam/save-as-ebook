@@ -33,20 +33,14 @@ var supportedCss = [
     'border',
     'color', 
     'font',
-    // 'letter-spacing', 
     'line-height',
     'list-style',
     'padding',
-    // 'text-decoration', 
-    // 'text-transform', 
     'text-align', 
-    // 'word-spacing',
 ];
 //////
 
 function getImageSrc(srcTxt) {
-    
-    
     if (!srcTxt) {
         return '';
     }
@@ -72,9 +66,7 @@ function getImageSrc(srcTxt) {
             filename: newImgFileName, // TODO name
             data: getBase64ImgData(srcTxt)
         });
-    } else {
-        console.log("img url", fileExtension, getImgDownloadUrl(srcTxt));
-        
+    } else {        
         allImages.push({
             originalUrl: getImgDownloadUrl(srcTxt),
             filename: newImgFileName,  // TODO name
@@ -131,84 +123,6 @@ function preProcess($htmlObject) {
     extractSvgToImg($htmlObject);
 }
 
-
-// TODO remove / change
-// function force($content, withError) {
-//     try {
-//         var tagOpen = '@@@' + generateRandomTag();
-//         var tagClose = '###' + generateRandomTag();
-//         // var tagOpen = '<';
-//         // var tagClose = '>';
-//         var startEl = '<object>';
-//         var endEl = '</object>';
-
-//         // if (withError) {
-//         //     $content = $($content);
-//         //     preProcess($content);
-//         // }
-
-//         $content.find('img').each(function (index, elem) {
-//             var $elem = $(elem);
-//             var imgSrc = getImageSrc($elem.attr('src'));
-//             if (imgSrc === '') {
-//                 $elem.replaceWith('');
-//             } else {
-//                 var className = $elem.attr('data-class');
-//                 $elem.replaceWith(startEl + tagOpen + 'img src="' + imgSrc + '" class="' + className + '"' + tagClose + tagOpen + '/img' + tagClose + endEl);
-//             }
-//         });
-
-//         $content.find('a').each(function (index, elem) {
-//             var $elem = $(elem);
-//             var aHref = getHref($elem.attr('href'));
-//             if (aHref === '') {
-//                 $elem.replaceWith('');
-//             } else {
-//                 var className = $elem.attr('data-class');
-//                 $elem.replaceWith(startEl + tagOpen + 'a href="' + aHref + '" class="' + className + '"' + tagClose + $(elem).html() + tagOpen + '/a' + tagClose + endEl);
-//             }
-//         });
-        
-//         // var regex = /(<([^>]+)>)/ig
-//         // var contentString = $content.html().replace(regex, '')
-
-//         function all($startElement) {
-//             var tagName = $startElement.get(0).tagName.toLowerCase();
-//             if (allowedTags.indexOf(tagName) >= 0) {
-//                 var children = $startElement.children();
-//                 var childrenLen = children.length;
-//                 while (childrenLen--) {
-//                     all($(children[childrenLen]));
-//                 }
-//                 var className = $startElement.attr('data-class');
-//                 // $startElement.replaceWith(startEl + tagOpen + tagName + ' class="' + className + '"' + tagClose + $startElement.html() + tagOpen + '/' + tagName + tagClose + endEl);
-                
-//                 $startElement.replaceWith(tagOpen + tagName + ' class="' + className + '"' + tagClose +
-//                          $startElement.html() + tagOpen + '/' + tagName + tagClose);
-//             }
-//         }
-
-//         all($content);
-
-//         var contentString = $content.text();
-
-//         var tagOpenRegex = new RegExp(tagOpen, 'gi');
-//         var tagCloseRegex = new RegExp(tagClose, 'gi');
-//         contentString = contentString.replace(tagOpenRegex, '<');
-//         contentString = contentString.replace(tagCloseRegex, '>');
-//         contentString = contentString.replace(/&/gi, '&amp;');
-//         contentString = contentString.replace(/&amp;nbsp;/gi, '&#160;');
-    
-//         // getHref() replace does not work (&amp; is overwritten)
-//         // contentString = escapeXMLChars(contentString);        
-
-//         return contentString;
-//     } catch (e) {
-//         console.log('Error:', e);
-//         return e;
-//     }
-// }
-
 function parseHTML(rawContentString) {
     allImages = [];
     extractedImages = [];
@@ -225,9 +139,9 @@ function parseHTML(rawContentString) {
                 }
 
                 if (tag === 'img') {
-                    var tmpAttrsTxt = '';
+                    let tmpAttrsTxt = '';
                     let tmpSrc = ''
-                    for (var i = 0; i < attrs.length; i++) {
+                    for (let i = 0; i < attrs.length; i++) {
                         if (attrs[i].name === 'src') {
                             tmpSrc = getImageSrc(attrs[i].value)
                             tmpAttrsTxt += ' src="' + tmpSrc + '"';
@@ -248,8 +162,8 @@ function parseHTML(rawContentString) {
                         lastFragment = tmpAttrsTxt.length === 0 ? '<img></img>' : '<img' + tmpAttrsTxt + ' alt=""></img>';
                     }
                 } else if (tag === 'a') {
-                    var tmpAttrsTxt = '';
-                    for (var i = 0; i < attrs.length; i++) {
+                    let tmpAttrsTxt = '';
+                    for (let i = 0; i < attrs.length; i++) {
                         if (attrs[i].name === 'href') {
                             tmpAttrsTxt += ' href="' + getHref(attrs[i].value) + '"';
                         } else if (attrs[i].name === 'data-class') {
@@ -258,25 +172,25 @@ function parseHTML(rawContentString) {
                     }
                     lastFragment = tmpAttrsTxt.length === 0 ? '<a>' : '<a' + tmpAttrsTxt + '>';
                 } else if (tag === 'br' || tag === 'hr') {
-                    var tmpAttrsTxt = '';
-                    for (var i = 0; i < attrs.length; i++) {
+                    let tmpAttrsTxt = '';
+                    for (let i = 0; i < attrs.length; i++) {
                         if (attrs[i].name === 'data-class') {
                             tmpAttrsTxt += ' class="' + attrs[i].value + '"';
                         }
                     }
                     lastFragment = '<' + tag + tmpAttrsTxt + '></' + tag + '>';
                 } else if (tag === 'math') {
-                    var tmpAttrsTxt = '';
+                    let tmpAttrsTxt = '';
                     tmpAttrsTxt += ' xmlns="http://www.w3.org/1998/Math/MathML"';
-                    for (var i = 0; i < attrs.length; i++) {
+                    for (let i = 0; i < attrs.length; i++) {
                         if (attrs[i].name === 'alttext') {
                             tmpAttrsTxt += ' alttext="' + attrs[i].value + '"';
                         }
                     }
                     lastFragment = '<' + tag + tmpAttrsTxt + '>';
                 } else {
-                    var tmpAttrsTxt = '';
-                    for (var i = 0; i < attrs.length; i++) {
+                    let tmpAttrsTxt = '';
+                    for (let i = 0; i < attrs.length; i++) {
                         if (attrs[i].name === 'data-class') {
                             tmpAttrsTxt += ' class="' + attrs[i].value + '"';
                         }
@@ -321,9 +235,9 @@ function getContent(htmlContent) {
     try {
         // TODO - move; called multiple times on selection
         preProcess($('body'))
-        var tmp = document.createElement('div');
+        let tmp = document.createElement('div');
         tmp.appendChild(htmlContent.cloneNode(true));
-        var tmpHtml = '<div>' + tmp.innerHTML + '</div>';
+        let tmpHtml = '<div>' + tmp.innerHTML + '</div>';
         return parseHTML(tmpHtml);
     } catch (e) {
         console.log('Error:', e);
@@ -338,9 +252,9 @@ function getSelectedNodes() {
         // return document.selection.createRange().parentElement();
         // return document.selection.createRange();
     // }
-    var selection = window.getSelection();
-    var docfrag = [];
-    for (var i = 0; i < selection.rangeCount; i++) {
+    let selection = window.getSelection();
+    let docfrag = [];
+    for (let i = 0; i < selection.rangeCount; i++) {
         docfrag.push(selection.getRangeAt(i).cloneContents());
     }
     return docfrag;
@@ -387,8 +301,8 @@ function extractCss(includeStyle, appliedStyles) {
 
                     // Reuse CSS - if the same css code was generated for another element, reuse it's class name
 
-                    var tcss = JSON.stringify(tmpNewCss)
-                    var found = false
+                    let tcss = JSON.stringify(tmpNewCss)
+                    let found = false
 
                     if (Object.keys(tmpIdsToNewCssSTRING).length === 0) {
                         tmpIdsToNewCssSTRING[tmpName] = tcss;
@@ -426,7 +340,7 @@ function extractCss(includeStyle, appliedStyles) {
 /////
 
 function deferredAddZip(url, filename) {
-    var deferred = $.Deferred();
+    let deferred = $.Deferred();
     JSZipUtils.getBinaryContent(url, function(err, data) {
         if (err) {
             // deferred.reject(err); TODO

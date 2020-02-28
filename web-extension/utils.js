@@ -100,7 +100,7 @@ function setIsBusy(isBusy) {
 
 /////
 function getCurrentUrl() {
-    var url = window.location.href;
+    let url = window.location.href;
     if (url.indexOf('?') > 0) {
         url = window.location.href.split('?')[0];
     }
@@ -109,7 +109,7 @@ function getCurrentUrl() {
 }
 
 function getOriginUrl() {
-    var originUrl = window.location.origin;
+    let originUrl = window.location.origin;
     if (!originUrl) {
         originUrl = window.location.protocol + "//" + window.location.host;
     }
@@ -118,7 +118,7 @@ function getOriginUrl() {
 
 function getFileExtension(fileName) {
     try {
-        var tmpFileName = '';
+        let tmpFileName = '';
 
         if (isBase64Img(fileName)) {
             tmpFileName = getBase64ImgType(fileName);
@@ -147,7 +147,7 @@ function getFileExtension(fileName) {
 }
 
 function getImageType(fileName) {
-    var imageType = getFileExtension(fileName);
+    let imageType = getFileExtension(fileName);
     if (imageType === 'svg') {
         imageType = 'svg+xml';
     }
@@ -205,18 +205,18 @@ function removeEndingSlash(inputStr) {
 
 // https://gist.github.com/jonleighton/958841
 function base64ArrayBuffer(arrayBuffer) {
-    var base64 = '';
-    var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    let base64 = '';
+    let encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
-    var bytes = new Uint8Array(arrayBuffer);
-    var byteLength = bytes.byteLength;
-    var byteRemainder = byteLength % 3;
-    var mainLength = byteLength - byteRemainder;
+    let bytes = new Uint8Array(arrayBuffer);
+    let byteLength = bytes.byteLength;
+    let byteRemainder = byteLength % 3;
+    let mainLength = byteLength - byteRemainder;
 
-    var a, b, c, d;
-    var chunk;
+    let a, b, c, d;
+    let chunk;
 
-    for (var i = 0; i < mainLength; i = i + 3) {
+    for (let i = 0; i < mainLength; i = i + 3) {
         chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2];
         a = (chunk & 16515072) >> 18;
         b = (chunk & 258048) >> 12;
@@ -273,11 +273,11 @@ function getBase64ImgData(srcTxt) {
 function getXPath(elm) {
     if (!elm) return ''
 
-    var allNodes = document.getElementsByTagName('*');
-    for (var segs = []; elm && elm.nodeType === 1; elm = elm.parentNode) {
+    let allNodes = document.getElementsByTagName('*');
+    for (let segs = []; elm && elm.nodeType === 1; elm = elm.parentNode) {
         if (elm.hasAttribute('id')) {
-            var uniqueIdCount = 0;
-            for (var n = 0; n < allNodes.length; n++) {
+            let uniqueIdCount = 0;
+            for (let n = 0; n < allNodes.length; n++) {
                 if (allNodes[n].hasAttribute('id') && allNodes[n].id === elm.id) {
                     uniqueIdCount++;
                 }
@@ -306,16 +306,16 @@ function getXPath(elm) {
 }
 
 function lookupElementByXPath(path) {
-    var evaluator = new XPathEvaluator();
-    var result = evaluator.evaluate(path, document.documentElement, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+    let evaluator = new XPathEvaluator();
+    let result = evaluator.evaluate(path, document.documentElement, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
     return  result.singleNodeValue;
 }
 
 function generateRandomTag(tagLen) {
     tagLen = tagLen || 5;
-    var text = '';
-    var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    for(var i = 0; i < tagLen; i++) {
+    let text = '';
+    let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    for(let i = 0; i < tagLen; i++) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
@@ -361,13 +361,13 @@ function getPageTitle(title) {
 }
 
 function jsonToCss(jsonObj) {
-    var keys = Object.keys(jsonObj);
-    var result = '';
-    for (var i = 0; i < keys.length; i++) {
-        var tmpJsonObj = jsonObj[keys[i]];
-        var tmpKeys = Object.keys(tmpJsonObj);
+    let keys = Object.keys(jsonObj);
+    let result = '';
+    for (let i = 0; i < keys.length; i++) {
+        let tmpJsonObj = jsonObj[keys[i]];
+        let tmpKeys = Object.keys(tmpJsonObj);
         result += '.' + keys[i] + ' {';
-        for (var j = 0; j < tmpKeys.length; j++) {
+        for (let j = 0; j < tmpKeys.length; j++) {
             result += tmpKeys[j] + ':' + tmpJsonObj[tmpKeys[j]] + ';';
         }
         result += '} ';

@@ -38,27 +38,27 @@ chrome.runtime.sendMessage({
 function createStyleList(styles) {
     allStyles = styles;
     chrome.tabs.query({'active': true}, function (tabs) {
-        var currentUrl = tabs[0].url;
+        let currentUrl = tabs[0].url;
 
         if (!styles || styles.length === 0) {
             return;
         }
 
-        var foundMatchingUrl = false;
+        let foundMatchingUrl = false;
 
         // if multiple URL regexes match, select the longest one
-        var allMatchingStyles = [];
+        let allMatchingStyles = [];
 
-        for (var i = 0; i < styles.length; i++) {
-            var listItem = document.createElement('option');
+        for (let i = 0; i < styles.length; i++) {
+            let listItem = document.createElement('option');
             listItem.id = 'option_' + i;
             listItem.className = 'cssEditor-chapter-item';
             listItem.value = 'option_' + i;
             listItem.innerText = styles[i].title;
 
             currentUrl = currentUrl.replace(/(http[s]?:\/\/|www\.)/i, '').toLowerCase();
-            var styleUrl = styles[i].url;
-            var styleUrlRegex = null;
+            let styleUrl = styles[i].url;
+            let styleUrlRegex = null;
 
             try {
                 styleUrlRegex =  new RegExp(styleUrl, 'i');
@@ -77,7 +77,7 @@ function createStyleList(styles) {
             allMatchingStyles.sort(function (a, b) {
                 return b.length - a.length;
             });
-            var selStyle = allMatchingStyles[0];
+            let selStyle = allMatchingStyles[0];
             currentStyle = styles[selStyle.index];
 
             chrome.runtime.sendMessage({
@@ -90,7 +90,7 @@ function createStyleList(styles) {
 }
 
 function createIncludeStyle(data) {
-    var includeStyleCheck = document.getElementById('includeStyleCheck');
+    let includeStyleCheck = document.getElementById('includeStyleCheck');
     includeStyleCheck.checked = data;
 }
 
@@ -101,7 +101,7 @@ chrome.runtime.sendMessage({
 });
 
 document.getElementById('includeStyleCheck').onclick = function () {
-    var includeStyleCheck = document.getElementById('includeStyleCheck');
+    let includeStyleCheck = document.getElementById('includeStyleCheck');
     chrome.runtime.sendMessage({
         type: "set include style",
         includeStyle: includeStyleCheck.checked
