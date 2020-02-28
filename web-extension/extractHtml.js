@@ -45,6 +45,8 @@ var supportedCss = [
 //////
 
 function getImageSrc(srcTxt) {
+    
+    
     if (!srcTxt) {
         return '';
     }
@@ -53,23 +55,26 @@ function getImageSrc(srcTxt) {
         return '';
     }
 
-    // TODO - convert <imgs> with svg sources to jpeg
+    // TODO move
+    srcTxt = srcTxt.replace(/&amp;/g, '&')
 
-    // TODO https://preview.redd.it/oyj35v4jrri41.png?width=960&crop=smart&auto=webp&s=aa6dac5580038f489faa707093710f427ec83b20
+    // TODO - convert <imgs> with svg sources to jpeg OR add support for svg
 
-    var fileExtension = getFileExtension(srcTxt);
+    let fileExtension = getFileExtension(srcTxt);
     if (fileExtension === '') {
         return '';
     }
-    var newImgFileName = 'img-' + generateRandomNumber(true) + '.' + fileExtension;
+    let newImgFileName = 'img-' + generateRandomNumber(true) + '.' + fileExtension;
 
-    var isB64Img = isBase64Img(srcTxt);
+    let isB64Img = isBase64Img(srcTxt);
     if (isB64Img) {
         extractedImages.push({
             filename: newImgFileName, // TODO name
             data: getBase64ImgData(srcTxt)
         });
     } else {
+        console.log("img url", fileExtension, getImgDownloadUrl(srcTxt));
+        
         allImages.push({
             originalUrl: getImgDownloadUrl(srcTxt),
             filename: newImgFileName,  // TODO name
@@ -90,7 +95,7 @@ function extractMathMl($htmlObject) {
 function extractCanvasToImg($htmlObject) {
     $htmlObject.find('canvas').each(function (index, elem) {
         try {
-            var imgUrl = docEl.toDataURL('image/jpeg');
+            let imgUrl = docEl.toDataURL('image/jpeg');
             $(elem).replaceWith('<img src="' + imgUrl + '" alt=""></img>');
         } catch (e) {
             console.log(e)
@@ -107,7 +112,7 @@ function extractSvgToImg($htmlObject) {
         let newWidth = bbox.width
         let newHeight = bbox.height
         let svgXml = serializer.serializeToString(elem);
-        var imgSrc = 'data:image/svg+xml;base64,' + window.btoa(svgXml);
+        let imgSrc = 'data:image/svg+xml;base64,' + window.btoa(svgXml);
         $(elem).replaceWith('<img src="' + imgSrc + '" width="'+newWidth+'" height="'+newHeight+'">' + '</img>');
     });
 }

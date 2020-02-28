@@ -162,18 +162,18 @@ function getImgDownloadUrl(imgSrc) {
     return getAbsoluteUrl(imgSrc);
 }
 
-function getAbsoluteUrl(urlStr) {
+function getAbsoluteUrl(urlStr) {    
     if (!urlStr) {
         return '';
     }
+    if (urlStr.length === 0) {
+        return '';
+    }
     try {
-        if (urlStr.length === 0) {
-            return '';
-        }
-        urlStr = decodeHtmlEntity(urlStr);
-        var currentUrl = getCurrentUrl();
-        var originUrl = getOriginUrl();
-        var absoluteUrl = urlStr;
+        urlStr = decodeHtmlEntity(urlStr);    
+        let currentUrl = getCurrentUrl();
+        let originUrl = getOriginUrl();
+        let absoluteUrl = urlStr;
 
         originUrl = removeEndingSlash(originUrl)
         currentUrl = removeEndingSlash(currentUrl)
@@ -187,7 +187,8 @@ function getAbsoluteUrl(urlStr) {
         } else if (urlStr.indexOf('http') !== 0) {
             absoluteUrl = currentUrl + '/' + urlStr;
         }
-        absoluteUrl = escapeXMLChars(absoluteUrl);
+        // TODO is this needed?
+        // absoluteUrl = escapeXMLChars(absoluteUrl);
         return absoluteUrl;
     } catch (e) {
         console.log('Error:', e);
