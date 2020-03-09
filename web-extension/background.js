@@ -228,40 +228,59 @@ function prepareStyles(tab, includeStyle, appliedStyles, callback) {
         let currentUrl = tab[0].url;
         let currentStyle = null;
 
-        if (styles && styles.length > 0) {
-            let allMatchingStyles = [];
+        if (!styles) {
+            callback(appliedStyles)
+        }
 
-            for (let i = 0; i < styles.length; i++) {
-                currentUrl = currentUrl.replace(/(http[s]?:\/\/|www\.)/i, '').toLowerCase();
-                let styleUrl = styles[i].url;
-                let styleUrlRegex = null;
+        if (styles.length === 0) {
+            callback(appliedStyles)
+        }
 
-                try {
-                    styleUrlRegex =  new RegExp(styleUrl, 'i');
-                } catch (e) {
-                }
+        let allMatchingStyles = [];
 
-                if (styleUrlRegex && styleUrlRegex.test(currentUrl)) {
-                    allMatchingStyles.push({
-                        index: i,
-                        length: styleUrl.length
-                    });
-                }
+        for (let i = 0; i < styles.length; i++) {
+            currentUrl = currentUrl.replace(/(http[s]?:\/\/|www\.)/i, '').toLowerCase();
+            let styleUrl = styles[i].url;
+            let styleUrlRegex = null;
+
+            try {
+                styleUrlRegex = new RegExp(styleUrl, 'i');
+            } catch (e) {
             }
 
-            if (allMatchingStyles.length >= 1) {
-                allMatchingStyles.sort((a, b) => b.length - a.length);
-                let selStyle = allMatchingStyles[0];
-                currentStyle = styles[selStyle.index];
-
-                if (currentStyle && currentStyle.style) {
-                    chrome.tabs.insertCSS(tab[0].id, {code: currentStyle.style});
-                    appliedStyles.push(currentStyle);
-                }
+            if (styleUrlRegex && styleUrlRegex.test(currentUrl)) {
+                allMatchingStyles.push({
+                    index: i,
+                    length: styleUrl.length
+                });
             }
         }
 
-        callback(appliedStyles)
+        if (allMatchingStyles.length === 0) {
+            callback(appliedStyles)
+        }
+
+        allMatchingStyles.sort((a, b) => b.length - a.length);
+        let selStyle = allMatchingStyles[0];
+
+        if (!selStyle) {
+            callback(appliedStyles)
+        }
+
+        currentStyle = styles[selStyle.index];
+
+        if (!currentStyle) {
+            callback(appliedStyles)
+        }
+
+        if (!currentStyle.style) {
+            callback(appliedStyles)
+        }
+
+        chrome.tabs.insertCSS(tab[0].id, { code: currentStyle.style }, () => {
+            appliedStyles.push(currentStyle);
+            callback(appliedStyles)
+        });
     });
 }
 
