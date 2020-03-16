@@ -230,10 +230,12 @@ function prepareStyles(tab, includeStyle, appliedStyles, callback) {
 
         if (!styles) {
             callback(appliedStyles)
+            return
         }
 
         if (styles.length === 0) {
             callback(appliedStyles)
+            return
         }
 
         let allMatchingStyles = [];
@@ -258,23 +260,27 @@ function prepareStyles(tab, includeStyle, appliedStyles, callback) {
 
         if (allMatchingStyles.length === 0) {
             callback(appliedStyles)
+            return
         }
-
+    
         allMatchingStyles.sort((a, b) => b.length - a.length);
         let selStyle = allMatchingStyles[0];
 
         if (!selStyle) {
             callback(appliedStyles)
+            return
         }
 
         currentStyle = styles[selStyle.index];
 
         if (!currentStyle) {
             callback(appliedStyles)
+            return
         }
 
         if (!currentStyle.style) {
             callback(appliedStyles)
+            return
         }
 
         chrome.tabs.insertCSS(tab[0].id, { code: currentStyle.style }, () => {
