@@ -66,6 +66,13 @@ in Chrome:
 3. Click on Keyboard shortcuts
 ```
 
+## Added in 1.4
+ - Smaller ebook file size
+ - Fix for #37 - custom styles not applied 
+ - Fix for #36 - br tag missing from pre blocks
+ - Fix for #31 - hanging in Busy state
+ - Other misc bug fixes 
+
 ## Added in v1.3.4
  - Fix for MathML - the rendered expression is too large (Issue #26)
  - Add translation in Russian (thanks to @ Emil Khalikov) & Brazilian Portuguese (thanks to @welksonramos)
