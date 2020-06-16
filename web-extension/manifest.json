@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "__MSG_extName__",
-    "version": "1.4",
+    "version": "1.4.99",
     "default_locale": "en",
     "author": "Alex Adam",
     "homepage_url": "https://github.com/alexadam/save-as-ebook",
@@ -11,7 +11,8 @@
     },
     "content_scripts": [{
         "matches": ["<all_urls>"],
-        "js": ["jquery.js", "jszip.js", "jszip-utils.js", "pure-parser.js", "cssjson.js", "filesaver.js", "saveEbook.js", "extractHtml.js", "utils.js"]
+        "js": ["jquery.js", "jszip.js", "jszip-utils.js", "pure-parser.js", "cssjson.js", "filesaver.js", 
+            "saveEbook.js", "extractHtml.js", "utils.js"]
     }],
     "background": {
         "scripts": ["background.js"]
@@ -22,16 +23,12 @@
         "default_popup": "menu.html"
      },
     "permissions": [
-        "contextMenus",
         "activeTab",
         "storage",
         "unlimitedStorage",
         "tabs",
-        "notifications",
-        "http://*/*",
-        "https://*/*",
         "<all_urls>",
-        "downloads"
+        "notifications"
     ],
     "commands": {
         "save-page": {
