@@ -169,15 +169,22 @@ function _buildEbook(allPages, fromMenu=false) {
     );
 
     ///////////////
-    var imgsFolder = oebps.folder("images");
-    allPages.forEach(function(page) {
-        for (var i = 0; i < page.images.length; i++) {
-            var tmpImg = page.images[i];
-            imgsFolder.file(tmpImg.filename, tmpImg.data, {
-                base64: true
-            });
-        }
-    });
+    try {
+        let imgsFolder = oebps.folder("images");
+        allPages.forEach(function(page) {
+            for (let i = 0; i < page.images.length; i++) {
+                let tmpImg = page.images[i]
+                if (tmpImg.isBinary) {
+                    imgsFolder.file(tmpImg.filename, tmpImg.data, {binary: true})
+                } else {
+                    imgsFolder.file(tmpImg.filename, tmpImg.data, {base64: true})
+                }
+            }
+        });
+    } catch (error) {
+        console.log(error);
+    }
+    
 
     zip.generateAsync({
             type: "blob"

@@ -379,7 +379,8 @@ function deferredAddZip(url, filename) {
             
             extractedImages.push({
                 filename: filename,
-                data: base64ArrayBuffer(data)
+                isBinary: true,
+                data: data
             });
             deferred.resolve();
         }
