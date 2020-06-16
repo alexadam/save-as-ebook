@@ -174,11 +174,12 @@ function _buildEbook(allPages, fromMenu=false) {
         allPages.forEach(function(page) {
             for (let i = 0; i < page.images.length; i++) {
                 let tmpImg = page.images[i]
-                if (tmpImg.isBinary) {
-                    imgsFolder.file(tmpImg.filename, tmpImg.data, {binary: true})
-                } else {
+                // TODO - Must be JSON serializable - see the same comment in extractHtml.js
+                // if (tmpImg.isBinary) {
+                //     imgsFolder.file(tmpImg.filename, tmpImg.data, {binary: true})
+                // } else {
                     imgsFolder.file(tmpImg.filename, tmpImg.data, {base64: true})
-                }
+                // }
             }
         });
     } catch (error) {

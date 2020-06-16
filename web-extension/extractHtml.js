@@ -376,12 +376,13 @@ function deferredAddZip(url, filename) {
                 }
                 tmpGlobalContent = tmpGlobalContent.replace(oldFilename, filename)
             }
-            
+                        
             extractedImages.push({
                 filename: filename,
-                isBinary: true,
-                data: data
+                // TODO - must be JSON serializable
+                data: base64ArrayBuffer(data)
             });
+            
             deferred.resolve();
         }
     });
