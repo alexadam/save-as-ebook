@@ -28,8 +28,26 @@ chrome.runtime.onInstalled.addListener(details => {
 ///////////////////
 
 
+// chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+//     if (changeInfo.status == 'complete' && tab.active) {
+  
+//       chrome.tabs.executeScript(null, {file: 'jquery.js'});
+//       chrome.tabs.executeScript(null, {file: 'jszip.js'});
+//       chrome.tabs.executeScript(null, {file: 'jszip-utils.js'});
+//       chrome.tabs.executeScript(null, {file: 'pure-parser.js'});
+//       chrome.tabs.executeScript(null, {file: 'cssjson.js'});
+//       chrome.tabs.executeScript(null, {file: 'filesaver.js'});
+//       chrome.tabs.executeScript(null, {file: 'saveEbook.js'});
+//       chrome.tabs.executeScript(null, {file: 'extractHtml.js'});
+//       chrome.tabs.executeScript(null, {file: 'utils.js'});
+
+//     }
+//   });
+
+
 
 var isBusy = false;
+var busyResetTimer = null
 
 var defaultStyles = [
     {
@@ -168,17 +186,20 @@ function executeCommand(command) {
     }
     if (command.type === 'save-page') {
         dispatch('extract-page', false, []);
-        isBusy = true;
     } else if (command.type === 'save-selection') {
         dispatch('extract-selection', false, []);
-        isBusy = true;
     } else if (command.type === 'add-page') {
         dispatch('extract-page', true, []);
-        isBusy = true;
     } else if (command.type === 'add-selection') {
         dispatch('extract-selection', true, []);
-        isBusy = true;
     }
+
+    isBusy = true
+
+    // 
+    busyResetTimer = setTimeout(() => {
+        resetBusy()
+    }, 20000)
 }
 
 function dispatch(action, justAddToBuffer, appliedStyles) {
@@ -335,8 +356,12 @@ function applyAction(tab, action, justAddToBuffer, includeStyle, appliedStyles, 
 }
 
 function resetBusy() {
-    isBusy = false;
-    chrome.browserAction.setBadgeText({text: ""});
+    if (busyResetTimer) {
+        clearTimeout(busyResetTimer)
+        busyResetTimer = null
+    }
+    isBusy = false
+    chrome.browserAction.setBadgeText({text: ""})
 
     let popups = chrome.extension.getViews({type: "popup"});
     if (popups && popups.length > 0) {
