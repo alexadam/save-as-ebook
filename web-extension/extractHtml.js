@@ -1,3 +1,11 @@
+
+// Used to replace <img> src links that don't have a file extension
+// If the image src doesn't have a file type:
+// 1. Create a dummy link
+// 2. Detect image type from the binary data & create new links
+// 3. Replace all the dummy links in tmpGlobalContent with the new links
+var tmpGlobalContent = null
+
 var allImages = [];
 var extractedImages = [];
 var allowedTags = [
@@ -56,7 +64,7 @@ function getImageSrc(srcTxt) {
 
     let fileExtension = getFileExtension(srcTxt);
     if (fileExtension === '') {
-        return '';
+       fileExtension = "TODO-EXTRACT"
     }
     let newImgFileName = 'img-' + generateRandomNumber(true) + '.' + fileExtension;
 
@@ -341,12 +349,34 @@ function extractCss(includeStyle, appliedStyles) {
 
 function deferredAddZip(url, filename) {
     let deferred = $.Deferred();
-    JSZipUtils.getBinaryContent(url, function(err, data) {
+    JSZipUtils.getBinaryContent(url, function(err, data) {        
         if (err) {
             // deferred.reject(err); TODO
             console.log('Error:', err);
             deferred.resolve();
         } else {
+            // TODO - move to utils.js
+            if (filename.endsWith("TODO-EXTRACT")) {
+                let oldFilename = filename
+                let arr = (new Uint8Array(data)).subarray(0, 4);
+                let header = "";
+                for(let i = 0; i < arr.length; i++) {
+                    header += arr[i].toString(16);
+                }
+                if (header.startsWith("89504e47")) {
+                    filename = filename.replace("TODO-EXTRACT", "png")
+                } else if (header.startsWith("47494638")) {
+                    filename = filename.replace("TODO-EXTRACT", "gif")
+                } else if (header.startsWith("ffd8ff")) {
+                    filename = filename.replace("TODO-EXTRACT", "jpg")
+                } else {
+                    // ERROR
+                    console.log("Error! Unable to extract the image type!");
+                    deferred.resolve();
+                }
+                tmpGlobalContent = tmpGlobalContent.replace(oldFilename, filename)
+            }
+            
             extractedImages.push({
                 filename: filename,
                 data: base64ArrayBuffer(data)
@@ -376,6 +406,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         });
     }
 
+    tmpGlobalContent = tmpContent
+
     allImages.forEach((tmpImg) => {
         imgsPromises.push(deferredAddZip(tmpImg.originalUrl, tmpImg.filename));
     });
@@ -389,7 +421,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             styleFileContent: styleFile,
             styleFileName: 'style' + generateRandomNumber() + '.css',
             images: extractedImages,
-            content: tmpContent
+            content: tmpGlobalContent
         };
         sendResponse(result);
     }).fail((e) => {
