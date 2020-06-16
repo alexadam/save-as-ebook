@@ -26,9 +26,10 @@
         "activeTab",
         "storage",
         "unlimitedStorage",
-        "tabs",
-        "<all_urls>",
         "notifications"
+    ],
+    "optional_permissions": [
+         "<all_urls>"
     ],
     "commands": {
         "save-page": {

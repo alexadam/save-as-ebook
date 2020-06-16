@@ -21,13 +21,14 @@
         "default_title": "Save as eBook",
         "default_popup": "menu.html"
      },
-    "permissions": [
-        "contextMenus",
+     "permissions": [
         "activeTab",
         "storage",
         "unlimitedStorage",
-        "tabs",
         "notifications"
+    ],
+    "optional_permissions": [
+         "<all_urls>"
     ],
     "commands": {
         "save-page": {
