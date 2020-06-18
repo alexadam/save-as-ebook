@@ -27,25 +27,6 @@ chrome.runtime.onInstalled.addListener(details => {
 ///////////////////
 ///////////////////
 
-
-// chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-//     if (changeInfo.status == 'complete' && tab.active) {
-  
-//       chrome.tabs.executeScript(null, {file: 'jquery.js'});
-//       chrome.tabs.executeScript(null, {file: 'jszip.js'});
-//       chrome.tabs.executeScript(null, {file: 'jszip-utils.js'});
-//       chrome.tabs.executeScript(null, {file: 'pure-parser.js'});
-//       chrome.tabs.executeScript(null, {file: 'cssjson.js'});
-//       chrome.tabs.executeScript(null, {file: 'filesaver.js'});
-//       chrome.tabs.executeScript(null, {file: 'saveEbook.js'});
-//       chrome.tabs.executeScript(null, {file: 'extractHtml.js'});
-//       chrome.tabs.executeScript(null, {file: 'utils.js'});
-
-//     }
-//   });
-
-
-
 var isBusy = false;
 var busyResetTimer = null
 
@@ -320,23 +301,17 @@ function applyAction(tab, action, justAddToBuffer, includeStyle, appliedStyles, 
 
         if (!response) {
             resetBusy()
-            chrome.tabs.sendMessage(tab[0].id, {'alert': 'Save as eBook does not work on this web site!'}, (r) => {
-              console.log(r);
-            });
+            chrome.tabs.sendMessage(tab[0].id, {'alert': 'Save as eBook does not work on this web site!'}, (r) => {});
             return;
         }
 
         if (response.content.trim() === '') {
-            if (justAddToBuffer) {
-                chrome.tabs.sendMessage(tab[0].id, {'alert': 'Cannot add an empty selection as chapter!'}, (r) => {
-                  console.log(r);
-                });
-            } else {
-                chrome.tabs.sendMessage(tab[0].id, {'alert': 'Cannot generate the eBook from an empty selection!'}, (r) => {
-                  console.log(r);
-                });
-            }
             resetBusy()
+            if (justAddToBuffer) {
+                chrome.tabs.sendMessage(tab[0].id, {'alert': 'Cannot add an empty selection as chapter!'}, (r) => {});
+            } else {
+                chrome.tabs.sendMessage(tab[0].id, {'alert': 'Cannot generate the eBook from an empty selection!'}, (r) => {});
+            }
             return;
         }
         if (!justAddToBuffer) {
@@ -356,11 +331,13 @@ function applyAction(tab, action, justAddToBuffer, includeStyle, appliedStyles, 
 }
 
 function resetBusy() {
+    isBusy = false
+
     if (busyResetTimer) {
         clearTimeout(busyResetTimer)
         busyResetTimer = null
     }
-    isBusy = false
+    
     chrome.browserAction.setBadgeText({text: ""})
 
     let popups = chrome.extension.getViews({type: "popup"});

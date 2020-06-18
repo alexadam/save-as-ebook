@@ -122,6 +122,9 @@ function extractIFrames() {
     let changeIFrames = []
     let newDivs = []
     for (let iFrame of allIframes) {
+        if (!iFrame.contentDocument || !iFrame.contentDocument.body) {
+            continue
+        }
         let bodyContent = iFrame.contentDocument.body.innerHTML        
         let bbox = iFrame.getBoundingClientRect()
         let newDiv = document.createElement('div')
