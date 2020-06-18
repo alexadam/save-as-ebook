@@ -18,7 +18,6 @@ var allowedTags = [
     'math', 'maction', 'menclose', 'merror', 'mfenced', 'mfrac', 'mglyph', 'mi', 'mlabeledtr', 'mmultiscripts', 'mn', 'mo', 'mover', 'mpadded', 'mphantom', 'mroot',
     'mrow', 'ms', 'mspace', 'msqrt', 'mstyle', 'msub', 'msup', 'msubsup', 'mtable', 'mtd', 'mtext', 'mtr', 'munder', 'munderover', 'msgroup', 'mlongdiv', 'mscarries',
     'mscarry', 'mstack', 'semantics'
-
     // TODO ? 
     // ,'form', 'button'
 
@@ -115,6 +114,29 @@ function extractSvgToImg($htmlObject) {
         let imgSrc = 'data:image/svg+xml;base64,' + window.btoa(svgXml);
         $(elem).replaceWith('<img src="' + imgSrc + '" width="'+newWidth+'" height="'+newHeight+'">' + '</img>');
     });
+}
+
+// replaces all iframes by divs with the same innerHTML content
+function extractIFrames() {
+    let allIframes = document.getElementsByTagName('iframe')
+    let changeIFrames = []
+    let newDivs = []
+    for (let iFrame of allIframes) {
+        let bodyContent = iFrame.contentDocument.body.innerHTML        
+        let bbox = iFrame.getBoundingClientRect()
+        let newDiv = document.createElement('div')
+        newDiv.style.width = bbox.width
+        newDiv.style.height = bbox.height
+        newDiv.innerHTML = bodyContent
+        changeIFrames.push(iFrame)
+        newDivs.push(newDiv)
+    }
+    for (let i = 0; i < newDivs.length; i++) {
+        let newDiv = newDivs[i]
+        let iFrame = changeIFrames[i]
+        let iframeParent = iFrame.parentNode
+        iframeParent.replaceChild(newDiv, iFrame)
+    }
 }
 
 function preProcess($htmlObject) {
@@ -395,6 +417,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     let pageSrc = '';
     let tmpContent = '';
     let styleFile = null;
+
+    extractIFrames()
 
     if (request.type === 'extract-page') {
         styleFile = extractCss(request.includeStyle, request.appliedStyles)
