@@ -23,13 +23,12 @@
         "default_popup": "menu.html"
      },
     "permissions": [
+        "contextMenus",
         "activeTab",
         "storage",
         "unlimitedStorage",
-        "notifications"
-    ],
-    "optional_permissions": [
-         "<all_urls>"
+        "notifications",
+        "<all_urls>"
     ],
     "commands": {
         "save-page": {
