@@ -356,6 +356,13 @@ function extractCss(includeStyle, appliedStyles) {
         });
         return jsonToCss(tmpIdsToNewCss);
     } else {
+        // remove hidden elements when style is not included
+        $('body').find('*').each((i, pre) => {
+            let $pre = $(pre)
+            if (!$pre.is(':visible')) {
+                $pre.replaceWith('')
+            }
+        })
         let mergedCss = '';
         if (appliedStyles && appliedStyles.length > 0) {
             for (let i = 0; i < appliedStyles.length; i++) {
