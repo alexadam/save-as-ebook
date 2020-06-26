@@ -66,6 +66,13 @@ in Chrome:
 3. Click on Keyboard shortcuts
 ```
 
+## Added in 1.4.1
+ - Remove unnecessary permissions
+ - Detect image type if the URL doesn't have a file extension (jpg, gif, png)
+ - Reset the Busy indicator on errors
+ - Remove hidden elements when style is not included
+ - Replace iframes with divs
+
 ## Added in 1.4
  - Smaller ebook file size
  - Fix for #37 - custom styles not applied 
