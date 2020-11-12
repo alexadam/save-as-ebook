@@ -3,40 +3,48 @@ var lastElementData = {}
 var lastParentElem = null
 var lastParentData = {}
 
+let cleanXPaths = []
+
 
 let bodyElem = document.getElementsByTagName('body')[0]
 let bodyInner = bodyElem.innerHTML
 bodyElem.innerHTML = ''
 
-let container = document.createElement('div')
-container.style.display = "flex"
-container.style.flexFlow = "row"
-let menuContainer = document.createElement('div')
-menuContainer.style.width = '300px'
-menuContainer.style.minWidth = '300px'
-menuContainer.style.height = '600px'
-menuContainer.style.minHeight = '600px'
-let page = document.createElement('div')
-page.id= 'super-selector'
-page.style.width = '100%'
-page.style.height = '100%'
-page.innerHTML = bodyInner
+// let container = document.createElement('div')
+// container.style.display = "flex"
+// container.style.flexFlow = "row"
+// let menuContainer = document.createElement('div')
+// menuContainer.style.width = '300px'
+// menuContainer.style.minWidth = '300px'
+// menuContainer.style.height = '600px'
+// menuContainer.style.minHeight = '600px'
+// let page = document.createElement('div')
+// page.id= 'super-selector'
+// page.style.width = '90%'
+// page.style.height = '90%'
+// page.innerHTML = bodyInner
 
-let menu = document.createElement('div')
-menu.id = "slector-main-menu"
-menu.style.width = '300px'
-menu.style.minWidth = '300px'
-menu.style.height = '600px'
-menu.style.minHeight = '600px'
-menu.style.backgroundColor = 'black'
-menu.style.position = 'fixed'
-menu.style.top = '0'
+// let menu = document.createElement('div')
+// menu.id = "slector-main-menu"
+// menu.style.width = '300px'
+// menu.style.minWidth = '300px'
+// menu.style.height = '600px'
+// menu.style.minHeight = '600px'
+// menu.style.backgroundColor = 'black'
+// menu.style.position = 'fixed'
+// menu.style.top = '0'
 
 
-container.appendChild(menuContainer)
-container.appendChild(page)
-bodyElem.appendChild(container)
-bodyElem.appendChild(menu)
+// container.appendChild(menuContainer)
+// container.appendChild(page)
+// bodyElem.appendChild(container)
+// bodyElem.appendChild(menu)
+
+bodyElem.innerHTML = `<div style="width: 100%;">
+        <div id="super-selector" style="max-width:75%; position: absolute;">${bodyInner}'</div>
+        <div id="slector-main-menu" style="width:25%; min-width: 300px; height: 100%; right: 0; position: fixed;">MENU</div>
+    </div>`
+
 
 document.getElementById('super-selector').addEventListener('mousemove', (e) => {
 // document.getElementsByTagName('body')[0].addEventListener('mousemove', (e) => {
@@ -66,6 +74,11 @@ document.getElementById('super-selector').addEventListener('mousemove', (e) => {
         }
 
         // console.log(createXPathFromElement(clickedElem));
+
+          ///
+        let tmpElem = document.createElement('div')
+        tmpElem.innerText = createXPathFromElement(clickedElem);
+        document.getElementById('slector-main-menu').appendChild(tmpElem)
 
         let clickedElemParent = clickedElem.parentNode;
         let foundClickedEleme = false
