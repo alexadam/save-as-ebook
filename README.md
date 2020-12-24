@@ -66,6 +66,9 @@ in Chrome:
 3. Click on Keyboard shortcuts
 ```
 
+## Added in 1.4.2
+ - Added MIME type to the generated .epub file
+
 ## Added in 1.4.1
  - Remove unnecessary permissions
  - Detect image type if the URL doesn't have a file extension (jpg, gif, png)

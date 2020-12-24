@@ -188,7 +188,8 @@ function _buildEbook(allPages, fromMenu=false) {
     
 
     zip.generateAsync({
-            type: "blob"
+            type: "blob",
+            mimeType: "application/epub+zip"
         })
         .then(function(content) {
             console.log("done !");
