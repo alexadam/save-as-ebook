@@ -295,9 +295,9 @@ function sanitize(rawContentString) {
                             tmpAttrsTxt += ' class="' + attrs[i].value + '"';
                         }
                     }
-					// +++ MM: some more extras like colspan ...
-					var extraAttrs = [ 'colspan', 'title', 'lang', 'span', 'name' ]; 
-					for (var i = 0; i < attrs.length; i++) {						
+		    // +++ MM: some more extras like colspan ...    "start" for <ol> numbering
+		    var extraAttrs = [ 'colspan', 'title', 'lang', 'span', 'name', 'start' ]; 
+		    for (var i = 0; i < attrs.length; i++) {						
                         if (extraAttrs.indexOf( attrs[i].name ) != -1 ) {
                           tmpAttrsTxt += ' '+attrs[i].name+'="' + attrs[i].value + '"'  ; 
                         }
