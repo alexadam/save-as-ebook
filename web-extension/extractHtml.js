@@ -126,17 +126,17 @@ function extractIFrames() {
             return "#" + id + " " + line.replace("body", "");
         }).join("\n");
     }
-    let iframes = Array.from(document.querySelectorAll("iframe"));
+    const iframes = Array.from(document.querySelectorAll("iframe"));
     const divs = iframes.map(function (iframe, index) {
         const div = document.createElement("div");
         div.id = "save-as-ebook-iframe-" + index;
         if (!iframe.contentDocument || !iframe.contentDocument.body) {
             return div;
         }
-        let bbox = iframe.getBoundingClientRect();
+        const bbox = iframe.getBoundingClientRect();
         div.style.width = bbox.width;
         div.style.height = bbox.height;
-        div.innerHTML = iframe.contentDocument.body.innerHTML ?? "";
+        div.innerHTML = iframe.contentDocument.body.innerHTML;
         Array.from(div.querySelectorAll("style")).forEach(function (style) {
             style.innerHTML = editStyle(style.innerHTML, div.id);
         });
