@@ -6,6 +6,9 @@
     "includeStyle": {
         "message": "Include (Custom) Style"
     },
+    "japaneseStyle": {
+        "message": "Make it Japanese"
+    },
     "editStyles": {
         "message": "Edit Custom Styles ..."
     },

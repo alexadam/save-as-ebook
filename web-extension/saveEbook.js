@@ -1,5 +1,6 @@
 var cssFileName = 'ebook.css';
 var ebookTitle = null;
+let japaneseStyle = false;
 
 chrome.runtime.onMessage.addListener((obj, sender, sendResponse) => {
     if (obj.shortcut && obj.shortcut === 'build-ebook') {
@@ -10,6 +11,15 @@ chrome.runtime.onMessage.addListener((obj, sender, sendResponse) => {
     }
     return true;
 })
+
+chrome.storage.local.get("japaneseStyle", function(data) {
+    if(typeof data.japaneseStyle == "undefined") {
+        japaneseStyle =  false;
+    } else {
+        japaneseStyle = data.japaneseStyle;
+    }
+});
+
 
 function getImagesIndex(allImages) {
     return allImages.reduce(function(prev, elem, index) {
@@ -136,8 +146,40 @@ function _buildEbook(allPages, fromMenu=false) {
             '</body></html>'
         );
     });
-
-    oebps.file('content.opf',
+    
+    if (japaneseStyle === true) {
+        oebps.file('content.opf',
+        '<?xml version="1.0" encoding="UTF-8" ?>' +
+        '<package xmlns="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" unique-identifier="db-id" version="3.0">' +
+        '<metadata>' +
+        '<dc:title id="t1">'+ ebookName + '</dc:title>' +
+        '<dc:identifier id="db-id">isbn</dc:identifier>' +
+        '<meta property="dcterms:modified">' + new Date().toISOString().replace(/\.[0-9]+Z/i, 'Z') + '</meta>' +
+        '<dc:language>en</dc:language>' +
+        '</metadata>' +
+        '<manifest>' +
+        '<item id="toc" properties="nav" href="toc.xhtml" media-type="application/xhtml+xml" />' +
+        '<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />' +
+        '<item id="template_css" href="' + cssFileName + '" media-type="text/css" />' +
+        allPages.reduce(function(prev, page, index) {
+            return prev + '\n' + '<item id="ebook' + index + '" href="pages/' + page.url + '" media-type="application/xhtml+xml" />';
+        }, '') +
+        allPages.reduce(function(prev, page, index) {
+            return prev + '\n' + '<item id="style' + index + '" href="style/' + page.styleFileName + '" media-type="text/css" />';
+        }, '') +
+        allPages.reduce(function(prev, page, index) {
+            return prev + '\n' + getImagesIndex(page.images);
+        }, '') +
+        '</manifest>' +
+        '<spine toc="ncx" page-progression-direction="rtl">' +
+        allPages.reduce(function(prev, page, index) {
+            return prev + '\n' + '<itemref idref="ebook' + index + '" />';
+        }, '') +
+        '</spine>' +
+        '</package>'
+    );
+    } else {
+        oebps.file('content.opf',
         '<?xml version="1.0" encoding="UTF-8" ?>' +
         '<package xmlns="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" unique-identifier="db-id" version="3.0">' +
         '<metadata>' +
@@ -166,7 +208,8 @@ function _buildEbook(allPages, fromMenu=false) {
         }, '') +
         '</spine>' +
         '</package>'
-    );
+    );    
+    }
 
     ///////////////
     try {
