@@ -43,7 +43,9 @@ var supportedCss = [
     'line-height',
     'list-style',
     'padding',
-    'text-align', 
+    'text-align',
+    "-epub-writing-mode",
+    "writing-mode",
 ];
 //////
 
