@@ -45,6 +45,7 @@ var supportedCss = [
     'padding',
     'text-align',
     "-epub-writing-mode",
+    "-webkit-writing-mode",
     "writing-mode",
 ];
 //////
@@ -368,6 +369,7 @@ function extractCss(includeStyle, appliedStyles) {
                 $pre.replaceWith('')
             }
         })
+
         let mergedCss = '';
         if (appliedStyles && appliedStyles.length > 0) {
             for (let i = 0; i < appliedStyles.length; i++) {

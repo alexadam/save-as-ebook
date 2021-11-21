@@ -125,13 +125,56 @@ function _buildEbook(allPages, fromMenu=false) {
         '</navMap>' +
         '</ncx>'
     );
-
+    if (japaneseStyle === true) {
+        var styleFolder = oebps.folder('style');
+        styleFolder.file('japanese.css', 
+        '.left { text-align:left; }' +
+        '.center { text-align:center; }' +
+        '.right {text-align:right; }' +
+        'img.left {float:left; }' + 
+        'img.left { float:right; }' +
+        '.blue { color:#0000ff; }' +
+        '.green {color:#008000; }' +
+        '.red { color:#ff0000; }' +
+        '.tcy { -epub-text-combine:horizontal; -webkit-text-combine:horizontal; }' +
+        '.em_accent { -epub-text-emphasis-style: filled sesame; }' +
+        '.em_dot { -epub-text-emphasis-style: filled double-circle; }' +
+        '.em_circle { -epub-text-emphasis-style: open dot; }' +
+        '.em_disc { -epub-text-emphasis-style: filled dot; }' +
+        '@page { margin:8%; }' +
+        '@media all and (orientation:portrait){ img.pagefit { width:100%; } } ' +
+        '@media all and (orientation:landscape){ img.pagefit { height:100%; } }' +
+        'body { font-size: 20px; line-height: 175%; letter-spacing: 0px; text-align: justify; -epub-writing-mode: vertical-rl; writing-mode: vertical-rl; }' +
+        'h1,h2,h3,h4,h5,h6 { font-size: 110%; font-weight: bold; }' +
+        'a { text-decoration: none; }' +
+        'a:link { color:#00008b; }' +
+        'a:visited { color:#00008b; }' +
+        '.indent { margin-right:1em; margin-left:1em; padding-top:1em; text-indent:-1em;}'); // Ugly but it works
+    }
     oebps.file(cssFileName, ''); //TODO
     var styleFolder = oebps.folder('style');
     allPages.forEach(function(page) {
         styleFolder.file(page.styleFileName, page.styleFileContent);
     });
+    
 
+    if (japaneseStyle === true) { 
+     var pagesFolder = oebps.folder('pages');
+    allPages.forEach(function(page) {
+        var tmpPageTitle = escapeXMLChars(page.title);
+        pagesFolder.file(page.url,
+            '<?xml version="1.0" encoding="utf-8"?>' +
+            '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">' +
+            '<head>' +
+            '<title>' + tmpPageTitle+ '</title>' +
+            '<link href="../style/japanese.css" rel="stylesheet" type="text/css" />' + 
+            '<link href="../style/' + page.styleFileName + '" rel="stylesheet" type="text/css" />' +
+            '</head><body>' +
+            page.content +
+            '</body></html>'
+        );
+    });
+    } else {
     var pagesFolder = oebps.folder('pages');
     allPages.forEach(function(page) {
         var tmpPageTitle = escapeXMLChars(page.title);
@@ -146,16 +189,17 @@ function _buildEbook(allPages, fromMenu=false) {
             '</body></html>'
         );
     });
-    
+    }
+ 
     if (japaneseStyle === true) {
         oebps.file('content.opf',
         '<?xml version="1.0" encoding="UTF-8" ?>' +
-        '<package xmlns="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" unique-identifier="db-id" version="3.0">' +
+        '<package xmlns="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" unique-identifier="db-id" version="3.0" xml:lang="ja">' +
         '<metadata>' +
         '<dc:title id="t1">'+ ebookName + '</dc:title>' +
         '<dc:identifier id="db-id">isbn</dc:identifier>' +
         '<meta property="dcterms:modified">' + new Date().toISOString().replace(/\.[0-9]+Z/i, 'Z') + '</meta>' +
-        '<dc:language>en</dc:language>' +
+        '<dc:language>ja</dc:language>' +
         '</metadata>' +
         '<manifest>' +
         '<item id="toc" properties="nav" href="toc.xhtml" media-type="application/xhtml+xml" />' +
@@ -164,8 +208,9 @@ function _buildEbook(allPages, fromMenu=false) {
         allPages.reduce(function(prev, page, index) {
             return prev + '\n' + '<item id="ebook' + index + '" href="pages/' + page.url + '" media-type="application/xhtml+xml" />';
         }, '') +
+        '<item id="style0" href="style/japanese.css" media-type="text/css" />' +
         allPages.reduce(function(prev, page, index) {
-            return prev + '\n' + '<item id="style' + index + '" href="style/' + page.styleFileName + '" media-type="text/css" />';
+            return prev + '\n' + '<item id="style' + index+1 + '" href="style/' + page.styleFileName + '" media-type="text/css" />';
         }, '') +
         allPages.reduce(function(prev, page, index) {
             return prev + '\n' + getImagesIndex(page.images);
