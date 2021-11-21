@@ -4,6 +4,7 @@ var appliedStyles = [];
 
 // create menu labels
 document.getElementById('menuTitle').innerHTML = chrome.i18n.getMessage('extName');
+document.getElementById('japaneseStyle').innerHTML = chrome.i18n.getMessage('japaneseStyle');
 document.getElementById('includeStyle').innerHTML = chrome.i18n.getMessage('includeStyle');
 document.getElementById('editStyles').innerHTML = chrome.i18n.getMessage('editStyles');
 document.getElementById('savePageLabel').innerHTML = chrome.i18n.getMessage('savePage');
@@ -86,6 +87,26 @@ function createStyleList(styles) {
             }, function(response) {
             });
         }
+    });
+}
+
+function createJapaneseStyle(data) {
+    let japaneseStyleCheck = document.getElementById('japaneseStyleCheck');
+    japaneseStyleCheck.checked = data;
+}
+
+chrome.runtime.sendMessage({
+    type: "get japanese style"
+}, function(response) {
+    createJapaneseStyle(response.japaneseStyle);
+});
+
+document.getElementById('japaneseStyleCheck').onclick = function () {
+    let japaneseStyleCheck = document.getElementById('japaneseStyleCheck');
+    chrome.runtime.sendMessage({
+        type: "set japanese style",
+        japaneseStyle: japaneseStyleCheck.checked
+    }, function(response) {
     });
 }
 

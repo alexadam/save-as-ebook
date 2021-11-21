@@ -206,6 +206,16 @@ function dispatch(action, justAddToBuffer, appliedStyles) {
     });
 }
 
+function isJapaneseStyles(callback) {
+    chrome.storage.local.get('japaneseStyle', (data) => {
+        if (!data) {
+            callback({japaneseStyle: false});
+        } else {
+            callback({japaneseStyle: data.japaneseStyle});
+        }
+    });
+}
+
 function isIncludeStyles(callback) {
     chrome.storage.local.get('includeStyle', (data) => {
         if (!data) {
@@ -399,6 +409,18 @@ function _execRequest(request, sender, sendResponse) {
     }
     if (request.type === 'set current style') {
         chrome.storage.local.set({'currentStyle': request.currentStyle});
+    }
+    if (request.type === 'get japanese style') {
+        chrome.storage.local.get('japaneseStyle', function (data) {
+            if (!data) {
+                sendResponse({japaneseStyle: false});
+            } else {
+                sendResponse({japaneseStyle: data.japaneseStyle});
+            }
+        });
+    }
+    if (request.type === 'set japanese style') {
+        chrome.storage.local.set({'japaneseStyle': request.japaneseStyle});
     }
     if (request.type === 'get include style') {
         chrome.storage.local.get('includeStyle', function (data) {

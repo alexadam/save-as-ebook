@@ -6,6 +6,9 @@
     "includeStyle": {
         "message": "Inclure le style"
     },
+    "japaneseStyle": {
+        "message": "A la Japonaise"
+    },
     "styleLabel": {
         "message": "Style personnalisé :"
     },

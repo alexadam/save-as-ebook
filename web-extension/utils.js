@@ -1,3 +1,19 @@
+function setJapaneseStyle(japaneseStyle) {
+    chrome.runtime.sendMessage({
+        type: "set japanese style",
+        japaneseStyle: japaneseStyle
+    }, function(response) {
+    });
+}
+
+function getJapaneseStyle(callback) {
+    chrome.runtime.sendMessage({
+        type: "get japanese style"
+    }, function(response) {
+        callback(response.japaneseStyle);
+    });
+}
+
 function setIncludeStyle(includeStyle) {
     chrome.runtime.sendMessage({
         type: "set include style",
