@@ -138,4 +138,5 @@ in Chrome:
  - http://johnny.github.io/jquery-sortable/
  - https://github.com/eligrey/FileSaver.js/
  - https://www.iconfinder.com/icons/753890/book_books_education_library_study_icon#size=128
+ - http://www2.infocity.co.jp/epubjp/EPUB3_Japanese_Basic_Standard_E_1020.pdf
  - Thanks to [pumpk0n](https://github.com/pumpk0n) and [Francois Bocquet](https://github.com/fbocquet) for helping me with the French translation
