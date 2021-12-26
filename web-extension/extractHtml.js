@@ -118,14 +118,24 @@ function extractSvgToImg($htmlObject) {
 
 // replaces all iframes by divs with the same innerHTML content
 function extractIFrames() {
-    function editStyle(style, id) {
-        return style.split("\n").map(function (line) {
-            if(!/\{/.test(line)) {
-                return line;
-            }
-            return "#" + id + " " + line.replace("body", "");
-        }).join("\n");
-    }
+	function addIdInStyle(style, id) {
+		return style.split("{").map(function (segment) {
+			const selectors = segment.split("}");
+			// if the CSS is well formed, selectors may be 1 element (for the first 
+			// rule) or 2 elements array. Last element is the one which contains the
+			// actual selectors.
+			selectors[selectors.length - 1] = selectors[selectors.length - 1]
+				.split(",")
+				.map(function (selector) {
+				return (
+					selector.trim().length > 0//check if it's just an empty line
+					? "#" + id + " " + selector.replace("body", "")
+					: selector
+				);
+			});
+			return selectors.join("}");
+		}).join("{");
+	}
     const iframes = Array.from(document.querySelectorAll("iframe"));
     const divs = iframes.map(function (iframe, index) {
         const div = document.createElement("div");
@@ -138,7 +148,7 @@ function extractIFrames() {
         div.style.height = bbox.height;
         div.innerHTML = iframe.contentDocument.body.innerHTML;
         Array.from(div.querySelectorAll("style")).forEach(function (style) {
-            style.innerHTML = editStyle(style.innerHTML, div.id);
+            style.innerHTML = addIdInStyle(style.innerHTML, div.id);
         });
         return div;
     });
