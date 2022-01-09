@@ -141,12 +141,6 @@ function extractIFrames(iframes, prefix = "") {
 		}).join("{");
 	}
 
-	function createResetStyle(id) {
-		const style = document.createElement("style");
-		style.innerHTML = "#" + id + ",#" + id + " * {all:unset;}";
-		return style;
-	}
-
     const divs = iframes.map(function (iframe, index) {
         const div = document.createElement("div");
         div.id = prefix + "save-as-ebook-iframe-" + index;
@@ -160,14 +154,12 @@ function extractIFrames(iframes, prefix = "") {
 		console.log(div.id);
         div.innerHTML = iframe.contentDocument.body.innerHTML;
         Array.from(div.querySelectorAll("style")).forEach(function (style) {
-			console.log("style edited!");
             style.innerHTML = addIdInStyle(style.innerHTML, div.id);
         });
 
 		div.insertBefore(createResetStyle(div.id), div.firstChild);
         return div;
     });
-    iframes.forEach((iframe, i) => iframe.parentNode.replaceChild(divs[i], iframe));
 	return divs.forEach((div, i) => extractIFrames(
 		Array.from(div.querySelectorAll("iframe")),
 		i + "-"
