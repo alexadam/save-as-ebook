@@ -157,9 +157,9 @@ function extractIFrames(iframes, prefix = "") {
             style.innerHTML = addIdInStyle(style.innerHTML, div.id);
         });
 
-		div.insertBefore(createResetStyle(div.id), div.firstChild);
         return div;
     });
+    iframes.forEach((iframe, i) => iframe.parentNode.replaceChild(divs[i], iframe));
 	return divs.forEach((div, i) => extractIFrames(
 		Array.from(div.querySelectorAll("iframe")),
 		i + "-"
