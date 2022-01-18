@@ -99,7 +99,11 @@ function setIsBusy(isBusy) {
 }
 
 /////
-function getCurrentUrl() {
+function getBaseUrl() {
+	const base = document.querySelector("base");
+	if (base) {
+		return base.getAttribute("href");
+	}
     let url = window.location.href;
     if (url.indexOf('?') > 0) {
         url = window.location.href.split('?')[0];
@@ -171,7 +175,7 @@ function getAbsoluteUrl(urlStr) {
     }
     try {
         urlStr = decodeHtmlEntity(urlStr);    
-        let currentUrl = getCurrentUrl();
+        let currentUrl = getBaseUrl();
         let originUrl = getOriginUrl();
         let absoluteUrl = urlStr;
 
