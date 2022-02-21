@@ -76,6 +76,18 @@ function showEditor() {
     createNewStyleButton.onclick = createNewStyle;
     titleHolder.appendChild(createNewStyleButton);
 
+	var exportCustomCssButton = document.createElement('button');
+	exportCustomCssButton.id = 'cssEditor-exportCustomCss'; 
+    exportCustomCssButton.innerText = chrome.i18n.getMessage('exportCustomCss');
+    exportCustomCssButton.onclick = exportCustomCss;
+    titleHolder.appendChild(exportCustomCssButton);
+
+	var importCustomCssButton = document.createElement('button');
+	importCustomCssButton.id = 'cssEditor-importCustomCss'; 
+    importCustomCssButton.innerText = chrome.i18n.getMessage('importCustomCss');
+    importCustomCssButton.onclick = importCustomCss;
+    titleHolder.appendChild(importCustomCssButton);
+
     modalList.appendChild(titleHolder);
 
     function createNewStyle() {
@@ -88,6 +100,8 @@ function showEditor() {
         createStyleList();
     }
 
+	function importCustomCss() {}
+	function exportCustomCss() {}
     //////
 
     var editorHolder = document.createElement('div');

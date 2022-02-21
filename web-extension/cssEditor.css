@@ -23,11 +23,15 @@
     font-size: 15px;
     font-family: sans-serif;
 }
-#cssEditor-createNewStyle {
+#cssEditor-createNewStyle,
+#cssEditor-importCustomCss,
+#cssEditor-exportCustomCss
+{
     padding: 3px;
     cursor: pointer;
     font-size: 15px;
     font-family: sans-serif;
+	margin-right: 3px;
 }
 .cssEditor-field-label-holder {
     margin-top: 10px;
