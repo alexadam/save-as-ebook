@@ -436,7 +436,7 @@ function _execRequest(request, sender, sendResponse) {
             chrome.downloads.download({
                 'saveAs': true,
                 'url': URL.createObjectURL(
-                    new Blob([JSON.stringify(data)], {
+                    new Blob([JSON.stringify({styles: data.styles})], {
                         type: "application/json",
                     })
                 ),

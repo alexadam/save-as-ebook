@@ -104,31 +104,48 @@ function showEditor() {
         createStyleList();
     }
 
-    function logError() {
-        if (chrome.runtime.lastError) {
-            console.error('Error: ', chrome.runtime.lastError.message);
-        }
-    }
+	function validateCustomStyles(customStyles) {
+		if (!customStyles.styles) {
+			return false;
+		}
+		return customStyles.styles.every((style) => {
+			return (
+				checkRegex(style.url)
+				&& typeof style.title === "string" && style.title.length
+				&& typeof style.style === "string" && style.style.length
+			);
+
+		});
+	}
 
 	function importCustomStyles(event) {
         var reader = new FileReader();
         reader.readAsText(event.target.files[0]);
-        reader.onload = function() {
+        reader.onload = function () {
             try {
-                var importedStyle = JSON.parse(reader.result);
-                chrome.runtime.sendMessage({'type': 'ImportCustomStyles', 'customStyles': importedStyle}, logError);
+                var importedStyles = JSON.parse(reader.result);
             } catch (e) {
-                console.error("invalid Style imported");
-                //EXIT! alert(chrome.i18n.getMessage('styleSaved'));
+                alert(chrome.i18n.getMessage('invalidCustomStyleJson'));
+				return;
             }
+			if (validateCustomStyles(importedStyles)) {
+				chrome.runtime.sendMessage({'type': 'ImportCustomStyles', 'customStyles': importedStyles}, () => {
+					alert(chrome.i18n.getMessage('stylesImported'));
+					closeModal();
+				});
+			} else {
+				alert(chrome.i18n.getMessage('invalidCustomStyleJson'));
+			}
+			return;
         };
 
         reader.onerror = function() {
-            console.log(reader.error);
+			alert(chrome.i18n.getMessage('errorOnReadingFile'));
+			return;
         };
     }
 	function exportCustomStyles() {
-        chrome.runtime.sendMessage({'type': 'ExportCustomStyles'}, logError);
+        chrome.runtime.sendMessage({'type': 'ExportCustomStyles'}, () => {});
     }
     //////
 
@@ -288,7 +305,7 @@ function showEditor() {
     }
 
     function saveStyle() {
-        var isRegexValid = checkRegex();
+        var isRegexValid = checkRegex(document.getElementById('cssEditor-matchUrl').value);
         if (!isRegexValid) {
             alert(chrome.i18n.getMessage('invalidRegex'));
             return;
@@ -312,9 +329,11 @@ function showEditor() {
         alert(chrome.i18n.getMessage('styleSaved'));
     }
 
-    function checkRegex() {
-        var regexContent = document.getElementById('cssEditor-matchUrl').value;
+    function checkRegex(regexContent) {
         var isValid = true;
+		if (typeof regexContent !== "string") {
+			return false;
+		}
         try {
             new RegExp(regexContent);
         } catch(e) {
