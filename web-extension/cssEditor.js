@@ -77,13 +77,13 @@ function showEditor() {
     titleHolder.appendChild(createNewStyleButton);
 
 	var exportCustomCssButton = document.createElement('button');
-	exportCustomCssButton.id = 'cssEditor-exportCustomCss'; 
+	exportCustomCssButton.id = 'cssEditor-exportCustomCss';
     exportCustomCssButton.innerText = chrome.i18n.getMessage('exportCustomCss');
     exportCustomCssButton.onclick = exportCustomCss;
     titleHolder.appendChild(exportCustomCssButton);
 
 	var importCustomCssButton = document.createElement('button');
-	importCustomCssButton.id = 'cssEditor-importCustomCss'; 
+	importCustomCssButton.id = 'cssEditor-importCustomCss';
     importCustomCssButton.innerText = chrome.i18n.getMessage('importCustomCss');
     importCustomCssButton.onclick = importCustomCss;
     titleHolder.appendChild(importCustomCssButton);
@@ -100,8 +100,18 @@ function showEditor() {
         createStyleList();
     }
 
-	function importCustomCss() {}
-	function exportCustomCss() {}
+    function logError() {
+        if (chrome.runtime.lastError) {
+            console.error('Error: ', chrome.runtime.lastError.message);
+        }
+    }
+
+	function importCustomCss() {
+        chrome.runtime.sendMessage({'type': 'ImportCustomCss'}, logError);
+    }
+	function exportCustomCss() {
+        chrome.runtime.sendMessage({'type': 'ExportCustomCss'}, logError);
+    }
     //////
 
     var editorHolder = document.createElement('div');

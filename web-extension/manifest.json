@@ -11,8 +11,8 @@
     },
     "content_scripts": [{
         "matches": ["<all_urls>"],
-        "js": ["./libs/jquery.js", "./libs/jszip.js", "./libs/jszip-utils.js", 
-            "./libs/pure-parser.js", "./libs/cssjson.js", "./libs/filesaver.js", 
+        "js": ["./libs/jquery.js", "./libs/jszip.js", "./libs/jszip-utils.js",
+            "./libs/pure-parser.js", "./libs/cssjson.js", "./libs/filesaver.js",
             "saveEbook.js", "extractHtml.js", "utils.js"]
     }],
     "background": {
@@ -26,6 +26,7 @@
     "permissions": [
         "contextMenus",
         "activeTab",
+        "downloads",
         "storage",
         "unlimitedStorage",
         "notifications",

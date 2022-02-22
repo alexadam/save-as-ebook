@@ -31,7 +31,7 @@
     cursor: pointer;
     font-size: 15px;
     font-family: sans-serif;
-	margin-right: 3px;
+	margin: 0 3px;
 }
 .cssEditor-field-label-holder {
     margin-top: 10px;
