@@ -78,11 +78,11 @@
     "createNewStyle": {
         "message": "Create New Style"
     },
-    "importCustomCss": {
-        "message": "Import custom CSS"
+    "importCustomStyles": {
+        "message": "Import custom Styles"
     },
-    "exportCustomCss": {
-        "message": "Export custom CSS"
+    "exportCustomStyles": {
+        "message": "Export custom Styles"
     },
     "styleNameLabel": {
         "message": "Name"

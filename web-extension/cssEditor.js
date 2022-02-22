@@ -76,17 +76,21 @@ function showEditor() {
     createNewStyleButton.onclick = createNewStyle;
     titleHolder.appendChild(createNewStyleButton);
 
-	var exportCustomCssButton = document.createElement('button');
-	exportCustomCssButton.id = 'cssEditor-exportCustomCss';
-    exportCustomCssButton.innerText = chrome.i18n.getMessage('exportCustomCss');
-    exportCustomCssButton.onclick = exportCustomCss;
-    titleHolder.appendChild(exportCustomCssButton);
+	var exportCustomStylesButton = document.createElement('button');
+	exportCustomStylesButton.id = 'cssEditor-exportCustomStyles';
+    exportCustomStylesButton.innerText = chrome.i18n.getMessage('exportCustomStyles');
+    exportCustomStylesButton.onclick = exportCustomStyles;
+    titleHolder.appendChild(exportCustomStylesButton);
 
-	var importCustomCssButton = document.createElement('button');
-	importCustomCssButton.id = 'cssEditor-importCustomCss';
-    importCustomCssButton.innerText = chrome.i18n.getMessage('importCustomCss');
-    importCustomCssButton.onclick = importCustomCss;
-    titleHolder.appendChild(importCustomCssButton);
+	var importCustomStylesInput = document.createElement('input');
+	var importCustomStylesButton = document.createElement('label');
+    importCustomStylesButton.id = 'cssEditor-importCustomStyles';
+    importCustomStylesInput.type = 'file';
+    importCustomStylesInput.accept = 'application/json';
+    importCustomStylesButton.innerText = chrome.i18n.getMessage('importCustomStyles');
+    importCustomStylesButton.onchange = importCustomStyles;
+    importCustomStylesButton.appendChild(importCustomStylesInput);
+    titleHolder.appendChild(importCustomStylesButton);
 
     modalList.appendChild(titleHolder);
 
@@ -106,11 +110,25 @@ function showEditor() {
         }
     }
 
-	function importCustomCss() {
-        chrome.runtime.sendMessage({'type': 'ImportCustomCss'}, logError);
+	function importCustomStyles(event) {
+        var reader = new FileReader();
+        reader.readAsText(event.target.files[0]);
+        reader.onload = function() {
+            try {
+                var importedStyle = JSON.parse(reader.result);
+                chrome.runtime.sendMessage({'type': 'ImportCustomStyles', 'customStyles': importedStyle}, logError);
+            } catch (e) {
+                console.error("invalid Style imported");
+                //EXIT! alert(chrome.i18n.getMessage('styleSaved'));
+            }
+        };
+
+        reader.onerror = function() {
+            console.log(reader.error);
+        };
     }
-	function exportCustomCss() {
-        chrome.runtime.sendMessage({'type': 'ExportCustomCss'}, logError);
+	function exportCustomStyles() {
+        chrome.runtime.sendMessage({'type': 'ExportCustomStyles'}, logError);
     }
     //////
 

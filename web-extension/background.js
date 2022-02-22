@@ -431,7 +431,7 @@ function _execRequest(request, sender, sendResponse) {
     if (request.type === 'done') {
         resetBusy()
     }
-    if (request.type === 'ExportCustomCss') {
+    if (request.type === 'ExportCustomStyles') {
         chrome.storage.local.get(null, function (data) {
             chrome.downloads.download({
                 'saveAs': true,
@@ -440,13 +440,13 @@ function _execRequest(request, sender, sendResponse) {
                         type: "application/json",
                     })
                 ),
-                'filename': 'customCss.json'
+                'filename': 'customStyles.json'
             }, logError);
         });
 
     }
-    if (request.type === 'ImportCustomCss') {
-        console.log("import css");
+    if (request.type === 'ImportCustomStyles') {
+        chrome.storage.local.set({'styles': request.customStyles.styles});
     }
     return true;
 }
