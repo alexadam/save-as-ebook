@@ -129,23 +129,29 @@ function showEditor() {
 				return;
             }
 			if (validateCustomStyles(importedStyles)) {
-				chrome.runtime.sendMessage({'type': 'ImportCustomStyles', 'customStyles': importedStyles}, () => {
-					alert(chrome.i18n.getMessage('stylesImported'));
-					closeModal();
-				});
+				chrome.runtime.sendMessage(
+					{
+						'type': 'ImportCustomStyles',
+						'customStyles': importedStyles
+					},
+					function () {
+						alert(chrome.i18n.getMessage('stylesImported'));
+						closeModal();
+					}
+				);
 			} else {
 				alert(chrome.i18n.getMessage('invalidCustomStyleJson'));
 			}
 			return;
         };
 
-        reader.onerror = function() {
+        reader.onerror = function () {
 			alert(chrome.i18n.getMessage('errorOnReadingFile'));
 			return;
         };
     }
 	function exportCustomStyles() {
-        chrome.runtime.sendMessage({'type': 'ExportCustomStyles'}, () => {});
+        chrome.runtime.sendMessage({'type': 'ExportCustomStyles'});
     }
     //////
 

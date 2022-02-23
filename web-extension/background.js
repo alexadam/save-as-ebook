@@ -346,12 +346,6 @@ function resetBusy() {
     }
 }
 
-function logError() {
-    if (chrome.runtime.lastError) {
-        console.error('Error: ', chrome.runtime.lastError.message);
-    }
-}
-
 chrome.runtime.onMessage.addListener(_execRequest);
 
 function _execRequest(request, sender, sendResponse) {
@@ -441,12 +435,15 @@ function _execRequest(request, sender, sendResponse) {
                     })
                 ),
                 'filename': 'customStyles.json'
-            }, logError);
+            });
         });
 
     }
     if (request.type === 'ImportCustomStyles') {
-        chrome.storage.local.set({'styles': request.customStyles.styles});
+        chrome.storage.local.set(
+			{'styles': request.customStyles.styles},
+			sendResponse
+		);
     }
     return true;
 }
