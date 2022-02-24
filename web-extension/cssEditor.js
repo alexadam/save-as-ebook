@@ -108,14 +108,11 @@ function showEditor() {
 		if (!customStyles.styles) {
 			return false;
 		}
-		return customStyles.styles.every((style) => {
-			return (
-				checkRegex(style.url)
-				&& typeof style.title === "string" && style.title.length
-				&& typeof style.style === "string" && style.style.length
-			);
-
-		});
+		return customStyles.styles.every((style) => (
+			checkRegex(style.url)
+			&& typeof style.title === "string" && style.title.length
+			&& typeof style.style === "string" && style.style.length
+		) });
 	}
 
 	function importCustomStyles(event) {
