@@ -112,7 +112,7 @@ function showEditor() {
 			checkRegex(style.url)
 			&& typeof style.title === "string" && style.title.length
 			&& typeof style.style === "string" && style.style.length
-		) });
+		));
 	}
 
 	function importCustomStyles(event) {
