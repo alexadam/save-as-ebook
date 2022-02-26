@@ -23,11 +23,24 @@
     font-size: 15px;
     font-family: sans-serif;
 }
-#cssEditor-createNewStyle {
+#cssEditor-createNewStyle,
+#cssEditor-exportCustomStyles,
+#cssEditor-importCustomStyles
+{
     padding: 3px;
     cursor: pointer;
     font-size: 15px;
     font-family: sans-serif;
+	margin: 0 3px;
+    border-radius: 5px;
+    border: 1px solid;
+    border-color: #8F8F9D;
+    background-color: #E9E9ED;
+    cursor: pointer;
+    display: inline-block;
+}
+input[type="file"] {
+    display: none;
 }
 .cssEditor-field-label-holder {
     margin-top: 10px;

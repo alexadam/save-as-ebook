@@ -63,6 +63,15 @@
     "invalidRegex": {
         "message": "Invalid regular expression"
     },
+	"invalidCustomStyleJson": {
+		"message": "Invalid custom styles JSON"
+	},
+	"stylesImported": {
+		"message": "Custom styles imported correctly"
+	},
+    "errorOnReadingFile": {
+        "message": "Error on reading file"
+    },
     "styleSaved": {
         "message": "Style saved!"
     },
@@ -77,6 +86,12 @@
     },
     "createNewStyle": {
         "message": "Create New Style"
+    },
+    "importCustomStyles": {
+        "message": "Import custom Styles"
+    },
+    "exportCustomStyles": {
+        "message": "Export custom Styles"
     },
     "styleNameLabel": {
         "message": "Name"

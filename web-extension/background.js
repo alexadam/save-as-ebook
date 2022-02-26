@@ -177,7 +177,7 @@ function executeCommand(command) {
 
     isBusy = true
 
-    // 
+    //
     busyResetTimer = setTimeout(() => {
         resetBusy()
     }, 20000)
@@ -264,7 +264,7 @@ function prepareStyles(tab, includeStyle, appliedStyles, callback) {
             callback(appliedStyles)
             return
         }
-    
+
         allMatchingStyles.sort((a, b) => b.length - a.length);
         let selStyle = allMatchingStyles[0];
 
@@ -337,7 +337,7 @@ function resetBusy() {
         clearTimeout(busyResetTimer)
         busyResetTimer = null
     }
-    
+
     chrome.browserAction.setBadgeText({text: ""})
 
     let popups = chrome.extension.getViews({type: "popup"});
@@ -424,6 +424,26 @@ function _execRequest(request, sender, sendResponse) {
     }
     if (request.type === 'done') {
         resetBusy()
+    }
+    if (request.type === 'ExportCustomStyles') {
+        chrome.storage.local.get(null, function (data) {
+            chrome.downloads.download({
+                'saveAs': true,
+                'url': URL.createObjectURL(
+                    new Blob([JSON.stringify({styles: data.styles})], {
+                        type: "application/json",
+                    })
+                ),
+                'filename': 'customStyles.json'
+            });
+        });
+
+    }
+    if (request.type === 'ImportCustomStyles') {
+        chrome.storage.local.set(
+			{'styles': request.customStyles.styles},
+			sendResponse
+		);
     }
     return true;
 }

@@ -76,6 +76,22 @@ function showEditor() {
     createNewStyleButton.onclick = createNewStyle;
     titleHolder.appendChild(createNewStyleButton);
 
+	var exportCustomStylesButton = document.createElement('button');
+	exportCustomStylesButton.id = 'cssEditor-exportCustomStyles';
+    exportCustomStylesButton.innerText = chrome.i18n.getMessage('exportCustomStyles');
+    exportCustomStylesButton.onclick = exportCustomStyles;
+    titleHolder.appendChild(exportCustomStylesButton);
+
+	var importCustomStylesInput = document.createElement('input');
+	var importCustomStylesButton = document.createElement('label');
+    importCustomStylesButton.id = 'cssEditor-importCustomStyles';
+    importCustomStylesInput.type = 'file';
+    importCustomStylesInput.accept = 'application/json';
+    importCustomStylesButton.innerText = chrome.i18n.getMessage('importCustomStyles');
+    importCustomStylesButton.onchange = importCustomStyles;
+    importCustomStylesButton.appendChild(importCustomStylesInput);
+    titleHolder.appendChild(importCustomStylesButton);
+
     modalList.appendChild(titleHolder);
 
     function createNewStyle() {
@@ -88,6 +104,52 @@ function showEditor() {
         createStyleList();
     }
 
+	function validateCustomStyles(customStyles) {
+		if (!customStyles.styles) {
+			return false;
+		}
+		return customStyles.styles.every((style) => (
+			checkRegex(style.url)
+			&& typeof style.title === "string" && style.title.length
+			&& typeof style.style === "string" && style.style.length
+		));
+	}
+
+	function importCustomStyles(event) {
+        var reader = new FileReader();
+        reader.readAsText(event.target.files[0]);
+        reader.onload = function () {
+            try {
+                var importedStyles = JSON.parse(reader.result);
+            } catch (e) {
+                alert(chrome.i18n.getMessage('invalidCustomStyleJson'));
+				return;
+            }
+			if (validateCustomStyles(importedStyles)) {
+				chrome.runtime.sendMessage(
+					{
+						'type': 'ImportCustomStyles',
+						'customStyles': importedStyles
+					},
+					function () {
+						alert(chrome.i18n.getMessage('stylesImported'));
+						closeModal();
+					}
+				);
+			} else {
+				alert(chrome.i18n.getMessage('invalidCustomStyleJson'));
+			}
+			return;
+        };
+
+        reader.onerror = function () {
+			alert(chrome.i18n.getMessage('errorOnReadingFile'));
+			return;
+        };
+    }
+	function exportCustomStyles() {
+        chrome.runtime.sendMessage({'type': 'ExportCustomStyles'});
+    }
     //////
 
     var editorHolder = document.createElement('div');
@@ -246,7 +308,7 @@ function showEditor() {
     }
 
     function saveStyle() {
-        var isRegexValid = checkRegex();
+        var isRegexValid = checkRegex(document.getElementById('cssEditor-matchUrl').value);
         if (!isRegexValid) {
             alert(chrome.i18n.getMessage('invalidRegex'));
             return;
@@ -270,9 +332,11 @@ function showEditor() {
         alert(chrome.i18n.getMessage('styleSaved'));
     }
 
-    function checkRegex() {
-        var regexContent = document.getElementById('cssEditor-matchUrl').value;
+    function checkRegex(regexContent) {
         var isValid = true;
+		if (typeof regexContent !== "string") {
+			return false;
+		}
         try {
             new RegExp(regexContent);
         } catch(e) {
