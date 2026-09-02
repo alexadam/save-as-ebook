@@ -16,7 +16,7 @@ or manually
 3. Select the extension's directory
 ```
 
-### From [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/saveasebook/)
+### From [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/saveasebook/)
 
 or manually
 
