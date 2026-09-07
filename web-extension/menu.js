@@ -24,6 +24,7 @@ document.getElementById('saveSelectionLabel').textContent = chrome.i18n.getMessa
 document.getElementById('pageChapterLabel').textContent = chrome.i18n.getMessage('pageChapter');
 document.getElementById('selectionChapterLabel').textContent = chrome.i18n.getMessage('selectionChapter');
 document.getElementById('editChapters').textContent = chrome.i18n.getMessage('editChapters');
+document.getElementById('saveDestination').textContent = chrome.i18n.getMessage('saveDestination');
 document.getElementById('waitMessage').textContent = chrome.i18n.getMessage('waitMessage');
 
 // What a command that never started is told, by key rather than by sentence:
@@ -441,6 +442,10 @@ document.getElementById("styleLibrary").onclick = openStyleLibraryForThisPage;
 
 document.getElementById("editChapters").onclick = function() {
     openEditor('chapters.html');
+};
+
+document.getElementById("saveDestination").onclick = function() {
+    openEditor('destination.html');
 };
 
 // The wait message stays up for as long as this popup lives: the background

@@ -131,7 +131,7 @@ let jobClaimPending = false
 // acted on, and the alternative - injecting it separately when the setting is on
 // - leaves a tab that was injected with the setting off unable to honour it when
 // the user turns it on without reloading.
-const CONTENT_SCRIPTS = ['libs/jszip.js', 'libs/readability.js', 'utils.js', 'cssSanitizer.js', 'sanitizeHtml.js', 'extractHtml.js', 'saveEbook.js']
+const CONTENT_SCRIPTS = ['libs/jszip.js', 'libs/readability.js', 'utils.js', 'cssSanitizer.js', 'sanitizeHtml.js', 'extractHtml.js', 'destinations.js', 'saveEbook.js']
 
 // The styles that ship with the extension live in styles/catalog.json, read
 // through loadStyleCatalog() below. They used to be an array here, which meant a
@@ -1153,6 +1153,23 @@ function _execRequest(request, sender, sendResponse) {
     }
     if (request.type === 'set reader mode') {
         storageSet({'readerMode': request.readerMode}, function (error) {
+            sendResponse(writeResponse(error));
+        });
+        return true;
+    }
+    if (request.type === 'get save destination') {
+        chrome.storage.local.get(request.keys, function (data) {
+            if (!data) {
+                sendResponse({});
+            } else {
+                sendResponse(data);
+            }
+        });
+        return true;
+    }
+    if (request.type === 'set save destination') {
+        delete request.type;
+        storageSet(request, function (error) {
             sendResponse(writeResponse(error));
         });
         return true;

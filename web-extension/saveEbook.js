@@ -1426,8 +1426,13 @@ function buildEbook(allPages, bookMeta, jobId) {
         })
         .then(function(content) {
             clearInterval(heartbeat);
-            downloadBlob(content, ebookFileName);
-            finishJob(null, jobId);
+            saveEbookToDestination(content, ebookFileName)
+                .then(function() {
+                    finishJob(null, jobId);
+                })
+                .catch(function(error) {
+                    finishJob('Could not save the eBook: ' + error, jobId);
+                });
         })
         .catch(function(error) {
             // out of memory on a very large book, a corrupt image, a revoked
