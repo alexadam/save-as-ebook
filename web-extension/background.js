@@ -1,9 +1,10 @@
 // The shared style matcher, and the css sanitizer it strips imported styles
-// with. Chrome loads only the single file named by background.service_worker,
+// with. Plus the utils and destinations libraries needed to save epub files.
+// Chrome loads only the single file named by background.service_worker,
 // so they have to be pulled in here; Firefox runs the background.scripts list,
 // which already names them, and has no importScripts in an event page.
 if (typeof importScripts === 'function') {
-    importScripts('cssSanitizer.js', 'styleLibrary.js');
+    importScripts('cssSanitizer.js', 'styleLibrary.js', 'utils.js', 'destinations.js');
 }
 
 // Firefox's `chrome` namespace is callback-only - those calls return undefined,
@@ -1227,6 +1228,16 @@ function _execRequest(request, sender, sendResponse) {
         sendResponse({ok: true});
         endJob(request.jobId, sender)
         return false;
+    }
+    if (request.type === 'save to crosspoint') {
+        const {blob, fileName} = request;
+        readSaveDestinationFromBackground()
+            .then((dest) => {
+                saveEbookToCrosspoint(dest, blob, fileName)
+                    .then(sendResponse)
+                    .catch(sendResponse);
+            });
+        return true;
     }
     // an unknown type still has a sender waiting on a callback
     sendResponse({});

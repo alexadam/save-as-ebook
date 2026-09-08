@@ -9,11 +9,11 @@ async function doSave() {
     const crosspointUrl = document.getElementById('crosspointUrl').value;
     const crosspointPath = document.getElementById('crosspointPath').value;
 
-    await setSaveDestination({protocol, crosspointUrl, crosspointPath});
+    await setSaveDestinationFromContent({protocol, crosspointUrl, crosspointPath});
 }
 
 async function main() {
-    const saved = await readSaveDestination();
+    const saved = await readSaveDestinationFromContent();
 
     const protocolList = document.createElement('ul');
     const protocols = [

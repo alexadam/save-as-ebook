@@ -17,6 +17,10 @@
             "strict_min_version": "142.0"
         }
     },
+    "content_security_policy": {
+        "extension_pages": "script-src 'self';"
+    },
+    "message_serialization": "structured_clone",
     "description": "Save a web page or selection as eBook (.epub)",
     "icons": {
         "48": "icons/book48.png",
@@ -24,7 +28,7 @@
     },
     "background": {
         "service_worker": "background.js",
-        "scripts": ["cssSanitizer.js", "styleLibrary.js", "background.js"]
+        "scripts": ["cssSanitizer.js", "styleLibrary.js", "utils.js", "destinations.js", "background.js"]
     },
     "action": {
         "default_icon": "icons/book32.png",
