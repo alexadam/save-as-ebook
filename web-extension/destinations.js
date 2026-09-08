@@ -3,7 +3,7 @@ async function readSaveDestinationFromContent() {
         type: 'get save destination',
         keys: ['protocol', 'crosspointUrl', 'crosspointPath'].map(_namespaceKey)
     });
-    return _readSaveDestination(data);
+    return await _readSaveDestination(data);
 }
 
 async function readSaveDestinationFromBackground() {
@@ -15,10 +15,10 @@ async function readSaveDestinationFromBackground() {
     } catch {
         data = {};
     }
-    return _readSaveDestination(data);
+    return await _readSaveDestination(data);
 }
 
-function _readSaveDestination(data) {
+async function _readSaveDestination(data) {
     let protocol;
     if (data.saveDestinationProtocol === 'crosspoint') {
         protocol = 'crosspoint';
@@ -26,7 +26,7 @@ function _readSaveDestination(data) {
         protocol = 'download';
     }
 
-    const crosspointUrl = data.saveDestinationCrosspointUrl ?? 'http://crosspoint.local';
+    const crosspointUrl = data.saveDestinationCrosspointUrl ?? (await _defaultCrosspointUrl());
     const crosspointPath = data.saveDestinationCrosspointPath ?? '/';
 
     const state = {
@@ -36,6 +36,17 @@ function _readSaveDestination(data) {
     };
     return state;
 };
+
+async function _defaultCrosspointUrl() {
+    // Firefox attempts to upgrade .local domains to HTTPS (unlike Chrome) by default.
+    if (typeof browser.runtime.getBrowserInfo !== 'undefined') {
+        const {vendor} = await browser.runtime.getBrowserInfo();
+        if (vendor === 'Mozilla') {
+            return 'http://192.168.1.2';
+        }
+    }
+    return 'http://crosspoint.local';
+}
 
 async function setSaveDestinationFromContent(state) {
     let data = {};
