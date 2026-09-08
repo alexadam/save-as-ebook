@@ -683,5 +683,33 @@
     "noStyleForThisSite": {
         "message": "No style for this site - make one",
         "description": "Shown in the popup under the Style Library button when nothing in the library covers the page"
+    },
+    "saveDestination": {
+        "message": "Set Save Destination ...",
+        "description": "Popup menu entry to open the save destination settings page."
+    },
+    "saveDestinationTitle": {
+        "message": "Save Destination",
+        "description": "Page title for the save destination settings page."
+    },
+    "saveDestinationDownload": {
+        "message": "Browser Download",
+        "description": "Radio button label for the direct download save protocol."
+    },
+    "saveDestinationCrosspoint": {
+        "message": "Send to CrossPoint Reader",
+        "description": "Radio button label for the CrossPoint save protocol."
+    },
+    "saveDestinationCrosspointUrl": {
+        "message": "Server URL",
+        "description": "Text entry label for the CrossPoint server URL."
+    },
+    "saveDestinationCrosspointPath": {
+        "message": "Save Path",
+        "description": "Text entry label for the CrossPoint destination path."
+    },
+    "saveDestinationApply": {
+        "message": "Save changes",
+        "description": "Button text for the button to apply the save destination settings."
     }
 }

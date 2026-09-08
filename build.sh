@@ -35,6 +35,8 @@ m = json.load(open('manifest.json'))
 if target == 'firefox':
     # Firefox ignores service_worker and warns about it; it runs background.scripts.
     m['background'].pop('service_worker', None)
+    # Firefox also warns about message_serialization, which is a Chrome-specific setting.
+    m.pop('message_serialization', None)
 elif target == 'chrome':
     m['background'].pop('scripts', None)
     m.pop('browser_specific_settings', None)

@@ -1,9 +1,10 @@
 // The shared style matcher, and the css sanitizer it strips imported styles
-// with. Chrome loads only the single file named by background.service_worker,
+// with. Plus the utils and destinations libraries needed to save epub files.
+// Chrome loads only the single file named by background.service_worker,
 // so they have to be pulled in here; Firefox runs the background.scripts list,
 // which already names them, and has no importScripts in an event page.
 if (typeof importScripts === 'function') {
-    importScripts('cssSanitizer.js', 'styleLibrary.js');
+    importScripts('cssSanitizer.js', 'styleLibrary.js', 'utils.js', 'destinations.js');
 }
 
 // Firefox's `chrome` namespace is callback-only - those calls return undefined,
@@ -131,7 +132,7 @@ let jobClaimPending = false
 // acted on, and the alternative - injecting it separately when the setting is on
 // - leaves a tab that was injected with the setting off unable to honour it when
 // the user turns it on without reloading.
-const CONTENT_SCRIPTS = ['libs/jszip.js', 'libs/readability.js', 'utils.js', 'cssSanitizer.js', 'sanitizeHtml.js', 'extractHtml.js', 'saveEbook.js']
+const CONTENT_SCRIPTS = ['libs/jszip.js', 'libs/readability.js', 'utils.js', 'cssSanitizer.js', 'sanitizeHtml.js', 'extractHtml.js', 'destinations.js', 'saveEbook.js']
 
 // The styles that ship with the extension live in styles/catalog.json, read
 // through loadStyleCatalog() below. They used to be an array here, which meant a
@@ -1157,6 +1158,23 @@ function _execRequest(request, sender, sendResponse) {
         });
         return true;
     }
+    if (request.type === 'get save destination') {
+        chrome.storage.local.get(request.keys, function (data) {
+            if (!data) {
+                sendResponse({});
+            } else {
+                sendResponse(data);
+            }
+        });
+        return true;
+    }
+    if (request.type === 'set save destination') {
+        delete request.type;
+        storageSet(request, function (error) {
+            sendResponse(writeResponse(error));
+        });
+        return true;
+    }
     // A preference rather than part of a book, so it is not among the keys
     // 'remove' discards - it has to still be set for the save after this one.
     if (request.type === 'get review before saving') {
@@ -1210,6 +1228,16 @@ function _execRequest(request, sender, sendResponse) {
         sendResponse({ok: true});
         endJob(request.jobId, sender)
         return false;
+    }
+    if (request.type === 'save to crosspoint') {
+        const {blob, fileName} = request;
+        readSaveDestinationFromBackground()
+            .then((dest) => {
+                saveEbookToCrosspoint(dest, blob, fileName)
+                    .then(sendResponse)
+                    .catch(sendResponse);
+            });
+        return true;
     }
     // an unknown type still has a sender waiting on a callback
     sendResponse({});
