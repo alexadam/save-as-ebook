@@ -1,0 +1,50 @@
+html {
+    font-family: sans-serif;
+    background: rgb(210, 210, 210);
+}
+body {
+    background: white;
+    max-width: 600px;
+    margin: 50px auto;
+    font-size: 15px;
+}
+
+#saveControls {
+    padding: 20px;
+}
+#saveControls input {
+    font-size: 15px;
+}
+
+#saveTitle {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#saveProtocols {
+    background: #f5f5f5;
+    padding: 10px;
+}
+#saveProtocols li {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+#saveProtocols:not(:has(#saveDestinationCrosspoint:checked)) ~ #saveControlsCrosspoint {
+    display: none;
+}
+
+#saveButtons {
+    text-align: right;
+}
+#saveButtons button {
+    border: none;
+    padding: 18px 20px;
+    font-size: 18px;
+    color: black;
+    background: white;
+}
+#saveButtons button:hover {
+    color: white;
+    background: black;
+}

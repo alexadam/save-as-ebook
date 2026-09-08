@@ -688,8 +688,12 @@
         "message": "Set Save Destination ...",
         "description": "Popup menu entry to open the save destination settings page."
     },
+    "saveDestinationTitle": {
+        "message": "Save Destination",
+        "description": "Page title for the save destination settings page."
+    },
     "saveDestinationDownload": {
-        "message": "Direct Download",
+        "message": "Browser Download",
         "description": "Radio button label for the direct download save protocol."
     },
     "saveDestinationCrosspoint": {
@@ -705,7 +709,7 @@
         "description": "Text entry label for the CrossPoint destination path."
     },
     "saveDestinationApply": {
-        "message": "Apply",
+        "message": "Save changes",
         "description": "Button text for the button to apply the save destination settings."
     }
 }

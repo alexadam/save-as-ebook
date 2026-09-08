@@ -10,12 +10,23 @@ async function doSave() {
     const crosspointPath = document.getElementById('crosspointPath').value;
 
     await setSaveDestinationFromContent({protocol, crosspointUrl, crosspointPath});
+    alert(browser.i18n.getMessage('changesSaved'));
+    close();
 }
 
 async function main() {
     const saved = await readSaveDestinationFromContent();
 
+    const controls = document.createElement('div');
+    controls.id = 'saveControls';
+
+    const title = document.createElement('span');
+    title.id = 'saveTitle';
+    title.innerText = chrome.i18n.getMessage('saveDestinationTitle');
+    controls.appendChild(title);
+
     const protocolList = document.createElement('ul');
+    protocolList.id = 'saveProtocols';
     const protocols = [
         {
             id: 'saveDestinationDownload',
@@ -43,9 +54,10 @@ async function main() {
 
         protocolList.appendChild(li);
     }
-    document.body.appendChild(protocolList);
+    controls.appendChild(protocolList);
 
     const cpTable = document.createElement('table');
+    cpTable.id = 'saveControlsCrosspoint';
     {
         const tr = document.createElement('tr');
         {
@@ -86,12 +98,19 @@ async function main() {
         }
         cpTable.appendChild(tr);
     }
-    document.body.appendChild(cpTable);
+    controls.appendChild(cpTable);
+
+    document.body.appendChild(controls);
+
+    const buttons = document.createElement('div');
+    buttons.id = 'saveButtons';
 
     const apply = document.createElement('button');
     apply.id = 'apply';
     apply.onclick = doSave;
     apply.innerText = chrome.i18n.getMessage('saveDestinationApply');
-    document.body.appendChild(apply);
+    buttons.appendChild(apply);
+
+    document.body.appendChild(buttons);
 }
 main();
